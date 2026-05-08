@@ -8,7 +8,7 @@ const Footer = () => {
     <footer className="mt-16 pb-10">
       <div className="site-container">
         <div className="rounded-3xl bg-gradient-to-br from-teal-600 via-emerald-600 to-cyan-600 p-[2px] shadow-2xl shadow-teal-500/20">
-          <div className="rounded-[22px] bg-white px-8 md:px-12 py-12 md:py-16">
+          <div className="rounded-[22px] bg-white px-10 md:px-16 lg:px-20 py-14 md:py-20">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-12">
               <div>
                 <div className="flex items-center gap-3 mb-5">
