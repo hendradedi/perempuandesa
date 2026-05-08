@@ -6,7 +6,7 @@ const Footer = () => {
 
   return (
     <footer className="mt-16 px-4 sm:px-6 lg:px-8 pb-8">
-      <div className="max-w-[1200px] mx-auto card !p-8 md:!p-10">
+      <div className="w-full max-w-7xl mx-auto card !p-8 md:!p-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Logo & Description */}
           <div className="md:col-span-1">

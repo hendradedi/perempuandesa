@@ -5,12 +5,12 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen text-slate-900 bg-slate-100">
       {/* Hero Section */}
-      <section className="relative px-4 sm:px-6 lg:px-8 pt-14 md:pt-20 pb-16 md:pb-20 overflow-hidden">
+      <section className="relative w-full px-4 sm:px-6 lg:px-8 xl:px-10 pt-14 md:pt-20 pb-16 md:pb-20 overflow-hidden">
         <div className="pointer-events-none absolute inset-0 -z-10">
           <div className="absolute -top-20 left-0 h-72 w-72 rounded-full bg-teal-200/35 blur-3xl" />
           <div className="absolute top-24 right-0 h-80 w-80 rounded-full bg-blue-200/30 blur-3xl" />
         </div>
-        <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+        <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 xl:gap-24 items-center">
           <div className="text-center lg:text-left">
             <span className="inline-flex items-center rounded-full border border-teal-200 bg-teal-50 text-teal-800 text-xs md:text-sm font-semibold tracking-[0.01em] px-3 py-1 mb-6">
               Program Belajar Perempuan Desa 2026
@@ -74,8 +74,8 @@ const LandingPage = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 md:py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-[1200px] mx-auto">
+      <section className="w-full py-16 md:py-20 px-4 sm:px-6 lg:px-8 xl:px-10">
+        <div className="w-full max-w-7xl mx-auto">
           <div className="text-center mb-14 md:mb-16">
             <h2 className="section-title tracking-[-0.02em] leading-tight">
               Mengapa Perempuan Desa?
@@ -122,8 +122,8 @@ const LandingPage = () => {
       </section>
 
       {/* Modules Section */}
-      <section className="py-16 md:py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-[1200px] mx-auto">
+      <section className="w-full py-16 md:py-20 px-4 sm:px-6 lg:px-8 xl:px-10">
+        <div className="w-full max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="section-title">
               Modul Pembelajaran
@@ -176,8 +176,8 @@ const LandingPage = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-16 md:py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-[1200px] mx-auto">
+      <section className="w-full py-16 md:py-20 px-4 sm:px-6 lg:px-8 xl:px-10">
+        <div className="w-full max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="section-title">
               Apa Kata Mereka?
@@ -258,7 +258,7 @@ const LandingPage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 md:py-20 px-4 sm:px-6 lg:px-8">
+      <section className="w-full py-16 md:py-20 px-4 sm:px-6 lg:px-8 xl:px-10">
         <div className="max-w-4xl mx-auto text-center">
           <div className="rounded-3xl bg-slate-900 px-6 sm:px-8 md:px-12 py-12 md:py-16 border border-slate-800">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 md:mb-6 leading-snug">
