@@ -11,7 +11,7 @@ const LandingPage = () => {
           <div className="absolute top-24 right-0 h-80 w-80 rounded-full bg-blue-200/30 blur-3xl" />
         </div>
 
-        <div className="site-container grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 xl:gap-24 2xl:gap-28 items-center">
+        <div className="site-container grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 xl:gap-24 2xl:gap-28 items-stretch">
           <div className="text-center">
             <span className="inline-flex items-center rounded-full border border-teal-200 bg-teal-50 text-teal-800 text-xs md:text-sm font-semibold tracking-[0.01em] px-3 py-1 mb-6">
               Program Belajar Perempuan Desa 2026
@@ -57,16 +57,26 @@ const LandingPage = () => {
           </div>
 
           <div className="w-full">
-            <div className="rounded-3xl border border-slate-200/80 bg-white/70 backdrop-blur-sm min-h-[320px] md:min-h-[460px] xl:min-h-[520px] p-5 md:p-7 xl:p-8 soft-shadow-indigo">
+            <div className="rounded-3xl border border-slate-200/80 bg-white/70 backdrop-blur-sm p-5 md:p-7 xl:p-8 soft-shadow-indigo h-full">
               <div className="h-full rounded-2xl overflow-hidden border border-slate-100 bg-slate-50 flex flex-col">
                 <img
                   src={perempuanDesaImage}
                   alt="Ilustrasi perempuan desa"
-                  className="w-full h-56 md:h-72 xl:h-80 object-cover object-top"
+                  className="w-full h-64 md:h-80 xl:h-[360px] object-cover object-top"
                 />
-                <div className="p-4 md:p-5">
-                  <p className="text-sm md:text-base font-semibold text-slate-800">Belajar berbasis kebutuhan perempuan desa</p>
-                  <p className="text-xs md:text-sm text-slate-600 mt-1 leading-relaxed">Konten praktis, evaluasi interaktif, dan jalur belajar yang relevan untuk pengembangan ekonomi keluarga.</p>
+                <div className="p-4 md:p-5 bg-white/90 border-t border-slate-100 flex-1 flex flex-col justify-center">
+                  <p className="text-sm md:text-base font-semibold text-slate-800 text-center">Belajar berbasis kebutuhan perempuan desa</p>
+                  <p className="text-xs md:text-sm text-slate-600 mt-2 leading-relaxed text-center max-w-lg mx-auto">Konten praktis, evaluasi interaktif, dan jalur belajar yang relevan untuk pengembangan ekonomi keluarga.</p>
+                  <div className="mt-4 grid grid-cols-2 gap-3 max-w-sm mx-auto w-full">
+                    <div className="rounded-xl bg-slate-100/80 px-3 py-2 text-center">
+                      <p className="text-xs text-slate-500">Kelas Singkat</p>
+                      <p className="text-sm font-bold text-slate-800">10-20 Menit</p>
+                    </div>
+                    <div className="rounded-xl bg-slate-100/80 px-3 py-2 text-center">
+                      <p className="text-xs text-slate-500">Bahasa</p>
+                      <p className="text-sm font-bold text-slate-800">Mudah Dipahami</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -81,12 +91,12 @@ const LandingPage = () => {
             <h2 className="section-title tracking-[-0.02em] leading-tight">
               Mengapa Perempuan Desa?
             </h2>
-            <p className="section-subtitle max-w-2xl mx-auto text-slate-600 leading-relaxed">
+            <p className="section-subtitle max-w-2xl mx-auto text-slate-600 leading-relaxed text-center">
               Platform kami dirancang khusus untuk memenuhi kebutuhan pembelajaran perempuan desa dengan fitur-fitur modern dan mendukung.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 max-w-6xl mx-auto">
             <div className="rounded-3xl bg-white border border-slate-100 text-center flex flex-col h-full p-6 md:p-7 soft-shadow-sky">
               <div className="text-5xl md:text-6xl mb-5 leading-none">📚</div>
               <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-4">Pembelajaran Interaktif</h3>
@@ -134,7 +144,7 @@ const LandingPage = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto">
             <div className="card-gradient soft-shadow-teal p-6 md:p-8">
               <div className="flex items-start gap-4 md:gap-5">
                 <div className="text-5xl md:text-6xl shrink-0 leading-none">💼</div>
@@ -188,7 +198,7 @@ const LandingPage = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
             <div className="card soft-shadow-rose p-6 md:p-7">
               <div className="flex items-center gap-0.5 mb-5">
                 {[1, 2, 3, 4, 5].map(star => (
