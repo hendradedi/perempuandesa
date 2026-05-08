@@ -1,6 +1,13 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import perempuanDesaImage from '../../assets/perempuan-desa.webp';
+import { Users } from 'lucide-react';
+
+const NAVIGATION = [
+  { name: 'Beranda', href: '/' },
+  { name: 'Modul', href: '/#modul' },
+  { name: 'Testimoni', href: '/#testimoni' },
+  { name: 'Tentang Kami', href: '/#tentang' }
+];
 
 const Navbar = ({ isAuthenticated, canAccessAdminPanel, onLogout, user }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,45 +19,46 @@ const Navbar = ({ isAuthenticated, canAccessAdminPanel, onLogout, user }) => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-slate-200/90 bg-white/90 backdrop-blur-xl">
+    <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-slate-200/60">
       <div className="site-container">
         <div className="flex justify-between items-center h-16 md:h-20 gap-3">
           {/* Logo */}
-          <Link to="/" className="flex min-w-0 items-center space-x-2 pr-2">
-            <img
-              src={perempuanDesaImage}
-              alt="Ilustrasi perempuan desa"
-              className="w-10 h-10 rounded-full object-cover border border-slate-200"
-            />
-            <span className="hidden sm:inline text-base md:text-xl font-extrabold tracking-tight bg-gradient-to-r from-teal-600 to-primary-700 bg-clip-text text-transparent truncate">
-              Perempuan Desa
-            </span>
-            <span className="sm:hidden text-base font-extrabold tracking-tight text-slate-800">
-              Desa
+          <Link to="/" className="flex min-w-0 items-center gap-3 pr-2">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-teal-600 to-emerald-400 flex items-center justify-center text-white shadow-lg shadow-teal-500/20">
+              <Users className="w-5 h-5" />
+            </div>
+            <span className="font-bold text-lg md:text-xl tracking-tight text-slate-800 truncate">
+              Perempuan<span className="text-teal-600">Desa</span>
             </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6 shrink-0 ml-auto">
+          <div className="hidden lg:flex items-center gap-8">
+            {NAVIGATION.map((item) => (
+              <a
+                key={item.name}
+                href={item.href}
+                className="text-sm font-medium text-slate-600 hover:text-teal-600 transition-colors"
+              >
+                {item.name}
+              </a>
+            ))}
+          </div>
+
+          <div className="hidden md:flex items-center gap-4 shrink-0 ml-auto lg:ml-0">
             {!isAuthenticated ? (
               <>
-                <Link 
-                  to="/" 
-                  className="text-slate-600 hover:text-teal-700 font-medium transition-colors whitespace-nowrap"
-                >
-                  Beranda
-                </Link>
-                <Link 
-                  to="/login" 
-                  className="text-slate-600 hover:text-teal-700 font-medium transition-colors whitespace-nowrap"
+                <Link
+                  to="/login"
+                  className="text-sm font-semibold text-slate-600 hover:text-teal-600 transition-colors"
                 >
                   Masuk
                 </Link>
-                <Link 
-                  to="/register" 
-                  className="btn-primary text-sm"
+                <Link
+                  to="/register"
+                  className="bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold px-6 py-2.5 rounded-full shadow-md shadow-teal-600/20 transition-all hover:shadow-lg hover:-translate-y-0.5"
                 >
-                  Daftar
+                  Daftar Gratis
                 </Link>
               </>
             ) : (
@@ -80,7 +88,7 @@ const Navbar = ({ isAuthenticated, canAccessAdminPanel, onLogout, user }) => {
                     <span className="text-lg">👑</span>
                     <span className="text-sm font-semibold text-amber-700">{user?.points || 0} Poin</span>
                   </div>
-                  <button 
+                  <button
                     onClick={handleLogout}
                     className="btn-outline text-sm"
                   >
@@ -92,7 +100,7 @@ const Navbar = ({ isAuthenticated, canAccessAdminPanel, onLogout, user }) => {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="md:hidden ml-auto">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label="Buka menu"
@@ -114,13 +122,27 @@ const Navbar = ({ isAuthenticated, canAccessAdminPanel, onLogout, user }) => {
           <div className="md:hidden py-4 border-t border-slate-200 fade-in">
             {!isAuthenticated ? (
               <div className="card !p-4 flex flex-col space-y-3">
-                <Link 
-                  to="/" 
+                <a
+                  href="/"
                   className="text-slate-700 hover:text-teal-700 font-medium transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Beranda
-                </Link>
+                </a>
+                <a
+                  href="/#modul"
+                  className="text-slate-700 hover:text-teal-700 font-medium transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Modul
+                </a>
+                <a
+                  href="/#testimoni"
+                  className="text-slate-700 hover:text-teal-700 font-medium transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Testimoni
+                </a>
                 <Link 
                   to="/login" 
                   className="text-slate-700 hover:text-teal-700 font-medium transition-colors"
