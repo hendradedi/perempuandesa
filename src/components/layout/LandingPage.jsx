@@ -46,7 +46,7 @@ const LandingPage = () => {
               </Link>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-16 pt-12 border-t border-slate-200">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-24 pt-12 border-t border-slate-200">
               <div>
                 <p className="text-2xl md:text-3xl font-bold text-teal-700">750+</p>
                 <p className="text-xs md:text-sm text-slate-500">Pengguna Aktif</p>
