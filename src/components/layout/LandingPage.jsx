@@ -5,18 +5,19 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen text-slate-900 bg-slate-100">
       {/* Hero Section */}
-      <section className="relative w-full px-4 sm:px-6 lg:px-8 xl:px-10 pt-14 md:pt-20 pb-16 md:pb-20 overflow-hidden">
+      <section className="relative w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-14 md:pt-20 pb-16 md:pb-20 overflow-hidden">
         <div className="pointer-events-none absolute inset-0 -z-10">
           <div className="absolute -top-20 left-0 h-72 w-72 rounded-full bg-teal-200/35 blur-3xl" />
           <div className="absolute top-24 right-0 h-80 w-80 rounded-full bg-blue-200/30 blur-3xl" />
         </div>
-        <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 xl:gap-24 items-center">
+
+        <div className="w-full max-w-screen-2xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 xl:gap-24 2xl:gap-28 items-center">
           <div className="text-center lg:text-left">
             <span className="inline-flex items-center rounded-full border border-teal-200 bg-teal-50 text-teal-800 text-xs md:text-sm font-semibold tracking-[0.01em] px-3 py-1 mb-6">
               Program Belajar Perempuan Desa 2026
             </span>
 
-            <h1 className="text-4xl md:text-5xl xl:text-6xl font-extrabold text-slate-900 leading-[1.12] tracking-[-0.02em] mb-5">
+            <h1 className="text-4xl md:text-5xl xl:text-6xl 2xl:text-7xl font-extrabold text-slate-900 leading-[1.1] tracking-[-0.02em] mb-5">
               Belajar Praktis.
               <br />
               <span className="text-primary-800">Tumbuh Mandiri.</span>
@@ -35,7 +36,7 @@ const LandingPage = () => {
               </Link>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5 pt-6 border-t border-slate-200/80 text-center lg:text-left max-w-4xl mx-auto lg:mx-0">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5 xl:gap-7 pt-6 border-t border-slate-200/80 text-center lg:text-left max-w-5xl mx-auto lg:mx-0">
               <div>
                 <p className="text-2xl md:text-3xl font-extrabold text-teal-700 leading-tight">750+</p>
                 <p className="text-xs md:text-sm text-slate-600 mt-1">Pengguna Aktif</p>
@@ -56,12 +57,12 @@ const LandingPage = () => {
           </div>
 
           <div className="w-full">
-            <div className="rounded-3xl border border-slate-200/80 bg-white/70 backdrop-blur-sm min-h-[320px] md:min-h-[440px] p-5 md:p-7 shadow-[0_24px_64px_rgba(15,23,42,0.1)]">
+            <div className="rounded-3xl border border-slate-200/80 bg-white/70 backdrop-blur-sm min-h-[320px] md:min-h-[460px] xl:min-h-[520px] p-5 md:p-7 xl:p-8 shadow-[0_24px_64px_rgba(15,23,42,0.1)]">
               <div className="h-full rounded-2xl overflow-hidden border border-slate-100 bg-slate-50 flex flex-col">
                 <img
                   src={perempuanDesaImage}
                   alt="Ilustrasi perempuan desa"
-                  className="w-full h-56 md:h-72 object-cover object-top"
+                  className="w-full h-56 md:h-72 xl:h-80 object-cover object-top"
                 />
                 <div className="p-4 md:p-5">
                   <p className="text-sm md:text-base font-semibold text-slate-800">Belajar berbasis kebutuhan perempuan desa</p>
@@ -74,8 +75,8 @@ const LandingPage = () => {
       </section>
 
       {/* Features Section */}
-      <section className="w-full py-16 md:py-20 px-4 sm:px-6 lg:px-8 xl:px-10">
-        <div className="w-full max-w-7xl mx-auto">
+      <section className="w-full py-16 md:py-20 px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
+        <div className="w-full max-w-screen-2xl mx-auto">
           <div className="text-center mb-14 md:mb-16">
             <h2 className="section-title tracking-[-0.02em] leading-tight">
               Mengapa Perempuan Desa?
@@ -122,8 +123,8 @@ const LandingPage = () => {
       </section>
 
       {/* Modules Section */}
-      <section className="w-full py-16 md:py-20 px-4 sm:px-6 lg:px-8 xl:px-10">
-        <div className="w-full max-w-7xl mx-auto">
+      <section className="w-full py-16 md:py-20 px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
+        <div className="w-full max-w-screen-2xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="section-title">
               Modul Pembelajaran
@@ -176,8 +177,8 @@ const LandingPage = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="w-full py-16 md:py-20 px-4 sm:px-6 lg:px-8 xl:px-10">
-        <div className="w-full max-w-7xl mx-auto">
+      <section className="w-full py-16 md:py-20 px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
+        <div className="w-full max-w-screen-2xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="section-title">
               Apa Kata Mereka?
@@ -258,8 +259,8 @@ const LandingPage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="w-full py-16 md:py-20 px-4 sm:px-6 lg:px-8 xl:px-10">
-        <div className="max-w-4xl mx-auto text-center">
+      <section className="w-full py-16 md:py-20 px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
+        <div className="max-w-screen-2xl mx-auto text-center">
           <div className="rounded-3xl bg-slate-900 px-6 sm:px-8 md:px-12 py-12 md:py-16 border border-slate-800">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 md:mb-6 leading-snug">
             Siap untuk Memulai Perjalanan Belajar Anda?
