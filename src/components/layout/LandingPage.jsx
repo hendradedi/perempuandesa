@@ -5,43 +5,61 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen text-slate-900 bg-slate-100">
       {/* Hero Section */}
-      <section className="px-4 sm:px-6 lg:px-8 pt-12 md:pt-20 pb-16 md:pb-20">
-        <div className="max-w-5xl mx-auto">
-          <div className="card bg-white p-7 md:p-10 text-center shadow-[0_16px_40px_rgba(15,23,42,0.1)]">
-            <span className="inline-flex items-center rounded-full border border-teal-200 bg-teal-50 text-teal-800 text-xs md:text-sm font-semibold px-3 py-1 mb-5">
+      <section className="relative px-4 sm:px-6 lg:px-8 pt-14 md:pt-20 pb-16 md:pb-20 overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute -top-20 left-0 h-72 w-72 rounded-full bg-teal-200/35 blur-3xl" />
+          <div className="absolute top-24 right-0 h-80 w-80 rounded-full bg-blue-200/30 blur-3xl" />
+        </div>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+          <div>
+            <span className="inline-flex items-center rounded-full border border-teal-200 bg-teal-50 text-teal-800 text-xs md:text-sm font-semibold tracking-[0.01em] px-3 py-1 mb-6">
               Program Belajar Perempuan Desa 2026
             </span>
-            <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 leading-tight mb-4">
-              Belajar Praktis, Tumbuh Mandiri
+
+            <h1 className="text-4xl md:text-5xl xl:text-6xl font-extrabold text-slate-900 leading-[1.12] tracking-[-0.02em] mb-5">
+              Belajar Praktis.
+              <br />
+              <span className="text-primary-800">Tumbuh Mandiri.</span>
             </h1>
-            <p className="text-sm md:text-lg text-slate-600 max-w-3xl mx-auto mb-8">
+
+            <p className="text-base md:text-lg text-slate-600 leading-relaxed max-w-xl mb-8">
               Platform pembelajaran digital untuk meningkatkan keterampilan, pengetahuan, dan kemandirian ekonomi perempuan di pedesaan Indonesia.
             </p>
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 mb-8">
-              <Link to="/register" className="btn-primary text-base px-7 py-3.5">
+
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mb-8">
+              <Link to="/register" className="btn-primary text-base md:text-lg px-7 py-3.5 bg-slate-900 hover:bg-slate-800">
                 Mulai Belajar Sekarang
               </Link>
-              <Link to="/login" className="btn-outline text-base px-7 py-3.5">
+              <Link to="/login" className="btn-outline text-base md:text-lg px-7 py-3.5">
                 Saya Sudah Punya Akun
               </Link>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 text-left">
-              <div className="rounded-xl bg-slate-50 p-4 border border-slate-200">
-                <p className="text-2xl font-extrabold text-teal-700">750+</p>
-                <p className="text-xs text-slate-600 mt-1">Pengguna Aktif</p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5 pt-6 border-t border-slate-200/80">
+              <div>
+                <p className="text-2xl md:text-3xl font-extrabold text-teal-700 leading-tight">750+</p>
+                <p className="text-xs md:text-sm text-slate-600 mt-1">Pengguna Aktif</p>
               </div>
-              <div className="rounded-xl bg-slate-50 p-4 border border-slate-200">
-                <p className="text-2xl font-extrabold text-primary-700">30+</p>
-                <p className="text-xs text-slate-600 mt-1">Modul Belajar</p>
+              <div>
+                <p className="text-2xl md:text-3xl font-extrabold text-primary-700 leading-tight">30+</p>
+                <p className="text-xs md:text-sm text-slate-600 mt-1">Modul Belajar</p>
               </div>
-              <div className="rounded-xl bg-slate-50 p-4 border border-slate-200">
-                <p className="text-2xl font-extrabold text-coral-500">140+</p>
-                <p className="text-xs text-slate-600 mt-1">Kuis Interaktif</p>
+              <div>
+                <p className="text-2xl md:text-3xl font-extrabold text-coral-500 leading-tight">140+</p>
+                <p className="text-xs md:text-sm text-slate-600 mt-1">Kuis Interaktif</p>
               </div>
-              <div className="rounded-xl bg-slate-50 p-4 border border-slate-200">
-                <p className="text-2xl font-extrabold text-yellow-600">85+</p>
-                <p className="text-xs text-slate-600 mt-1">Sertifikat</p>
+              <div>
+                <p className="text-2xl md:text-3xl font-extrabold text-yellow-600 leading-tight">85+</p>
+                <p className="text-xs md:text-sm text-slate-600 mt-1">Sertifikat</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="w-full">
+            <div className="rounded-3xl border border-dashed border-slate-300/90 bg-white/60 backdrop-blur-sm min-h-[320px] md:min-h-[440px] p-6 shadow-[0_22px_60px_rgba(15,23,42,0.08)] flex items-center justify-center">
+              <div className="text-center max-w-xs">
+                <p className="text-sm md:text-base font-semibold text-slate-700">Area Hero Image</p>
+                <p className="text-xs md:text-sm text-slate-500 mt-2 leading-relaxed">Tempatkan ilustrasi utama berukuran besar di area ini agar komposisi hero tetap seimbang dan premium.</p>
               </div>
             </div>
           </div>
@@ -51,17 +69,17 @@ const LandingPage = () => {
       {/* Features Section */}
       <section className="py-16 md:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="section-title">
+          <div className="text-center mb-14 md:mb-16">
+            <h2 className="section-title tracking-[-0.02em] leading-tight">
               Mengapa Perempuan Desa?
             </h2>
-            <p className="section-subtitle max-w-2xl mx-auto">
+            <p className="section-subtitle max-w-2xl mx-auto text-slate-600 leading-relaxed">
               Platform kami dirancang khusus untuk memenuhi kebutuhan pembelajaran perempuan desa dengan fitur-fitur modern dan mendukung.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-            <div className="card text-center flex flex-col h-full p-6 md:p-7">
+            <div className="rounded-3xl bg-white border border-slate-100 text-center flex flex-col h-full p-6 md:p-7 shadow-[0_18px_45px_rgba(15,23,42,0.06)]">
               <div className="text-5xl md:text-6xl mb-5 leading-none">📚</div>
               <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-4">Pembelajaran Interaktif</h3>
               <p className="text-slate-600 text-sm sm:text-base leading-relaxed flex-grow">
@@ -69,7 +87,7 @@ const LandingPage = () => {
               </p>
             </div>
 
-            <div className="card text-center flex flex-col h-full p-6 md:p-7">
+            <div className="rounded-3xl bg-white border border-slate-100 text-center flex flex-col h-full p-6 md:p-7 shadow-[0_18px_45px_rgba(15,23,42,0.06)]">
               <div className="text-5xl md:text-6xl mb-5 leading-none">🧠</div>
               <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-4">Kuis & Evaluasi</h3>
               <p className="text-slate-600 text-sm sm:text-base leading-relaxed flex-grow">
@@ -77,7 +95,7 @@ const LandingPage = () => {
               </p>
             </div>
 
-            <div className="card text-center flex flex-col h-full p-6 md:p-7">
+            <div className="rounded-3xl bg-white border border-slate-100 text-center flex flex-col h-full p-6 md:p-7 shadow-[0_18px_45px_rgba(15,23,42,0.06)]">
               <div className="text-5xl md:text-6xl mb-5 leading-none">🎮</div>
               <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-4">Gamifikasi</h3>
               <p className="text-slate-600 text-sm sm:text-base leading-relaxed flex-grow">
@@ -85,7 +103,7 @@ const LandingPage = () => {
               </p>
             </div>
 
-            <div className="card text-center flex flex-col h-full p-6 md:p-7">
+            <div className="rounded-3xl bg-white border border-slate-100 text-center flex flex-col h-full p-6 md:p-7 shadow-[0_18px_45px_rgba(15,23,42,0.06)]">
               <div className="text-5xl md:text-6xl mb-5 leading-none">🏆</div>
               <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-4">Sertifikat Digital</h3>
               <p className="text-slate-600 text-sm sm:text-base leading-relaxed flex-grow">
