@@ -2,6 +2,15 @@
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
 @config "../tailwind.config.js";
 
+:root {
+  --shadow-neutral: 0 12px 30px rgba(15, 23, 42, 0.08);
+  --shadow-sky: 0 14px 34px rgba(14, 165, 233, 0.14);
+  --shadow-teal: 0 14px 34px rgba(13, 148, 136, 0.14);
+  --shadow-rose: 0 14px 34px rgba(244, 63, 94, 0.14);
+  --shadow-amber: 0 14px 34px rgba(245, 158, 11, 0.14);
+  --shadow-indigo: 0 18px 42px rgba(79, 70, 229, 0.16);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -179,14 +188,34 @@ a {
 .card {
   @apply rounded-2xl p-6 border border-slate-200;
   background: #ffffff;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  box-shadow: var(--shadow-neutral);
   backdrop-filter: blur(8px);
 }
 
 .card-gradient {
   @apply rounded-2xl p-6 border border-slate-200;
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  box-shadow: var(--shadow-neutral);
+}
+
+.soft-shadow-sky {
+  box-shadow: var(--shadow-sky);
+}
+
+.soft-shadow-teal {
+  box-shadow: var(--shadow-teal);
+}
+
+.soft-shadow-rose {
+  box-shadow: var(--shadow-rose);
+}
+
+.soft-shadow-amber {
+  box-shadow: var(--shadow-amber);
+}
+
+.soft-shadow-indigo {
+  box-shadow: var(--shadow-indigo);
 }
 
 .form-label {

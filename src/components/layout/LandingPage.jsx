@@ -12,7 +12,7 @@ const LandingPage = () => {
         </div>
 
         <div className="site-container grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 xl:gap-24 2xl:gap-28 items-center">
-          <div className="text-center lg:text-left">
+          <div className="text-center">
             <span className="inline-flex items-center rounded-full border border-teal-200 bg-teal-50 text-teal-800 text-xs md:text-sm font-semibold tracking-[0.01em] px-3 py-1 mb-6">
               Program Belajar Perempuan Desa 2026
             </span>
@@ -23,11 +23,11 @@ const LandingPage = () => {
               <span className="text-primary-800">Tumbuh Mandiri.</span>
             </h1>
 
-            <p className="text-base md:text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto lg:mx-0 mb-8">
+            <p className="text-base md:text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto mb-8">
               Platform pembelajaran digital untuk meningkatkan keterampilan, pengetahuan, dan kemandirian ekonomi perempuan di pedesaan Indonesia.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3 sm:gap-4 mb-8">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 mb-8">
               <Link to="/register" className="btn-primary text-base md:text-lg px-7 py-3.5 bg-slate-900 hover:bg-slate-800">
                 Mulai Belajar Sekarang
               </Link>
@@ -36,7 +36,7 @@ const LandingPage = () => {
               </Link>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5 xl:gap-7 pt-6 border-t border-slate-200/80 text-center lg:text-left max-w-5xl mx-auto lg:mx-0">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5 xl:gap-7 pt-6 border-t border-slate-200/80 text-center max-w-5xl mx-auto">
               <div>
                 <p className="text-2xl md:text-3xl font-extrabold text-teal-700 leading-tight">750+</p>
                 <p className="text-xs md:text-sm text-slate-600 mt-1">Pengguna Aktif</p>
@@ -57,7 +57,7 @@ const LandingPage = () => {
           </div>
 
           <div className="w-full">
-            <div className="rounded-3xl border border-slate-200/80 bg-white/70 backdrop-blur-sm min-h-[320px] md:min-h-[460px] xl:min-h-[520px] p-5 md:p-7 xl:p-8 shadow-[0_24px_64px_rgba(15,23,42,0.1)]">
+            <div className="rounded-3xl border border-slate-200/80 bg-white/70 backdrop-blur-sm min-h-[320px] md:min-h-[460px] xl:min-h-[520px] p-5 md:p-7 xl:p-8 soft-shadow-indigo">
               <div className="h-full rounded-2xl overflow-hidden border border-slate-100 bg-slate-50 flex flex-col">
                 <img
                   src={perempuanDesaImage}
@@ -87,7 +87,7 @@ const LandingPage = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-            <div className="rounded-3xl bg-white border border-slate-100 text-center flex flex-col h-full p-6 md:p-7 shadow-[0_18px_45px_rgba(15,23,42,0.06)]">
+            <div className="rounded-3xl bg-white border border-slate-100 text-center flex flex-col h-full p-6 md:p-7 soft-shadow-sky">
               <div className="text-5xl md:text-6xl mb-5 leading-none">📚</div>
               <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-4">Pembelajaran Interaktif</h3>
               <p className="text-slate-600 text-sm sm:text-base leading-relaxed flex-grow">
@@ -95,7 +95,7 @@ const LandingPage = () => {
               </p>
             </div>
 
-            <div className="rounded-3xl bg-white border border-slate-100 text-center flex flex-col h-full p-6 md:p-7 shadow-[0_18px_45px_rgba(15,23,42,0.06)]">
+            <div className="rounded-3xl bg-white border border-slate-100 text-center flex flex-col h-full p-6 md:p-7 soft-shadow-teal">
               <div className="text-5xl md:text-6xl mb-5 leading-none">🧠</div>
               <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-4">Kuis & Evaluasi</h3>
               <p className="text-slate-600 text-sm sm:text-base leading-relaxed flex-grow">
@@ -103,7 +103,7 @@ const LandingPage = () => {
               </p>
             </div>
 
-            <div className="rounded-3xl bg-white border border-slate-100 text-center flex flex-col h-full p-6 md:p-7 shadow-[0_18px_45px_rgba(15,23,42,0.06)]">
+            <div className="rounded-3xl bg-white border border-slate-100 text-center flex flex-col h-full p-6 md:p-7 soft-shadow-rose">
               <div className="text-5xl md:text-6xl mb-5 leading-none">🎮</div>
               <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-4">Gamifikasi</h3>
               <p className="text-slate-600 text-sm sm:text-base leading-relaxed flex-grow">
@@ -111,7 +111,7 @@ const LandingPage = () => {
               </p>
             </div>
 
-            <div className="rounded-3xl bg-white border border-slate-100 text-center flex flex-col h-full p-6 md:p-7 shadow-[0_18px_45px_rgba(15,23,42,0.06)]">
+            <div className="rounded-3xl bg-white border border-slate-100 text-center flex flex-col h-full p-6 md:p-7 soft-shadow-amber">
               <div className="text-5xl md:text-6xl mb-5 leading-none">🏆</div>
               <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-4">Sertifikat Digital</h3>
               <p className="text-slate-600 text-sm sm:text-base leading-relaxed flex-grow">
@@ -135,7 +135,7 @@ const LandingPage = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-            <div className="card-gradient p-6 md:p-8">
+            <div className="card-gradient soft-shadow-teal p-6 md:p-8">
               <div className="flex items-start gap-4 md:gap-5">
                 <div className="text-5xl md:text-6xl shrink-0 leading-none">💼</div>
                 <div className="min-w-0">
@@ -154,7 +154,7 @@ const LandingPage = () => {
               </div>
             </div>
 
-            <div className="card-gradient p-6 md:p-8">
+            <div className="card-gradient soft-shadow-sky p-6 md:p-8">
               <div className="flex items-start gap-4 md:gap-5">
                 <div className="text-5xl md:text-6xl shrink-0 leading-none">🩺</div>
                 <div className="min-w-0">
@@ -189,7 +189,7 @@ const LandingPage = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            <div className="card p-6 md:p-7">
+            <div className="card soft-shadow-rose p-6 md:p-7">
               <div className="flex items-center gap-0.5 mb-5">
                 {[1, 2, 3, 4, 5].map(star => (
                   <span key={star} className="text-yellow-400 text-lg md:text-xl">★</span>
@@ -211,7 +211,7 @@ const LandingPage = () => {
               </div>
             </div>
 
-            <div className="card p-6 md:p-7">
+            <div className="card soft-shadow-teal p-6 md:p-7">
               <div className="flex items-center gap-0.5 mb-5">
                 {[1, 2, 3, 4, 5].map(star => (
                   <span key={star} className="text-yellow-400 text-lg md:text-xl">★</span>
@@ -233,7 +233,7 @@ const LandingPage = () => {
               </div>
             </div>
 
-            <div className="card p-6 md:p-7">
+            <div className="card soft-shadow-amber p-6 md:p-7">
               <div className="flex items-center gap-0.5 mb-5">
                 {[1, 2, 3, 4, 5].map(star => (
                   <span key={star} className="text-yellow-400 text-lg md:text-xl">★</span>
@@ -261,7 +261,7 @@ const LandingPage = () => {
       {/* CTA Section */}
       <section className="w-full section-pad">
         <div className="site-container text-center">
-          <div className="rounded-3xl bg-slate-900 px-6 sm:px-8 md:px-12 py-12 md:py-16 border border-slate-800">
+          <div className="rounded-3xl bg-slate-900 px-6 sm:px-8 md:px-12 py-12 md:py-16 border border-slate-800 soft-shadow-indigo">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 md:mb-6 leading-snug">
             Siap untuk Memulai Perjalanan Belajar Anda?
             </h2>
