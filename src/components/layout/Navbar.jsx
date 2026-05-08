@@ -14,7 +14,7 @@ const Navbar = ({ isAuthenticated, onLogout, user }) => {
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-slate-200/90 bg-white/90 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16 lg:h-20 gap-3">
+        <div className="flex justify-between items-center h-16 md:h-20 gap-3">
           {/* Logo */}
           <Link to="/" className="flex min-w-0 items-center space-x-2 pr-2">
             <img
@@ -31,7 +31,7 @@ const Navbar = ({ isAuthenticated, onLogout, user }) => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-6 shrink-0">
+          <div className="hidden md:flex items-center gap-6 shrink-0">
             {!isAuthenticated ? (
               <>
                 <Link 
@@ -84,7 +84,7 @@ const Navbar = ({ isAuthenticated, onLogout, user }) => {
           </div>
 
           {/* Mobile menu button */}
-          <div className="lg:hidden">
+          <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label="Buka menu"
@@ -103,7 +103,7 @@ const Navbar = ({ isAuthenticated, onLogout, user }) => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-slate-200 fade-in">
+          <div className="md:hidden py-4 border-t border-slate-200 fade-in">
             {!isAuthenticated ? (
               <div className="card !p-4 flex flex-col space-y-3">
                 <Link 

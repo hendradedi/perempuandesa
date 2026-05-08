@@ -7,7 +7,7 @@ const LandingPage = () => {
       {/* Hero Section */}
       <section className="px-4 sm:px-6 lg:px-8 pt-12 md:pt-20 pb-20 md:pb-24">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start lg:items-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-start md:items-center">
             <div className="fade-in">
               <span className="inline-flex items-center rounded-full border border-teal-200 bg-teal-50 text-teal-700 text-xs md:text-sm font-semibold px-3 py-1 mb-5">
                 Program Belajar Perempuan Desa
