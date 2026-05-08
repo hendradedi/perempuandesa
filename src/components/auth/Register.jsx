@@ -96,45 +96,74 @@ const Register = ({ onRegister }) => {
   };
 
   return (
-    <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8">
+    <div className="relative min-h-screen py-10 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      {/* Background decorations */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute -top-24 -right-20 h-72 w-72 rounded-full bg-teal-200/40 blur-3xl" />
+        <div className="absolute top-1/2 left-0 h-64 w-64 rounded-full bg-blue-200/40 blur-3xl" />
+        <div className="absolute bottom-0 right-1/3 h-56 w-56 rounded-full bg-amber-200/35 blur-3xl" />
+      </div>
+
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
-        <div className="card-gradient hidden lg:flex flex-col justify-between">
-          <div>
-            <span className="inline-flex rounded-full border border-primary-200 bg-primary-50 text-primary-700 text-xs font-semibold px-3 py-1 mb-6">
+        {/* Left Panel */}
+        <div className="hidden lg:flex flex-col justify-between rounded-3xl bg-gradient-to-br from-teal-600 to-teal-800 p-8 text-white overflow-hidden relative">
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
+            <div className="absolute bottom-20 -left-10 h-32 w-32 rounded-full bg-teal-300/20 blur-2xl" />
+          </div>
+          <div className="relative">
+            <span className="inline-flex rounded-full border border-white/30 bg-white/20 text-white text-xs font-semibold px-3 py-1 mb-6 backdrop-blur-sm">
               Pendaftaran Gratis
             </span>
-            <h2 className="text-4xl font-extrabold text-slate-900 leading-tight mb-4">
+            <h2 className="text-4xl font-extrabold leading-tight mb-4">
               Bangun Masa Depan
               <br />
               Bersama Komunitas
             </h2>
-            <p className="text-slate-600">
-              Daftarkan akun Anda untuk mengakses modul terstruktur, kuis evaluasi, dan pencapaian berbasis progres belajar.
+            <p className="text-teal-100 text-sm leading-relaxed mb-8">
+              Daftarkan akun untuk mengakses modul terstruktur, kuis evaluasi, dan pencapaian berbasis progres belajar.
             </p>
+            <div className="flex flex-col gap-3">
+              {[
+                { icon: '✅', text: 'Materi relevan untuk perempuan desa' },
+                { icon: '📊', text: 'Tracking progres belajar yang jelas' },
+                { icon: '🎖️', text: 'Badge dan sertifikat digital' },
+                { icon: '🤖', text: 'AI asisten penjelasan kuis' },
+              ].map((item) => (
+                <div key={item.text} className="flex items-center gap-3 text-sm text-teal-100">
+                  <span className="text-lg">{item.icon}</span>
+                  <span>{item.text}</span>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 mt-8">
-            <p className="text-sm font-semibold text-slate-900 mb-2">Apa yang Anda dapatkan?</p>
-            <ul className="text-sm text-slate-600 space-y-1.5">
-              <li>• Materi relevan untuk perempuan desa</li>
-              <li>• Tracking progres belajar yang jelas</li>
-              <li>• Badge dan sertifikat digital</li>
-            </ul>
+          <div className="relative rounded-2xl bg-white/15 backdrop-blur-sm border border-white/20 p-5 mt-6">
+            <p className="text-sm font-semibold text-white mb-1">Bergabung Sekarang</p>
+            <p className="text-xs text-teal-100">750+ perempuan desa sudah belajar dan berkembang bersama platform ini.</p>
           </div>
         </div>
 
-        <div className="card p-6 md:p-8">
-          <div className="text-center mb-8">
+        {/* Right Panel - Form */}
+        <div className="card p-6 md:p-8 shadow-xl">
+          <div className="text-center mb-7">
             <div className="flex justify-center mb-4">
-              <img
-                src={perempuanDesaImage}
-                alt="Ilustrasi perempuan desa"
-                className="w-20 h-20 rounded-full object-cover border-2 border-slate-200"
-              />
+              <div className="relative">
+                <img
+                  src={perempuanDesaImage}
+                  alt="Ilustrasi perempuan desa"
+                  className="w-20 h-20 rounded-full object-cover border-4 border-white shadow-md"
+                />
+                <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-teal-500 border-2 border-white">
+                  <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"/>
+                  </svg>
+                </span>
+              </div>
             </div>
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 leading-snug">
               Daftar Akun Baru
             </h2>
-            <p className="mt-3 text-slate-600 text-xs sm:text-sm md:text-base leading-relaxed">
+            <p className="mt-2 text-slate-500 text-sm">
               Mulai perjalanan belajar Anda hari ini.
             </p>
           </div>
