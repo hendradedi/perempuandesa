@@ -11,8 +11,8 @@ const LandingPage = () => {
           <div className="absolute top-24 right-0 h-80 w-80 rounded-full bg-blue-200/30 blur-3xl" />
         </div>
 
-        <div className="site-container grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 xl:gap-24 2xl:gap-28 items-stretch">
-          <div className="text-center">
+        <div className="site-container grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 xl:gap-20 items-stretch">
+          <div className="text-left">
             <span className="inline-flex items-center rounded-full border border-teal-200 bg-teal-50 text-teal-800 text-xs md:text-sm font-semibold tracking-[0.01em] px-3 py-1 mb-6">
               Program Belajar Perempuan Desa 2026
             </span>
@@ -23,11 +23,11 @@ const LandingPage = () => {
               <span className="text-primary-800">Tumbuh Mandiri.</span>
             </h1>
 
-            <p className="text-base md:text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto mb-8">
+            <p className="text-base md:text-lg text-slate-600 leading-relaxed max-w-2xl mb-8">
               Platform pembelajaran digital untuk meningkatkan keterampilan, pengetahuan, dan kemandirian ekonomi perempuan di pedesaan Indonesia.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 mb-8">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-start gap-3 sm:gap-4 mb-8">
               <Link to="/register" className="btn-primary text-base md:text-lg px-7 py-3.5 bg-slate-900 hover:bg-slate-800">
                 Mulai Belajar Sekarang
               </Link>
@@ -36,7 +36,7 @@ const LandingPage = () => {
               </Link>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5 xl:gap-7 pt-6 border-t border-slate-200/80 text-center max-w-5xl mx-auto">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5 xl:gap-7 pt-6 border-t border-slate-200/80 text-left max-w-5xl">
               <div>
                 <p className="text-2xl md:text-3xl font-extrabold text-teal-700 leading-tight">750+</p>
                 <p className="text-xs md:text-sm text-slate-600 mt-1">Pengguna Aktif</p>
@@ -64,7 +64,7 @@ const LandingPage = () => {
                   alt="Ilustrasi perempuan desa"
                   className="w-full h-64 md:h-80 xl:h-[360px] object-cover object-top"
                 />
-                <div className="p-4 md:p-5 bg-white/90 border-t border-slate-100 flex-1 flex flex-col justify-center">
+                <div className="p-4 md:p-5 pb-6 md:pb-7 bg-white/90 border-t border-slate-100 flex-1 flex flex-col justify-center">
                   <p className="text-sm md:text-base font-semibold text-slate-800 text-center">Belajar berbasis kebutuhan perempuan desa</p>
                   <p className="text-xs md:text-sm text-slate-600 mt-2 leading-relaxed text-center max-w-lg mx-auto">Konten praktis, evaluasi interaktif, dan jalur belajar yang relevan untuk pengembangan ekonomi keluarga.</p>
                   <div className="mt-4 grid grid-cols-2 gap-3 max-w-sm mx-auto w-full">
@@ -144,8 +144,8 @@ const LandingPage = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto">
-            <div className="card-gradient soft-shadow-teal p-6 md:p-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-6xl mx-auto w-full">
+            <div className="card-gradient soft-shadow-teal p-6 md:p-8 h-full">
               <div className="flex items-start gap-4 md:gap-5">
                 <div className="text-5xl md:text-6xl shrink-0 leading-none">💼</div>
                 <div className="min-w-0">
@@ -164,7 +164,7 @@ const LandingPage = () => {
               </div>
             </div>
 
-            <div className="card-gradient soft-shadow-sky p-6 md:p-8">
+            <div className="card-gradient soft-shadow-sky p-6 md:p-8 h-full">
               <div className="flex items-start gap-4 md:gap-5">
                 <div className="text-5xl md:text-6xl shrink-0 leading-none">🩺</div>
                 <div className="min-w-0">
@@ -198,7 +198,7 @@ const LandingPage = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
             <div className="card soft-shadow-rose p-6 md:p-7">
               <div className="flex items-center gap-0.5 mb-5">
                 {[1, 2, 3, 4, 5].map(star => (
