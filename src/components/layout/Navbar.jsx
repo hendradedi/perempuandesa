@@ -13,7 +13,7 @@ const Navbar = ({ isAuthenticated, canAccessAdminPanel, onLogout, user }) => {
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-slate-200/90 bg-white/90 backdrop-blur-xl">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-12">
         <div className="flex justify-between items-center h-16 md:h-20 gap-3">
           {/* Logo */}
           <Link to="/" className="flex min-w-0 items-center space-x-2 pr-2">
@@ -31,7 +31,7 @@ const Navbar = ({ isAuthenticated, canAccessAdminPanel, onLogout, user }) => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6 shrink-0">
+          <div className="hidden md:flex items-center gap-6 shrink-0 ml-auto">
             {!isAuthenticated ? (
               <>
                 <Link 

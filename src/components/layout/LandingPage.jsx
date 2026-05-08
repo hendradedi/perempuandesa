@@ -10,8 +10,8 @@ const LandingPage = () => {
           <div className="absolute -top-20 left-0 h-72 w-72 rounded-full bg-teal-200/35 blur-3xl" />
           <div className="absolute top-24 right-0 h-80 w-80 rounded-full bg-blue-200/30 blur-3xl" />
         </div>
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center">
+        <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+          <div className="text-center lg:text-left">
             <span className="inline-flex items-center rounded-full border border-teal-200 bg-teal-50 text-teal-800 text-xs md:text-sm font-semibold tracking-[0.01em] px-3 py-1 mb-6">
               Program Belajar Perempuan Desa 2026
             </span>
@@ -22,11 +22,11 @@ const LandingPage = () => {
               <span className="text-primary-800">Tumbuh Mandiri.</span>
             </h1>
 
-            <p className="text-base md:text-lg text-slate-600 leading-relaxed max-w-3xl mx-auto mb-8">
+            <p className="text-base md:text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto lg:mx-0 mb-8">
               Platform pembelajaran digital untuk meningkatkan keterampilan, pengetahuan, dan kemandirian ekonomi perempuan di pedesaan Indonesia.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 mb-8">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3 sm:gap-4 mb-8">
               <Link to="/register" className="btn-primary text-base md:text-lg px-7 py-3.5 bg-slate-900 hover:bg-slate-800">
                 Mulai Belajar Sekarang
               </Link>
@@ -35,7 +35,7 @@ const LandingPage = () => {
               </Link>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5 pt-6 border-t border-slate-200/80 text-center max-w-4xl mx-auto">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5 pt-6 border-t border-slate-200/80 text-center lg:text-left max-w-4xl mx-auto lg:mx-0">
               <div>
                 <p className="text-2xl md:text-3xl font-extrabold text-teal-700 leading-tight">750+</p>
                 <p className="text-xs md:text-sm text-slate-600 mt-1">Pengguna Aktif</p>
@@ -53,11 +53,20 @@ const LandingPage = () => {
                 <p className="text-xs md:text-sm text-slate-600 mt-1">Sertifikat</p>
               </div>
             </div>
+          </div>
 
-            <div className="mt-10 md:mt-12 rounded-3xl border border-dashed border-slate-300/90 bg-white/60 backdrop-blur-sm min-h-[280px] md:min-h-[380px] p-6 shadow-[0_22px_60px_rgba(15,23,42,0.08)] flex items-center justify-center">
-              <div className="text-center max-w-md">
-                <p className="text-sm md:text-base font-semibold text-slate-700">Area Hero Image</p>
-                <p className="text-xs md:text-sm text-slate-500 mt-2 leading-relaxed">Tempatkan ilustrasi utama berukuran besar di area ini agar komposisi hero tetap seimbang, bersih, dan terlihat elegan.</p>
+          <div className="w-full">
+            <div className="rounded-3xl border border-slate-200/80 bg-white/70 backdrop-blur-sm min-h-[320px] md:min-h-[440px] p-5 md:p-7 shadow-[0_24px_64px_rgba(15,23,42,0.1)]">
+              <div className="h-full rounded-2xl overflow-hidden border border-slate-100 bg-slate-50 flex flex-col">
+                <img
+                  src={perempuanDesaImage}
+                  alt="Ilustrasi perempuan desa"
+                  className="w-full h-56 md:h-72 object-cover object-top"
+                />
+                <div className="p-4 md:p-5">
+                  <p className="text-sm md:text-base font-semibold text-slate-800">Belajar berbasis kebutuhan perempuan desa</p>
+                  <p className="text-xs md:text-sm text-slate-600 mt-1 leading-relaxed">Konten praktis, evaluasi interaktif, dan jalur belajar yang relevan untuk pengembangan ekonomi keluarga.</p>
+                </div>
               </div>
             </div>
           </div>
