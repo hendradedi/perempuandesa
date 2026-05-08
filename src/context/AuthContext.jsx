@@ -9,6 +9,11 @@ import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { AuthContext } from './authContextObject';
 import { auth, db } from '../config/firebase';
 
+const isPermissionDeniedError = (error) => {
+  const code = error?.code || '';
+  return code.includes('permission-denied') || code.includes('missing-or-insufficient-permissions');
+};
+
 const adminEmails = (import.meta.env.VITE_ADMIN_EMAILS || '')
   .split(',')
   .map((item) => item.trim().toLowerCase())
@@ -52,17 +57,25 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     const credential = await signInWithEmailAndPassword(auth, email, password);
     const userDocRef = doc(db, 'users', credential.user.uid);
-    const userSnapshot = await getDoc(userDocRef);
 
-    if (userSnapshot.exists()) {
-      const existingUser = normalizeUserData(userSnapshot.data());
+    try {
+      const userSnapshot = await getDoc(userDocRef);
 
-      if (!existingUser.active) {
-        await signOut(auth);
-        throw new Error('ACCOUNT_DISABLED');
+      if (userSnapshot.exists()) {
+        const existingUser = normalizeUserData(userSnapshot.data());
+
+        if (!existingUser.active) {
+          await signOut(auth);
+          throw new Error('ACCOUNT_DISABLED');
+        }
+
+        return existingUser;
       }
-
-      return existingUser;
+    } catch (error) {
+      if (!isPermissionDeniedError(error)) {
+        throw error;
+      }
+      console.warn('Firestore read denied during login. Using fallback profile from auth only.');
     }
 
     const fallbackUser = {
@@ -77,11 +90,18 @@ export const AuthProvider = ({ children }) => {
       active: true
     };
 
-    await setDoc(userDocRef, {
-      ...fallbackUser,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
-    });
+    try {
+      await setDoc(userDocRef, {
+        ...fallbackUser,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+    } catch (error) {
+      if (!isPermissionDeniedError(error)) {
+        throw error;
+      }
+      console.warn('Firestore write denied during login fallback profile creation.');
+    }
 
     return normalizeUserData(fallbackUser);
   };
@@ -103,7 +123,14 @@ export const AuthProvider = ({ children }) => {
       updatedAt: serverTimestamp()
     };
 
-    await setDoc(doc(db, 'users', credential.user.uid), newUserData);
+    try {
+      await setDoc(doc(db, 'users', credential.user.uid), newUserData);
+    } catch (error) {
+      if (!isPermissionDeniedError(error)) {
+        throw error;
+      }
+      console.warn('Firestore write denied during registration. Account created in Auth with local fallback profile.');
+    }
 
     return normalizeUserData(newUserData);
   };
@@ -122,10 +149,28 @@ export const AuthProvider = ({ children }) => {
       }
 
       try {
-        const userSnapshot = await getDoc(doc(db, 'users', firebaseUser.uid));
-        if (userSnapshot.exists()) {
-          setUser(normalizeUserData(userSnapshot.data()));
-        } else {
+        try {
+          const userSnapshot = await getDoc(doc(db, 'users', firebaseUser.uid));
+          if (userSnapshot.exists()) {
+            setUser(normalizeUserData(userSnapshot.data()));
+          } else {
+            setUser(normalizeUserData({
+              uid: firebaseUser.uid,
+              name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Peserta',
+              email: firebaseUser.email,
+              points: 0,
+              badges: [],
+              completedModules: [],
+              certificates: [],
+              role: 'user',
+              active: true
+            }));
+          }
+        } catch (error) {
+          if (!isPermissionDeniedError(error)) {
+            throw error;
+          }
+          console.warn('Firestore read denied on auth state change. Using auth-only profile.');
           setUser(normalizeUserData({
             uid: firebaseUser.uid,
             name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Peserta',
