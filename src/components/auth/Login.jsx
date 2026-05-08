@@ -77,60 +77,9 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div className="relative min-h-screen py-10 px-4 sm:px-6 lg:px-8 overflow-hidden">
-      {/* Background decorations */}
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute -top-24 -left-20 h-72 w-72 rounded-full bg-teal-200/40 blur-3xl" />
-        <div className="absolute top-1/2 right-0 h-64 w-64 rounded-full bg-blue-200/40 blur-3xl" />
-        <div className="absolute bottom-0 left-1/3 h-56 w-56 rounded-full bg-amber-200/35 blur-3xl" />
-      </div>
-
-      <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
-        {/* Left Panel */}
-        <div className="hidden lg:flex flex-col justify-between rounded-3xl bg-gradient-to-br from-teal-600 to-teal-800 p-8 text-white overflow-hidden relative">
-          <div className="pointer-events-none absolute inset-0">
-            <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
-            <div className="absolute bottom-20 -left-10 h-32 w-32 rounded-full bg-teal-300/20 blur-2xl" />
-          </div>
-          <div className="relative">
-            <span className="inline-flex rounded-full border border-white/30 bg-white/20 text-white text-xs font-semibold px-3 py-1 mb-6 backdrop-blur-sm">
-              Area Peserta
-            </span>
-            <h2 className="text-4xl font-extrabold leading-tight mb-4">
-              Selamat Datang
-              <br />
-              Kembali
-            </h2>
-            <p className="text-teal-100 text-sm leading-relaxed mb-8">
-              Lanjutkan progres belajar, ikuti kuis, dan capai sertifikat baru bersama komunitas Perempuan Desa.
-            </p>
-            <div className="flex flex-col gap-3">
-              {[
-                { icon: '📚', text: 'Akses 30+ modul pembelajaran' },
-                { icon: '🎯', text: 'Kuis interaktif dengan AI' },
-                { icon: '🏆', text: 'Sertifikat digital terverifikasi' },
-                { icon: '👩‍🤝‍👩', text: 'Komunitas 750+ perempuan aktif' },
-              ].map((item) => (
-                <div key={item.text} className="flex items-center gap-3 text-sm text-teal-100">
-                  <span className="text-lg">{item.icon}</span>
-                  <span>{item.text}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="relative rounded-2xl bg-white/15 backdrop-blur-sm border border-white/20 p-5 mt-6">
-            <svg className="w-5 h-5 text-teal-200 mb-2" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
-            </svg>
-            <p className="text-sm text-white font-medium leading-relaxed">
-              "Belajar terarah membuat perubahan terasa nyata."
-            </p>
-            <p className="text-xs text-teal-200 mt-2">— Peserta Angkatan 2025</p>
-          </div>
-        </div>
-
-        {/* Right Panel - Form */}
-        <div className="card p-6 md:p-8 shadow-xl">
+    <div className="min-h-[calc(100vh-4.5rem)] bg-slate-100 px-4 sm:px-6 lg:px-8 py-8 md:py-12 flex items-center justify-center">
+      <div className="w-full max-w-md">
+        <div className="card bg-white p-6 md:p-8 shadow-[0_16px_40px_rgba(15,23,42,0.12)] border-slate-200">
           <div className="text-center mb-7">
             <div className="flex justify-center mb-4">
               <div className="relative">
@@ -150,7 +99,7 @@ const Login = ({ onLogin }) => {
               Masuk ke Akun
             </h2>
             <p className="mt-2 text-slate-500 text-sm">
-              Silakan masuk untuk melanjutkan pembelajaran.
+              Selamat datang kembali. Silakan masuk untuk melanjutkan pembelajaran.
             </p>
           </div>
 
