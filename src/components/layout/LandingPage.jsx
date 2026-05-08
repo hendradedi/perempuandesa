@@ -75,7 +75,7 @@ const LandingPage = () => {
 
       {/* Features Section */}
       <section className="py-16 md:py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-[1200px] mx-auto">
           <div className="text-center mb-14 md:mb-16">
             <h2 className="section-title tracking-[-0.02em] leading-tight">
               Mengapa Perempuan Desa?
@@ -123,7 +123,7 @@ const LandingPage = () => {
 
       {/* Modules Section */}
       <section className="py-16 md:py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-[1200px] mx-auto">
           <div className="text-center mb-16">
             <h2 className="section-title">
               Modul Pembelajaran
@@ -177,7 +177,7 @@ const LandingPage = () => {
 
       {/* Testimonials Section */}
       <section className="py-16 md:py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-[1200px] mx-auto">
           <div className="text-center mb-16">
             <h2 className="section-title">
               Apa Kata Mereka?
