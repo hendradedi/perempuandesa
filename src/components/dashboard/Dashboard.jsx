@@ -1,5 +1,8 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { learningModules } from '../../data/learningModules';
+import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { db } from '../../config/firebase';
+import { buildAllModules } from '../../utils/moduleHelpers';
 
 const LESSON_PROGRESS_KEY = 'lessonProgressByModule';
 
@@ -30,11 +33,31 @@ const getModuleProgressClass = (color) => {
 };
 
 const Dashboard = ({ user }) => {
+  const [materials, setMaterials] = useState([]);
+  const [modules, setModules] = useState([]);
   const completedByModule = getStoredProgress();
 
-  const progress = learningModules.reduce(
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [materialsSnapshot, loadedModules] = await Promise.all([
+          getDocs(query(collection(db, 'materials'), orderBy('createdAt', 'desc'))),
+          buildAllModules()
+        ]);
+        setMaterials(materialsSnapshot.docs.map((item) => ({ id: item.id, ...item.data() })));
+        setModules(loadedModules);
+      } catch {
+        setMaterials([]);
+        setModules([]);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  const progress = modules.reduce(
     (acc, module) => {
-      const completedIds = completedByModule[module.id] ?? [];
+      const completedIds = completedByModule[module.routeId] ?? [];
       const moduleCompletedLessons = module.lessons.filter((lesson) => completedIds.includes(lesson.id)).length;
 
       acc.totalLessons += module.lessons.length;
@@ -47,7 +70,7 @@ const Dashboard = ({ user }) => {
       return acc;
     },
     {
-      totalModules: learningModules.length,
+      totalModules: modules.length,
       completedModules: 0,
       totalLessons: 0,
       completedLessons: 0
@@ -133,16 +156,18 @@ const Dashboard = ({ user }) => {
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-slate-900 mb-6">Modul Pembelajaran</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {learningModules.map((module, index) => {
-              const completedIds = completedByModule[module.id] ?? [];
+            {modules.map((module, index) => {
+              const completedIds = completedByModule[module.routeId] ?? [];
               const completedLessons = module.lessons.filter((lesson) => completedIds.includes(lesson.id)).length;
-              const moduleProgress = Math.round((completedLessons / module.lessons.length) * 100);
+              const moduleProgress = module.lessons.length > 0
+                ? Math.round((completedLessons / module.lessons.length) * 100)
+                : 0;
               const progressClass = getModuleProgressClass(module.color);
 
               return (
                 <Link
-                  key={module.id}
-                  to={`/module/${module.id}`}
+                  key={module.routeId}
+                  to={`/module/${module.routeId}`}
                   className="card hover:-translate-y-0.5 transition-transform duration-300 slide-up"
                   style={{ animationDelay: `${0.5 + index * 0.1}s` }}
                 >
@@ -176,8 +201,36 @@ const Dashboard = ({ user }) => {
                 </Link>
               );
             })}
+
+            {modules.length === 0 && (
+              <div className="card">
+                <p className="text-slate-600">Belum ada modul tersedia saat ini.</p>
+              </div>
+            )}
           </div>
         </div>
+
+        {materials.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-slate-900 mb-6">Materi Tambahan dari Admin</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {materials.slice(0, 6).map((material) => (
+                <div key={material.id} className="card">
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <h3 className="text-lg font-bold text-slate-900 leading-snug">{material.title}</h3>
+                    <span className="text-xs rounded-full bg-teal-50 text-teal-700 border border-teal-200 px-2 py-1 whitespace-nowrap">
+                      {material.duration || '10 menit'}
+                    </span>
+                  </div>
+                  <p className="text-slate-600 text-sm mb-4">{material.description}</p>
+                  <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                    <p className="text-sm text-slate-700 line-clamp-4">{material.content}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="card slide-up" style={{ animationDelay: '0.8s' }}>
           <h3 className="text-xl font-bold text-slate-900 mb-4">Aksi Cepat</h3>

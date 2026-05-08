@@ -58,12 +58,14 @@ const Login = ({ onLogin }) => {
     setIsLoading(true);
 
     try {
-      await onLogin(formData.email, formData.password);
+      const authenticatedUser = await onLogin(formData.email, formData.password);
       setIsLoading(false);
-      navigate('/dashboard');
+      navigate(authenticatedUser?.isAdmin ? '/admin' : '/dashboard');
     } catch (error) {
       const code = error?.code || '';
-      if (code.includes('invalid-credential') || code.includes('wrong-password') || code.includes('user-not-found')) {
+      if (error?.message === 'ACCOUNT_DISABLED') {
+        setAuthError('Akun Anda dinonaktifkan oleh admin. Silakan hubungi pengelola.');
+      } else if (code.includes('invalid-credential') || code.includes('wrong-password') || code.includes('user-not-found')) {
         setAuthError('Email atau password tidak sesuai.');
       } else if (code.includes('too-many-requests')) {
         setAuthError('Terlalu banyak percobaan login. Coba lagi beberapa menit.');

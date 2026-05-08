@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { learningModules } from '../../data/learningModules';
+import { buildAllModules, findModuleByRouteId } from '../../utils/moduleHelpers';
 
 const LESSON_PROGRESS_KEY = 'lessonProgressByModule';
 
@@ -33,17 +33,31 @@ const getModuleProgressClass = (color) => {
 const ModuleDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [allModules, setAllModules] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedByModule, setSelectedByModule] = useState({});
   const [completedByModule, setCompletedByModule] = useState(() => getStoredProgress());
   const [showCongrats, setShowCongrats] = useState(false);
 
+  useEffect(() => {
+    const loadModules = async () => {
+      setIsLoading(true);
+      const modules = await buildAllModules();
+      setAllModules(modules);
+      setIsLoading(false);
+    };
+
+    loadModules();
+  }, []);
+
   const module = useMemo(
-    () => learningModules.find((item) => item.id === parseInt(id, 10)) ?? null,
-    [id]
+    () => findModuleByRouteId(allModules, id),
+    [allModules, id]
   );
 
-  const completedLessonIds = completedByModule[id] ?? [];
-  const selectedLessonId = module ? (selectedByModule[id] ?? module.lessons[0]?.id) : null;
+  const moduleRouteId = module?.routeId || id;
+  const completedLessonIds = completedByModule[moduleRouteId] ?? [];
+  const selectedLessonId = module ? (selectedByModule[moduleRouteId] ?? module.lessons[0]?.id) : null;
   const selectedLesson = module
     ? module.lessons.find((lesson) => lesson.id === selectedLessonId) ?? module.lessons[0]
     : null;
@@ -52,12 +66,12 @@ const ModuleDetail = () => {
   const progressClass = module ? getModuleProgressClass(module.color) : 'bg-primary-600';
 
   const selectLesson = (lessonId) => {
-    setSelectedByModule((prev) => ({ ...prev, [id]: lessonId }));
+    setSelectedByModule((prev) => ({ ...prev, [moduleRouteId]: lessonId }));
   };
 
   const saveModuleProgress = (updatedCompletedIds) => {
     setCompletedByModule((prev) => {
-      const next = { ...prev, [id]: updatedCompletedIds };
+      const next = { ...prev, [moduleRouteId]: updatedCompletedIds };
       localStorage.setItem(LESSON_PROGRESS_KEY, JSON.stringify(next));
       return next;
     });
@@ -74,7 +88,7 @@ const ModuleDetail = () => {
 
         const allCompleted = module.lessons.every((lesson) => updatedCompletedIds.includes(lesson.id));
         if (allCompleted) {
-          navigate(`/quiz/${module.id}`);
+          navigate(`/quiz/${module.routeId}`);
         } else {
           const currentIndex = module.lessons.findIndex((lesson) => lesson.id === selectedLesson.id);
           if (currentIndex < module.lessons.length - 1) {
@@ -86,6 +100,16 @@ const ModuleDetail = () => {
   };
 
   if (!module) {
+    if (isLoading) {
+      return (
+        <div className="min-h-screen flex items-center justify-center px-4">
+          <div className="card text-center max-w-md w-full">
+            <p className="text-lg text-slate-700">Memuat modul...</p>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="card text-center max-w-md w-full">
@@ -232,13 +256,13 @@ const ModuleDetail = () => {
                         if (currentIndex < module.lessons.length - 1) {
                           selectLesson(module.lessons[currentIndex + 1].id);
                         } else {
-                          navigate(`/quiz/${module.id}`);
+                          navigate(`/quiz/${module.routeId}`);
                         }
                       }}
                       className="btn-primary"
                     >
                       {module.lessons.findIndex((lesson) => lesson.id === selectedLesson.id) === module.lessons.length - 1
-                        ? 'Mulai Kuis →'
+                        ? 'Mulai Kuis ->'
                         : 'Selanjutnya →'}
                     </button>
                   )}

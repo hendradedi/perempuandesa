@@ -9,6 +9,42 @@ import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { AuthContext } from './authContextObject';
 import { auth, db } from '../config/firebase';
 
+const adminEmails = (import.meta.env.VITE_ADMIN_EMAILS || '')
+  .split(',')
+  .map((item) => item.trim().toLowerCase())
+  .filter(Boolean);
+
+const assistantAdminEmails = (import.meta.env.VITE_ASSISTANT_ADMIN_EMAILS || '')
+  .split(',')
+  .map((item) => item.trim().toLowerCase())
+  .filter(Boolean);
+
+const normalizeUserData = (userData = {}) => {
+  const active = userData.active !== false;
+  const email = userData.email || '';
+  const emailLower = email.toLowerCase();
+
+  let role = userData.role || 'user';
+
+  if (adminEmails.includes(emailLower)) {
+    role = 'admin';
+  } else if (assistantAdminEmails.includes(emailLower) && role === 'user') {
+    role = 'assistant_admin';
+  }
+
+  const isSuperAdmin = role === 'admin';
+  const canAccessAdminPanel = isSuperAdmin || role === 'assistant_admin';
+
+  return {
+    ...userData,
+    role,
+    active,
+    isAdmin: canAccessAdminPanel,
+    isSuperAdmin,
+    canAccessAdminPanel
+  };
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -19,7 +55,14 @@ export const AuthProvider = ({ children }) => {
     const userSnapshot = await getDoc(userDocRef);
 
     if (userSnapshot.exists()) {
-      return userSnapshot.data();
+      const existingUser = normalizeUserData(userSnapshot.data());
+
+      if (!existingUser.active) {
+        await signOut(auth);
+        throw new Error('ACCOUNT_DISABLED');
+      }
+
+      return existingUser;
     }
 
     const fallbackUser = {
@@ -29,7 +72,9 @@ export const AuthProvider = ({ children }) => {
       points: 0,
       badges: [],
       completedModules: [],
-      certificates: []
+      certificates: [],
+      role: 'user',
+      active: true
     };
 
     await setDoc(userDocRef, {
@@ -38,7 +83,7 @@ export const AuthProvider = ({ children }) => {
       updatedAt: serverTimestamp()
     });
 
-    return fallbackUser;
+    return normalizeUserData(fallbackUser);
   };
 
   const register = async ({ name, email, password }) => {
@@ -52,13 +97,15 @@ export const AuthProvider = ({ children }) => {
       badges: [],
       completedModules: [],
       certificates: [],
+      role: 'user',
+      active: true,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     };
 
     await setDoc(doc(db, 'users', credential.user.uid), newUserData);
 
-    return newUserData;
+    return normalizeUserData(newUserData);
   };
 
   const logout = async () => {
@@ -77,17 +124,19 @@ export const AuthProvider = ({ children }) => {
       try {
         const userSnapshot = await getDoc(doc(db, 'users', firebaseUser.uid));
         if (userSnapshot.exists()) {
-          setUser(userSnapshot.data());
+          setUser(normalizeUserData(userSnapshot.data()));
         } else {
-          setUser({
+          setUser(normalizeUserData({
             uid: firebaseUser.uid,
             name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Peserta',
             email: firebaseUser.email,
             points: 0,
             badges: [],
             completedModules: [],
-            certificates: []
-          });
+            certificates: [],
+            role: 'user',
+            active: true
+          }));
         }
       } finally {
         setLoading(false);
@@ -103,6 +152,9 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     isAuthenticated: !!user,
+    isAdmin: !!user?.isAdmin,
+    isSuperAdmin: !!user?.isSuperAdmin,
+    canAccessAdminPanel: !!user?.canAccessAdminPanel,
     loading
   }), [user, loading]);
 

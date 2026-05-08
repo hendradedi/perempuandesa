@@ -1,26 +1,40 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { learningModules, quizData } from '../../data/learningModules';
+import { buildAllModules, findModuleByRouteId } from '../../utils/moduleHelpers';
 
 const Quiz = () => {
   const { moduleId } = useParams();
   const navigate = useNavigate();
+  const [allModules, setAllModules] = useState([]);
+  const [isLoadingModule, setIsLoadingModule] = useState(true);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [score, setScore] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [answers, setAnswers] = useState([]);
   const [showExplanation, setShowExplanation] = useState(false);
+  const [aiMessages, setAiMessages] = useState([]);
+  const [aiInput, setAiInput] = useState('');
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const [aiError, setAiError] = useState('');
+
+  useEffect(() => {
+    const loadModules = async () => {
+      setIsLoadingModule(true);
+      const modules = await buildAllModules();
+      setAllModules(modules);
+      setIsLoadingModule(false);
+    };
+
+    loadModules();
+  }, []);
 
   const module = useMemo(
-    () => learningModules.find((item) => item.id === parseInt(moduleId, 10)) ?? null,
-    [moduleId]
+    () => findModuleByRouteId(allModules, moduleId),
+    [allModules, moduleId]
   );
 
-  const questions = useMemo(() => {
-    const quizKey = `module${moduleId}`;
-    return quizData[quizKey] || [];
-  }, [moduleId]);
+  const questions = useMemo(() => module?.quizQuestions || [], [module]);
 
   const handleAnswerSelect = (answerIndex) => {
     setSelectedAnswer(answerIndex);
@@ -68,6 +82,10 @@ const Quiz = () => {
     setShowResult(false);
     setAnswers([]);
     setShowExplanation(false);
+    setAiMessages([]);
+    setAiInput('');
+    setAiError('');
+    setIsAiLoading(false);
   };
 
   const handleFinish = () => {
@@ -75,6 +93,16 @@ const Quiz = () => {
   };
 
   if (!module || questions.length === 0) {
+    if (isLoadingModule) {
+      return (
+        <div className="min-h-screen flex items-center justify-center px-4">
+          <div className="card text-center max-w-md w-full">
+            <p className="text-lg text-slate-700">Memuat kuis...</p>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="card text-center max-w-md w-full">
@@ -86,6 +114,69 @@ const Quiz = () => {
 
   const percentage = Math.round((score / questions.length) * 100);
   const passed = percentage >= 70;
+
+  const requestAiExplanation = async (promptText) => {
+    const cleanPrompt = promptText.trim();
+
+    if (!cleanPrompt || isAiLoading) {
+      return;
+    }
+
+    const aiEndpoint = import.meta.env.VITE_AI_ENDPOINT || '/api/ai-quiz-explain';
+
+    setAiError('');
+    setIsAiLoading(true);
+
+    const nextMessages = [...aiMessages, { role: 'user', content: cleanPrompt }];
+    setAiMessages(nextMessages);
+    setAiInput('');
+
+    try {
+      const payload = {
+        userQuestion: cleanPrompt,
+        moduleTitle: module.title,
+        score,
+        totalQuestions: questions.length,
+        percentage,
+        passed,
+        answers: answers.map((answer, index) => ({
+          number: index + 1,
+          question: answer.question,
+          isCorrect: answer.isCorrect,
+          userAnswer: questions[index]?.options[answer.selectedAnswer] || '-',
+          correctAnswer: questions[index]?.options[answer.correctAnswer] || '-',
+          explanation: answer.explanation
+        })),
+        chatHistory: nextMessages.slice(-8)
+      };
+
+      const response = await fetch(aiEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.error || 'Layanan AI belum tersedia saat ini.');
+      }
+
+      setAiMessages((prev) => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: data.reply || 'Saya siap membantu menjelaskan hasil kuis Anda.'
+        }
+      ]);
+    } catch (error) {
+      setAiError(error.message || 'Gagal mendapatkan penjelasan AI.');
+    } finally {
+      setIsAiLoading(false);
+    }
+  };
 
   if (showResult) {
     return (
@@ -154,6 +245,89 @@ const Quiz = () => {
                   </div>
                 ))}
               </div>
+            </div>
+
+            <div className="text-left mb-8 rounded-2xl border border-slate-200 bg-white p-5">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                <h3 className="text-xl font-bold text-slate-900">AI Pendamping Belajar</h3>
+                <span className="text-xs sm:text-sm rounded-full bg-teal-50 text-teal-700 px-3 py-1 border border-teal-200 w-fit">
+                  Interaktif
+                </span>
+              </div>
+
+              <p className="text-sm text-slate-600 mb-4">
+                Tanya AI untuk memahami kesalahan jawaban, strategi belajar ulang, atau rencana latihan berikutnya.
+              </p>
+
+              <div className="flex flex-wrap gap-2 mb-4">
+                <button
+                  onClick={() => requestAiExplanation('Tolong jelaskan 3 hal utama yang harus saya pelajari lagi dari hasil kuis ini.')}
+                  className="btn-outline !px-3 !py-2 text-xs sm:text-sm"
+                  disabled={isAiLoading}
+                >
+                  Hal yang harus dipelajari ulang
+                </button>
+                <button
+                  onClick={() => requestAiExplanation('Buatkan rencana belajar 7 hari berdasarkan hasil kuis saya.')}
+                  className="btn-outline !px-3 !py-2 text-xs sm:text-sm"
+                  disabled={isAiLoading}
+                >
+                  Rencana 7 hari
+                </button>
+              </div>
+
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 min-h-40 max-h-72 overflow-y-auto">
+                {aiMessages.length === 0 && (
+                  <p className="text-sm text-slate-600">
+                    Belum ada percakapan. Ketik pertanyaan Anda atau pilih saran cepat di atas.
+                  </p>
+                )}
+
+                <div className="space-y-3">
+                  {aiMessages.map((message, index) => (
+                    <div
+                      key={`${message.role}-${index}`}
+                      className={`rounded-xl px-3 py-2 text-sm leading-relaxed ${
+                        message.role === 'assistant'
+                          ? 'bg-white border border-slate-200 text-slate-700'
+                          : 'bg-primary-700 text-white'
+                      }`}
+                    >
+                      {message.content}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {aiError && (
+                <div className="mt-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs sm:text-sm text-red-700">
+                  {aiError}
+                </div>
+              )}
+
+              <form
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  requestAiExplanation(aiInput);
+                }}
+                className="mt-4 flex flex-col sm:flex-row gap-2"
+              >
+                <input
+                  type="text"
+                  value={aiInput}
+                  onChange={(event) => setAiInput(event.target.value)}
+                  className="form-input"
+                  placeholder="Contoh: Kenapa saya salah di nomor 2 dan cara mengingatnya?"
+                  disabled={isAiLoading}
+                />
+                <button
+                  type="submit"
+                  className="btn-primary sm:w-auto"
+                  disabled={isAiLoading || !aiInput.trim()}
+                >
+                  {isAiLoading ? 'Memproses...' : 'Tanya AI'}
+                </button>
+              </form>
             </div>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">

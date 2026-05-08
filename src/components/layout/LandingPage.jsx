@@ -5,12 +5,17 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen text-slate-900">
       {/* Hero Section */}
-      <section className="px-4 sm:px-6 lg:px-8 pt-12 md:pt-20 pb-20 md:pb-24">
+      <section className="relative overflow-hidden px-4 sm:px-6 lg:px-8 pt-12 md:pt-20 pb-20 md:pb-24">
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute -top-24 -left-20 h-64 w-64 rounded-full bg-teal-200/55 blur-3xl" />
+          <div className="absolute top-16 right-0 h-72 w-72 rounded-full bg-blue-200/55 blur-3xl" />
+          <div className="absolute bottom-0 left-1/3 h-56 w-56 rounded-full bg-amber-200/45 blur-3xl" />
+        </div>
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-start md:items-center">
             <div className="fade-in">
-              <span className="inline-flex items-center rounded-full border border-teal-200 bg-teal-50 text-teal-700 text-xs md:text-sm font-semibold px-3 py-1 mb-5">
-                Program Belajar Perempuan Desa
+              <span className="inline-flex items-center rounded-full border border-teal-300 bg-white/80 text-teal-800 text-xs md:text-sm font-semibold px-3 py-1 mb-5 shadow-sm backdrop-blur">
+                Program Belajar Perempuan Desa 2026
               </span>
               <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 leading-tight mb-6">
                 Belajar Praktis.
@@ -19,8 +24,8 @@ const LandingPage = () => {
                   Tumbuh Mandiri.
                 </span>
               </h1>
-              <p className="text-base md:text-xl text-slate-600 max-w-xl mb-8">
-                Platform pembelajaran digital untuk meningkatkan keterampilan, pengetahuan, dan kemandirian ekonomi perempuan di pedesaan Indonesia.
+              <p className="text-base md:text-xl text-slate-700 max-w-xl mb-8">
+                Platform pembelajaran digital untuk meningkatkan keterampilan, pengetahuan, dan kemandirian ekonomi perempuan di pedesaan Indonesia dengan materi yang relevan dan mudah diterapkan.
               </p>
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
                 <Link to="/register" className="btn-primary text-base md:text-lg px-7 py-3.5">
@@ -30,10 +35,15 @@ const LandingPage = () => {
                   Saya Sudah Punya Akun
                 </Link>
               </div>
+              <div className="mt-5 flex flex-wrap gap-2 text-xs md:text-sm text-slate-700">
+                <span className="rounded-full bg-white/85 px-3 py-1 border border-slate-200">Kelas singkat 10-20 menit</span>
+                <span className="rounded-full bg-white/85 px-3 py-1 border border-slate-200">Bahasa sederhana</span>
+                <span className="rounded-full bg-white/85 px-3 py-1 border border-slate-200">Sertifikat digital</span>
+              </div>
             </div>
 
             <div className="slide-up">
-              <div className="card-gradient p-5 sm:p-6 md:p-8 overflow-hidden">
+              <div className="card-gradient border-teal-100 p-5 sm:p-6 md:p-8 overflow-hidden">
                 <div className="flex items-center justify-between border-b border-slate-200 pb-4 mb-5">
                   <p className="font-semibold text-slate-800 text-base">Ringkasan Komunitas</p>
                   <img
@@ -50,26 +60,26 @@ const LandingPage = () => {
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-5">
-                  <div className="rounded-xl bg-white p-4 sm:p-5 border border-slate-100">
-                    <p className="text-2xl sm:text-3xl font-extrabold text-teal-600 leading-tight">500+</p>
+                  <div className="rounded-xl bg-white p-4 sm:p-5 border border-teal-100">
+                    <p className="text-2xl sm:text-3xl font-extrabold text-teal-600 leading-tight">750+</p>
                     <p className="text-xs sm:text-sm text-slate-600 mt-2">Pengguna Aktif</p>
                   </div>
                   <div className="rounded-xl bg-white p-4 sm:p-5 border border-slate-100">
-                    <p className="text-2xl sm:text-3xl font-extrabold text-primary-600 leading-tight">25+</p>
+                    <p className="text-2xl sm:text-3xl font-extrabold text-primary-600 leading-tight">30+</p>
                     <p className="text-xs sm:text-sm text-slate-600 mt-2">Modul Belajar</p>
                   </div>
                   <div className="rounded-xl bg-white p-4 sm:p-5 border border-slate-100">
-                    <p className="text-2xl sm:text-3xl font-extrabold text-coral-500 leading-tight">100+</p>
+                    <p className="text-2xl sm:text-3xl font-extrabold text-coral-500 leading-tight">140+</p>
                     <p className="text-xs sm:text-sm text-slate-600 mt-2">Kuis Interaktif</p>
                   </div>
                   <div className="rounded-xl bg-white p-4 sm:p-5 border border-slate-100">
-                    <p className="text-2xl sm:text-3xl font-extrabold text-yellow-500 leading-tight">50+</p>
+                    <p className="text-2xl sm:text-3xl font-extrabold text-yellow-500 leading-tight">85+</p>
                     <p className="text-xs sm:text-sm text-slate-600 mt-2">Sertifikat</p>
                   </div>
                 </div>
                 <div className="rounded-xl bg-slate-900 text-slate-100 p-5 sm:p-6">
-                  <p className="text-sm font-semibold mb-2">Update Mingguan</p>
-                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">Topik baru: Strategi UMKM, Literasi Finansial Keluarga, dan Kesehatan Reproduksi.</p>
+                  <p className="text-sm font-semibold mb-2">Update Mingguan (Baru)</p>
+                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">Topik baru: Strategi UMKM, Literasi Finansial Keluarga, Kesehatan Reproduksi, dan Pengelolaan Usaha Rumah Tangga.</p>
                 </div>
               </div>
             </div>

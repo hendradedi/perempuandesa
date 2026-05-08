@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import perempuanDesaImage from '../../assets/perempuan-desa.webp';
 
-const Navbar = ({ isAuthenticated, onLogout, user }) => {
+const Navbar = ({ isAuthenticated, canAccessAdminPanel, onLogout, user }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -67,6 +67,14 @@ const Navbar = ({ isAuthenticated, onLogout, user }) => {
                 >
                   Profil
                 </Link>
+                {canAccessAdminPanel && (
+                  <Link
+                    to="/admin"
+                    className="text-slate-600 hover:text-teal-700 font-medium transition-colors whitespace-nowrap"
+                  >
+                    Admin
+                  </Link>
+                )}
                 <div className="flex items-center gap-3">
                   <div className="flex items-center space-x-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5">
                     <span className="text-lg">👑</span>
@@ -144,6 +152,15 @@ const Navbar = ({ isAuthenticated, onLogout, user }) => {
                 >
                   Profil
                 </Link>
+                {canAccessAdminPanel && (
+                  <Link
+                    to="/admin"
+                    className="text-slate-700 hover:text-teal-700 font-medium transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Admin
+                  </Link>
+                )}
                 <div className="flex items-center space-x-2 py-2 rounded-lg border border-amber-200 bg-amber-50 px-3">
                   <span className="text-xl">👑</span>
                   <span className="text-sm font-semibold text-amber-700 break-words">{user?.points || 0} Poin</span>
