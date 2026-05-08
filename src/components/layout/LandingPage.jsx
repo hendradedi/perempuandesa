@@ -45,25 +45,6 @@ const LandingPage = () => {
                 Saya Sudah Punya Akun
               </Link>
             </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-24 pt-12 border-t border-slate-200">
-              <div>
-                <p className="text-2xl md:text-3xl font-bold text-teal-700">750+</p>
-                <p className="text-xs md:text-sm text-slate-500">Pengguna Aktif</p>
-              </div>
-              <div>
-                <p className="text-2xl md:text-3xl font-bold text-cyan-700">30+</p>
-                <p className="text-xs md:text-sm text-slate-500">Modul Belajar</p>
-              </div>
-              <div>
-                <p className="text-2xl md:text-3xl font-bold text-emerald-700">140+</p>
-                <p className="text-xs md:text-sm text-slate-500">Kuis Interaktif</p>
-              </div>
-              <div>
-                <p className="text-2xl md:text-3xl font-bold text-amber-700">85+</p>
-                <p className="text-xs md:text-sm text-slate-500">Sertifikat</p>
-              </div>
-            </div>
           </div>
 
           <div className="relative">
@@ -73,6 +54,31 @@ const LandingPage = () => {
                 alt="Ilustrasi perempuan desa"
                 className="w-full h-72 md:h-96 rounded-2xl object-cover object-top"
               />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-12 md:py-16">
+        <div className="site-container">
+          <div className="rounded-2xl bg-white border border-slate-200 p-8 md:p-10 shadow-sm">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 md:gap-8">
+              <div className="text-center">
+                <p className="text-3xl md:text-4xl font-bold text-teal-700 mb-2">750+</p>
+                <p className="text-sm md:text-base text-slate-600 font-medium">Pengguna Aktif</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl md:text-4xl font-bold text-cyan-700 mb-2">30+</p>
+                <p className="text-sm md:text-base text-slate-600 font-medium">Modul Belajar</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl md:text-4xl font-bold text-emerald-700 mb-2">140+</p>
+                <p className="text-sm md:text-base text-slate-600 font-medium">Kuis Interaktif</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl md:text-4xl font-bold text-amber-700 mb-2">85+</p>
+                <p className="text-sm md:text-base text-slate-600 font-medium">Sertifikat</p>
+              </div>
             </div>
           </div>
         </div>
