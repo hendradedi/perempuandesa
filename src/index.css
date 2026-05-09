@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
 @config "../tailwind.config.js";
+@source "../index.html";
+@source "./**/*.{js,jsx,ts,tsx}";
 
 :root {
   --shadow-neutral: 0 10px 28px rgba(15, 23, 42, 0.08);
