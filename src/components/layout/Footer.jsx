@@ -66,7 +66,7 @@ const Footer = () => {
               </li>
               <li className="flex items-start gap-3">
                 <Mail className="w-4 h-4 text-rose-400 shrink-0 mt-1" />
-                <span className="text-stone-400 font-light text-sm">Lab PNF FIPP UNNES</span>
+                <span className="text-stone-400 font-light text-sm">arbarini.mint@mail.unnes.ac.id</span>
               </li>
             </ul>
             <div className="mt-6 p-3 rounded-xl bg-stone-800 border border-stone-700">
