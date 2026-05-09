@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import LandingPage from './components/layout/LandingPage';
@@ -26,15 +26,20 @@ function AppContent() {
     loading
   } = useAuth();
 
-  return (
-    <Router>
+  const AppShell = () => {
+    const location = useLocation();
+    const hideGlobalChrome = location.pathname === '/dashboard';
+
+    return (
       <div className="min-h-screen flex flex-col">
-        <Navbar
-          isAuthenticated={isAuthenticated}
-          canAccessAdminPanel={canAccessAdminPanel}
-          onLogout={logout}
-          user={user}
-        />
+        {!hideGlobalChrome && (
+          <Navbar
+            isAuthenticated={isAuthenticated}
+            canAccessAdminPanel={canAccessAdminPanel}
+            onLogout={logout}
+            user={user}
+          />
+        )}
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<LandingPage />} />
@@ -85,8 +90,14 @@ function AppContent() {
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </main>
-        <Footer />
+        {!hideGlobalChrome && <Footer />}
       </div>
+    );
+  };
+
+  return (
+    <Router>
+      <AppShell />
     </Router>
   );
 }
