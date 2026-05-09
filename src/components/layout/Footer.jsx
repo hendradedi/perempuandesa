@@ -59,7 +59,7 @@ const Footer = () => {
               <li className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-rose-400 shrink-0 mt-1" />
                 <span className="text-stone-400 font-light text-sm leading-relaxed">
-                  Laboratorium Pendidikan Non Formal<br />
+                  Dr. Mintarsih Arbarini, M.Pd, dkk<br />
                   FIPP UNNES<br />
                   Semarang, Jawa Tengah
                 </span>
@@ -71,7 +71,7 @@ const Footer = () => {
             </ul>
             <div className="mt-6 p-3 rounded-xl bg-stone-800 border border-stone-700">
               <p className="text-xs text-stone-400 italic leading-relaxed">
-                "Dibuat dan dikembangkan oleh Laboratorium Pendidikan Non Formal FIPP UNNES" ❤️
+                "Dibuat dan dikembangkan oleh Dr. Mintarsih Arbarini, M.Pd, dkk" ❤️
               </p>
             </div>
           </div>
