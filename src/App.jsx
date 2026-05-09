@@ -1,18 +1,26 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
-import LandingPage from './components/layout/LandingPage';
-import Login from './components/auth/Login';
-import Register from './components/auth/Register';
-import AdminPanel from './components/admin/AdminPanel';
-import Dashboard from './components/dashboard/Dashboard';
-import ModuleDetail from './components/modules/ModuleDetail';
-import Quiz from './components/quiz/Quiz';
-import Profile from './components/profile/Profile';
 import { AuthProvider } from './context/AuthContext';
 import { useAuth } from './context/useAuth';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import AdminRoute from './components/auth/AdminRoute';
+
+const LandingPage = lazy(() => import('./components/layout/LandingPage'));
+const Login = lazy(() => import('./components/auth/Login'));
+const Register = lazy(() => import('./components/auth/Register'));
+const AdminPanel = lazy(() => import('./components/admin/AdminPanel'));
+const Dashboard = lazy(() => import('./components/dashboard/Dashboard'));
+const ModuleDetail = lazy(() => import('./components/modules/ModuleDetail'));
+const Quiz = lazy(() => import('./components/quiz/Quiz'));
+const Profile = lazy(() => import('./components/profile/Profile'));
+
+const RouteLoadingFallback = () => (
+  <div className="min-h-[50vh] flex items-center justify-center px-4">
+    <p className="text-slate-600 text-sm sm:text-base">Memuat halaman...</p>
+  </div>
+);
 
 function AppContent() {
   const {
@@ -26,22 +34,32 @@ function AppContent() {
     loading
   } = useAuth();
 
-  const AppShell = () => {
-    const location = useLocation();
-    const hideGlobalChrome = location.pathname === '/dashboard';
+  const PublicLayout = () => (
+    <div className="min-h-screen flex flex-col">
+      <Navbar
+        isAuthenticated={isAuthenticated}
+        canAccessAdminPanel={canAccessAdminPanel}
+        onLogout={logout}
+        user={user}
+      />
+      <main className="flex-grow">
+        <Outlet />
+      </main>
+      <Footer />
+    </div>
+  );
 
-    return (
-      <div className="min-h-screen flex flex-col">
-        {!hideGlobalChrome && (
-          <Navbar
-            isAuthenticated={isAuthenticated}
-            canAccessAdminPanel={canAccessAdminPanel}
-            onLogout={logout}
-            user={user}
-          />
-        )}
-        <main className="flex-grow">
-          <Routes>
+  const DashboardLayout = () => (
+    <div className="min-h-screen">
+      <Outlet />
+    </div>
+  );
+
+  return (
+    <Router>
+      <Suspense fallback={<RouteLoadingFallback />}>
+        <Routes>
+          <Route element={<PublicLayout />}>
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<Login onLogin={login} />} />
             <Route path="/register" element={<Register onRegister={register} />} />
@@ -52,14 +70,6 @@ function AppContent() {
                   <AdminRoute canAccessAdminPanel={canAccessAdminPanel}>
                     <AdminPanel isSuperAdmin={isSuperAdmin} />
                   </AdminRoute>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute isAuthenticated={isAuthenticated} loading={loading}>
-                  <Dashboard user={user} />
                 </ProtectedRoute>
               }
             />
@@ -87,17 +97,22 @@ function AppContent() {
                 </ProtectedRoute>
               }
             />
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-        </main>
-        {!hideGlobalChrome && <Footer />}
-      </div>
-    );
-  };
+          </Route>
 
-  return (
-    <Router>
-      <AppShell />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated} loading={loading}>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<Dashboard user={user} />} />
+          </Route>
+
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </Suspense>
     </Router>
   );
 }

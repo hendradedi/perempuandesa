@@ -1,12 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { Users } from 'lucide-react';
+import { Sparkles, Crown } from 'lucide-react';
 
 const NAVIGATION = [
   { name: 'Beranda', href: '/' },
   { name: 'Modul', href: '/#modul' },
   { name: 'Testimoni', href: '/#testimoni' },
-  { name: 'Tentang Kami', href: '/#tentang' }
+  { name: 'Tentang', href: '/#tentang' }
 ];
 
 const Navbar = ({ isAuthenticated, canAccessAdminPanel, onLogout, user }) => {
@@ -19,79 +19,65 @@ const Navbar = ({ isAuthenticated, canAccessAdminPanel, onLogout, user }) => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-slate-200/60">
-      <div className="site-container">
-        <div className="flex justify-between items-center h-16 md:h-20 gap-3">
-          {/* Logo */}
-          <Link to="/" className="flex min-w-0 items-center gap-3 pr-2">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-teal-600 to-emerald-400 flex items-center justify-center text-white shadow-lg shadow-teal-500/20">
-              <Users className="w-5 h-5" />
+    <nav className="sticky top-0 z-50 w-full bg-white/90 border-b border-stone-200/50" style={{backdropFilter:'blur(20px)', boxShadow:'0 2px 10px rgba(28,25,23,0.04)'}}>
+      <div className="container-page">
+        <div className="flex justify-between items-center h-20 gap-3">
+          
+          {/* Logo SELARAS */}
+          <Link to="/" className="flex items-center gap-3 pr-2 group shrink-0">
+            <div className="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center text-rose-600 group-hover:bg-rose-100 transition-colors">
+              <Sparkles className="w-5 h-5" />
             </div>
-            <span className="font-bold text-lg md:text-xl tracking-tight text-slate-800 truncate">
-              Perempuan<span className="text-teal-600">Desa</span>
-            </span>
+            <div className="leading-none">
+              <span className="font-serif font-bold text-xl tracking-tight text-stone-900">SELARAS</span>
+              <p className="text-[9px] text-stone-400 font-medium tracking-wide hidden sm:block" style={{lineHeight:1.4}}>
+                Sistem Literasi Digital & Life Skill
+              </p>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-8">
+          <div className="hidden lg:flex items-center gap-10">
             {NAVIGATION.map((item) => (
               <a
                 key={item.name}
                 href={item.href}
-                className="text-sm font-medium text-slate-600 hover:text-teal-600 transition-colors"
+                className="text-sm font-medium text-stone-600 hover:text-rose-700 transition-colors relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[2px] after:bg-rose-700 hover:after:w-full after:transition-all after:duration-300"
               >
                 {item.name}
               </a>
             ))}
           </div>
 
-          <div className="hidden md:flex items-center gap-4 shrink-0 ml-auto lg:ml-0">
+          <div className="hidden md:flex items-center gap-5 shrink-0 ml-auto lg:ml-0">
             {!isAuthenticated ? (
               <>
-                <Link
-                  to="/login"
-                  className="text-sm font-semibold text-slate-600 hover:text-teal-600 transition-colors"
-                >
+                <Link to="/login" className="text-sm font-semibold text-stone-600 hover:text-rose-700 transition-colors">
                   Masuk
                 </Link>
-                <Link
-                  to="/register"
-                  className="bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold px-6 py-2.5 rounded-full shadow-md shadow-teal-600/20 transition-all hover:shadow-lg hover:-translate-y-0.5"
-                >
-                  Daftar Gratis
+                <Link to="/register" className="bg-rose-700 hover:bg-rose-800 text-white text-sm font-medium px-7 py-3 rounded-full transition-all hover:shadow-lg hover:-translate-y-0.5">
+                  Daftar Sekarang
                 </Link>
               </>
             ) : (
               <>
-                <Link 
-                  to="/dashboard" 
-                  className="text-slate-600 hover:text-teal-700 font-medium transition-colors whitespace-nowrap"
-                >
+                <Link to="/dashboard" className="text-sm font-medium text-stone-600 hover:text-rose-700 transition-colors">
                   Dashboard
                 </Link>
-                <Link 
-                  to="/profile" 
-                  className="text-slate-600 hover:text-teal-700 font-medium transition-colors whitespace-nowrap"
-                >
+                <Link to="/profile" className="text-sm font-medium text-stone-600 hover:text-rose-700 transition-colors">
                   Profil
                 </Link>
                 {canAccessAdminPanel && (
-                  <Link
-                    to="/admin"
-                    className="text-slate-600 hover:text-teal-700 font-medium transition-colors whitespace-nowrap"
-                  >
+                  <Link to="/admin" className="text-sm font-medium text-stone-600 hover:text-rose-700 transition-colors">
                     Admin
                   </Link>
                 )}
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center space-x-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5">
-                    <span className="text-lg">👑</span>
-                    <span className="text-sm font-semibold text-amber-700">{user?.points || 0} Poin</span>
+                <div className="flex items-center gap-4 border-l border-stone-200 pl-4 ml-2">
+                  <div className="flex items-center gap-2 rounded-full border border-rose-100 bg-rose-50 px-4 py-2">
+                    <Crown className="w-4 h-4 text-rose-500" />
+                    <span className="text-sm font-bold text-rose-700">{user?.points || 0} Poin</span>
                   </div>
-                  <button
-                    onClick={handleLogout}
-                    className="btn-outline text-sm"
-                  >
+                  <button onClick={handleLogout} className="text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">
                     Keluar
                   </button>
                 </div>
@@ -104,9 +90,9 @@ const Navbar = ({ isAuthenticated, canAccessAdminPanel, onLogout, user }) => {
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label="Buka menu"
-              className="rounded-lg border border-slate-200 bg-white p-2 text-slate-700 hover:text-teal-700 focus:outline-none"
+              className="rounded-full bg-stone-50 p-2.5 text-stone-700 hover:text-rose-700 hover:bg-rose-50 transition-colors focus:outline-none"
             >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {isMenuOpen ? (
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 ) : (
@@ -119,82 +105,32 @@ const Navbar = ({ isAuthenticated, canAccessAdminPanel, onLogout, user }) => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-slate-200 fade-in">
+          <div className="md:hidden py-6 border-t border-stone-100">
             {!isAuthenticated ? (
-              <div className="card !p-4 flex flex-col space-y-3">
-                <a
-                  href="/"
-                  className="text-slate-700 hover:text-teal-700 font-medium transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Beranda
-                </a>
-                <a
-                  href="/#modul"
-                  className="text-slate-700 hover:text-teal-700 font-medium transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Modul
-                </a>
-                <a
-                  href="/#testimoni"
-                  className="text-slate-700 hover:text-teal-700 font-medium transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Testimoni
-                </a>
-                <Link 
-                  to="/login" 
-                  className="text-slate-700 hover:text-teal-700 font-medium transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Masuk
-                </Link>
-                <Link 
-                  to="/register" 
-                  className="btn-primary text-center"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Daftar
-                </Link>
+              <div className="flex flex-col space-y-4 px-4">
+                {NAVIGATION.map((item) => (
+                  <a key={item.name} href={item.href} className="text-stone-700 font-medium hover:text-rose-700" onClick={() => setIsMenuOpen(false)}>
+                    {item.name}
+                  </a>
+                ))}
+                <div className="h-px w-full bg-stone-100 my-2"></div>
+                <Link to="/login" className="text-stone-700 font-medium hover:text-rose-700" onClick={() => setIsMenuOpen(false)}>Masuk</Link>
+                <Link to="/register" className="bg-rose-700 text-white text-center py-3 rounded-full font-medium mt-2" onClick={() => setIsMenuOpen(false)}>Daftar Sekarang</Link>
               </div>
             ) : (
-              <div className="card !p-4 flex flex-col space-y-3">
-                <Link 
-                  to="/dashboard" 
-                  className="text-slate-700 hover:text-teal-700 font-medium transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Dashboard
-                </Link>
-                <Link 
-                  to="/profile" 
-                  className="text-slate-700 hover:text-teal-700 font-medium transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Profil
-                </Link>
+              <div className="flex flex-col space-y-4 px-4">
+                <Link to="/dashboard" className="text-stone-700 font-medium hover:text-rose-700" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
+                <Link to="/profile" className="text-stone-700 font-medium hover:text-rose-700" onClick={() => setIsMenuOpen(false)}>Profil</Link>
                 {canAccessAdminPanel && (
-                  <Link
-                    to="/admin"
-                    className="text-slate-700 hover:text-teal-700 font-medium transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Admin
-                  </Link>
+                  <Link to="/admin" className="text-stone-700 font-medium hover:text-rose-700" onClick={() => setIsMenuOpen(false)}>Admin</Link>
                 )}
-                <div className="flex items-center space-x-2 py-2 rounded-lg border border-amber-200 bg-amber-50 px-3">
-                  <span className="text-xl">👑</span>
-                  <span className="text-sm font-semibold text-amber-700 break-words">{user?.points || 0} Poin</span>
+                <div className="h-px w-full bg-stone-100 my-2"></div>
+                <div className="flex items-center gap-3 py-3 rounded-2xl bg-rose-50 px-4">
+                  <Crown className="w-5 h-5 text-rose-500" />
+                  <span className="font-bold text-rose-700">{user?.points || 0} Poin</span>
                 </div>
-                <button 
-                  onClick={() => {
-                    handleLogout();
-                    setIsMenuOpen(false);
-                  }}
-                  className="btn-outline text-center"
-                >
-                  Keluar
+                <button onClick={() => { handleLogout(); setIsMenuOpen(false); }} className="text-stone-500 font-medium hover:text-stone-900 text-left mt-2">
+                  Keluar dari Akun
                 </button>
               </div>
             )}

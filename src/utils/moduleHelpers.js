@@ -56,7 +56,13 @@ export const buildCustomModules = async () => {
 export const buildAllModules = async () => {
   const staticModules = buildStaticModules();
   const customModules = await buildCustomModules();
-  return [...staticModules, ...customModules];
+  
+  // Filter out static modules that already exist in custom (Firestore) by title
+  const filteredStatic = staticModules.filter(sm => 
+    !customModules.some(cm => cm.title === sm.title)
+  );
+  
+  return [...filteredStatic, ...customModules];
 };
 
 export const findModuleByRouteId = (modules, routeId) => {

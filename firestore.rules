@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn() && (
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+      );
+    }
+
+    function isAssistantAdmin() {
+      return signedIn() && (
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'assistant_admin'
+      );
+    }
+
+    function canAccessAdminPanel() {
+      return isAdmin() || isAssistantAdmin();
+    }
+
+    // Koleksi Users
+    match /users/{userId} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.auth.uid == userId;
+      allow update: if signedIn() && (
+        request.auth.uid == userId || isAdmin()
+      );
+      allow delete: if isAdmin();
+    }
+
+    // Koleksi Settings (Penting untuk Sertifikat)
+    match /settings/{document=**} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    // Koleksi Materials
+    match /materials/{materialId} {
+      allow read: if signedIn();
+      allow create, update, delete: if canAccessAdminPanel();
+    }
+
+    // Koleksi Modules
+    match /modules/{moduleId} {
+      allow read: if signedIn();
+      allow create, update, delete: if canAccessAdminPanel();
+    }
+  }
+}

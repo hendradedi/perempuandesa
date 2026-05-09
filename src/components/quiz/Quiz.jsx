@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { doc, updateDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../../config/firebase';
+import { useAuth } from '../../context/useAuth';
 import { buildAllModules, findModuleByRouteId } from '../../utils/moduleHelpers';
 
 const Quiz = () => {
@@ -87,6 +90,59 @@ const Quiz = () => {
     setAiError('');
     setIsAiLoading(false);
   };
+
+  const { user, refreshUser } = useAuth();
+  const [isSaving, setIsSaving] = useState(false);
+
+  const saveQuizResult = async () => {
+    if (!user?.uid || !passed) return;
+    
+    setIsSaving(true);
+    try {
+      const userRef = doc(db, 'users', user.uid);
+      
+      // Points to award
+      const pointsToAdd = 50;
+      
+      // New certificate
+      const newCert = {
+        id: Date.now(),
+        module: module.title,
+        date: new Date().toISOString(),
+        icon: 'Award'
+      };
+
+      // Check if already has certificate for this module
+      const hasCert = (user.certificates || []).some(c => c.module === module.title);
+      
+      const updateData = {
+        points: (user.points || 0) + pointsToAdd,
+        updatedAt: serverTimestamp()
+      };
+
+      if (!hasCert) {
+        updateData.certificates = [...(user.certificates || []), newCert];
+      }
+
+      // Add to completed modules if not already
+      if (!(user.completedModules || []).includes(module.id)) {
+        updateData.completedModules = [...(user.completedModules || []), module.id];
+      }
+
+      await setDoc(userRef, updateData, { merge: true });
+      await refreshUser();
+    } catch (error) {
+      console.error('Error saving quiz result:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  useEffect(() => {
+    if (showResult && passed) {
+      saveQuizResult();
+    }
+  }, [showResult, passed]);
 
   const handleFinish = () => {
     navigate('/dashboard');

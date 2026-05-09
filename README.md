@@ -34,6 +34,12 @@ npm run dev
 npm run build
 ```
 
+## QA Layout
+
+Gunakan checklist ini sebelum deploy agar bug layout tidak terulang:
+
+- [QA_LAYOUT_CHECKLIST.md](QA_LAYOUT_CHECKLIST.md)
+
 ## Konfigurasi Environment
 
 Gunakan file contoh [.env.example](.env.example) sebagai acuan.

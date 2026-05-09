@@ -1,226 +1,176 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import perempuanDesaImage from '../../assets/perempuan-desa.webp';
-import { ArrowRight, CheckCircle2, CirclePlay, GraduationCap, HeartPulse, Rocket, Sparkles, Star, Wallet } from 'lucide-react';
+import perempuanDesaImage from '../../assets/srikandi-desa.webp';
+import { ArrowRight, CheckCircle2, Play, BookOpen, Heart, Sparkles, Star, Award, HelpCircle } from 'lucide-react';
+import UserGuideModal from './UserGuideModal';
 
 const LandingPage = () => {
+  const [showGuide, setShowGuide] = useState(false);
+
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-900">
-      <section className="relative overflow-hidden pt-16 md:pt-20 pb-16 md:pb-24">
+    <div className="min-h-screen bg-[#faf9f8] text-stone-800 font-sans selection:bg-rose-200 selection:text-rose-900">
+      
+      {/* HERO SECTION */}
+      <section className="relative overflow-hidden pt-20 md:pt-32 pb-20 md:pb-32">
         <div className="pointer-events-none absolute inset-0 -z-10">
-          <div className="absolute inset-x-0 top-0 h-[420px] bg-gradient-to-b from-cyan-50 to-transparent" />
-          <div className="absolute -top-10 left-0 h-72 w-72 rounded-full bg-emerald-200/35 blur-3xl" />
-          <div className="absolute top-10 right-0 h-80 w-80 rounded-full bg-sky-200/35 blur-3xl" />
+          <div className="absolute inset-x-0 top-0 h-[600px] bg-gradient-to-b from-rose-50/60 to-transparent" />
+          <div className="absolute -top-40 right-0 h-[600px] w-[600px] rounded-full bg-rose-100/40 blur-[120px]" />
+          <div className="absolute top-20 -left-20 h-[400px] w-[400px] rounded-full bg-stone-200/50 blur-[100px]" />
         </div>
 
-        <div className="site-container grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-          <div className="text-left">
-            <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 border border-emerald-200 px-4 py-1.5 text-sm font-semibold text-emerald-800 mb-6">
-              <Sparkles className="w-4 h-4" />
-              Program Belajar Perempuan Desa 2026
+        <div className="container-page grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+          <div className="text-left relative z-10 lg:pr-10">
+            <span className="inline-flex items-center gap-2 rounded-full bg-white border border-rose-100 px-5 py-2 text-sm font-semibold text-rose-700 mb-8 shadow-sm">
+              <Sparkles className="w-4 h-4 text-rose-500" />
+              Platform Sekolah Perempuan Desa
             </span>
 
-            <h1 className="text-4xl md:text-5xl xl:text-6xl font-bold leading-tight tracking-tight text-slate-900 mb-5">
-              Belajar Cerdas,
-              <br />
-              <span className="text-teal-600">Tumbuh Mandiri</span>
+            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-medium leading-tight tracking-tight text-stone-900 mb-3">
+              <span className="italic text-rose-700">SELARAS</span>
             </h1>
+            <p className="text-stone-500 text-sm mb-6 font-medium tracking-wide">Sistem Literasi digitAl dan Life skill Responsif gender untuk perempuan deSa</p>
 
-            <p className="text-base md:text-lg text-slate-600 leading-relaxed max-w-xl mb-8">
-              Platform pembelajaran digital yang membantu perempuan desa meningkatkan keterampilan, kepercayaan diri, dan kemandirian ekonomi keluarga.
+            <p className="text-lg md:text-xl text-stone-600 leading-relaxed mb-10 font-light" style={{maxWidth:'480px'}}>
+              Platform sekolah perempuan desa berbasis digital yang mendukung literasi digital, life skill, kemandirian ekonomi, dan penguatan kapasitas sosial perempuan secara inklusif, adaptif, dan berkelanjutan.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 my-8">
+            <div className="flex flex-col sm:flex-row items-center gap-5">
               <Link
                 to="/register"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white px-7 py-3 text-sm md:text-base font-semibold transition-all hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center gap-3 rounded-full bg-stone-900 hover:bg-stone-800 text-white px-8 py-4 text-base font-medium transition-all shadow-lg"
+                style={{transition:'all 0.3s'}}
+                onMouseEnter={e => e.currentTarget.style.transform='translateY(-2px)'}
+                onMouseLeave={e => e.currentTarget.style.transform='translateY(0)'}
               >
-                Mulai Belajar
+                Mulai Belajar Sekarang
                 <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link
-                to="/login"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-300 bg-white text-slate-700 hover:border-teal-500 hover:text-teal-600 px-7 py-3 text-sm md:text-base font-semibold transition-colors"
+              <button
+                onClick={() => setShowGuide(true)}
+                className="inline-flex items-center justify-center gap-3 rounded-full border border-stone-200 bg-white text-stone-700 px-8 py-4 text-base font-medium transition-all"
+                style={{backdropFilter:'blur(8px)'}}
               >
-                <CirclePlay className="w-4 h-4" />
-                Saya Sudah Punya Akun
-              </Link>
+                <HelpCircle className="w-4 h-4 text-rose-500" />
+                Panduan Pengguna
+              </button>
             </div>
           </div>
 
-          <div className="relative">
-            <div className="rounded-[28px] border border-slate-200 bg-white p-4 md:p-6 shadow-xl shadow-slate-300/30">
-              <img
-                src={perempuanDesaImage}
-                alt="Ilustrasi perempuan desa"
-                className="w-full h-72 md:h-96 rounded-2xl object-cover object-top"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-12 md:py-16">
-        <div className="site-container">
-          <div className="rounded-2xl bg-white border border-slate-200 p-8 md:p-10 shadow-sm">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 md:gap-8">
-              <div className="text-center">
-                <p className="text-3xl md:text-4xl font-bold text-teal-700 mb-2">750+</p>
-                <p className="text-sm md:text-base text-slate-600 font-medium">Pengguna Aktif</p>
+          <div className="relative z-10 w-full" style={{maxWidth:'520px', margin:'0 auto'}}>
+            <div className="relative p-3 bg-white border border-stone-100 shadow-2xl" style={{borderRadius:'2.5rem', backgroundColor:'rgba(255,255,255,0.5)', backdropFilter:'blur(20px)'}}>
+              <div className="overflow-hidden relative" style={{borderRadius:'2rem', aspectRatio:'4/5'}}>
+                <img
+                  src={perempuanDesaImage}
+                  alt="Ilustrasi perempuan desa"
+                  className="w-full h-full object-cover object-top"
+                  style={{transition:'transform 1s', cursor:'default'}}
+                  onMouseEnter={e => e.target.style.transform='scale(1.05)'}
+                  onMouseLeave={e => e.target.style.transform='scale(1)'}
+                />
+                <div className="absolute inset-0" style={{background:'linear-gradient(to top, rgba(28,25,23,0.4), transparent)'}}></div>
               </div>
-              <div className="text-center">
-                <p className="text-3xl md:text-4xl font-bold text-cyan-700 mb-2">30+</p>
-                <p className="text-sm md:text-base text-slate-600 font-medium">Modul Belajar</p>
-              </div>
-              <div className="text-center">
-                <p className="text-3xl md:text-4xl font-bold text-emerald-700 mb-2">140+</p>
-                <p className="text-sm md:text-base text-slate-600 font-medium">Kuis Interaktif</p>
-              </div>
-              <div className="text-center">
-                <p className="text-3xl md:text-4xl font-bold text-amber-700 mb-2">85+</p>
-                <p className="text-sm md:text-base text-slate-600 font-medium">Sertifikat</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="tentang" className="section-pad scroll-mt-24">
-        <div className="site-container">
-          <div className="text-center mb-12 md:mb-14">
-            <h2 className="section-title !mb-3">Mengapa Perempuan Desa?</h2>
-            <div className="flex justify-center">
-              <p className="max-w-2xl text-base md:text-lg text-slate-600 leading-relaxed">
-                Dirancang dengan pendekatan praktis, hangat, dan relevan dengan kebutuhan perempuan di pedesaan Indonesia.
-              </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-            <article className="rounded-2xl bg-white border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-cyan-50 text-cyan-700 flex items-center justify-center mb-4">
-                <GraduationCap className="w-6 h-6" />
-              </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Pembelajaran Interaktif</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Materi dibagi ringkas dengan alur yang mudah diikuti dari dasar hingga praktik.
-              </p>
-            </article>
-
-            <article className="rounded-2xl bg-white border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-4">
-                <Rocket className="w-6 h-6" />
-              </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Kuis & Evaluasi</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Uji pemahaman secara berkala agar pembelajaran benar-benar membentuk kebiasaan.
-              </p>
-            </article>
-
-            <article className="rounded-2xl bg-white border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-rose-50 text-rose-700 flex items-center justify-center mb-4">
-                <Star className="w-6 h-6" />
-              </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Gamifikasi Motivatif</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Kumpulkan poin dan lencana sebagai dorongan untuk terus naik level.
-              </p>
-            </article>
-
-            <article className="rounded-2xl bg-white border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center mb-4">
-                <CheckCircle2 className="w-6 h-6" />
-              </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Sertifikat Digital</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Setiap pencapaian dapat didokumentasikan dan dipakai untuk pengembangan diri.
-              </p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section id="modul" className="section-pad scroll-mt-24">
-        <div className="site-container">
-          <div className="text-center mb-12 md:mb-14">
-            <h2 className="section-title !mb-3">Modul Unggulan</h2>
-            <div className="flex justify-center">
-              <p className="max-w-2xl text-base md:text-lg text-slate-600 leading-relaxed">
-                Materi belajar pilihan untuk membantu perempuan desa lebih siap secara ekonomi dan kesehatan.
-              </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <article className="rounded-3xl bg-white border border-slate-200 p-7 md:p-8 shadow-sm">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                  <Wallet className="w-6 h-6" />
+              
+              {/* Floating Badge */}
+              <div className="absolute bg-white p-5 flex items-center gap-4" style={{bottom:'-1.5rem', left:'-2rem', borderRadius:'1.5rem', boxShadow:'0 20px 40px rgba(28,25,23,0.12)', border:'1px solid #e7e5e4'}}>
+                <div className="w-12 h-12 flex items-center justify-center text-rose-600" style={{background:'#fff1f2', borderRadius:'1rem'}}>
+                  <Heart className="w-6 h-6" style={{fill:'#fecdd3'}} />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-2">Kewirausahaan & Ekonomi Kreatif</h3>
-                  <p className="text-slate-600 text-sm md:text-base leading-relaxed mb-4">
-                    Belajar menyusun usaha rumahan, mengelola keuangan sederhana, dan memasarkan produk lokal.
-                  </p>
-                  <p className="text-sm text-slate-500">3 Pelajaran • 15 Menit • Praktik langsung</p>
+                  <p className="text-2xl font-serif font-bold text-stone-900">750+</p>
+                  <p className="text-xs font-semibold text-stone-500 uppercase" style={{letterSpacing:'0.08em'}}>Wanita Berdaya</p>
                 </div>
               </div>
-            </article>
-
-            <article className="rounded-3xl bg-white border border-slate-200 p-7 md:p-8 shadow-sm">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-cyan-100 text-cyan-700 flex items-center justify-center shrink-0">
-                  <HeartPulse className="w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-2">Kesehatan Reproduksi</h3>
-                  <p className="text-slate-600 text-sm md:text-base leading-relaxed mb-4">
-                    Pahami siklus tubuh, kebersihan reproduksi, dan langkah pencegahan masalah kesehatan dasar.
-                  </p>
-                  <p className="text-sm text-slate-500">3 Pelajaran • 20 Menit • Bahasa sederhana</p>
-                </div>
-              </div>
-            </article>
+            </div>
           </div>
         </div>
       </section>
 
-      <section id="testimoni" className="section-pad scroll-mt-24">
-        <div className="site-container">
-          <div className="text-center mb-12 md:mb-14">
-            <h2 className="section-title !mb-3">Cerita Dari Peserta</h2>
-            <div className="flex justify-center">
-              <p className="max-w-2xl text-base md:text-lg text-slate-600 leading-relaxed">
-                Perubahan kecil yang konsisten dapat membawa dampak besar bagi keluarga dan komunitas.
-              </p>
+      {/* METRICS SECTION */}
+      <section className="border-y border-stone-200 bg-white" style={{padding:'4rem 0'}}>
+        <div className="container-page">
+          <div className="grid grid-cols-2 md:grid-cols-4" style={{gap:'2rem'}}>
+            <div className="text-center">
+              <p className="font-serif text-stone-900 mb-2" style={{fontSize:'2.75rem', color:'#9f1239'}}>30+</p>
+              <p className="text-sm font-medium text-stone-500 uppercase" style={{letterSpacing:'0.1em'}}>Modul Premium</p>
+            </div>
+            <div className="text-center">
+              <p className="font-serif text-stone-900 mb-2" style={{fontSize:'2.75rem'}}>140</p>
+              <p className="text-sm font-medium text-stone-500 uppercase" style={{letterSpacing:'0.1em'}}>Sesi Interaktif</p>
+            </div>
+            <div className="text-center">
+              <p className="font-serif mb-2" style={{fontSize:'2.75rem', color:'#9f1239'}}>98%</p>
+              <p className="text-sm font-medium text-stone-500 uppercase" style={{letterSpacing:'0.1em'}}>Tingkat Kepuasan</p>
+            </div>
+            <div className="text-center">
+              <p className="font-serif text-stone-900 mb-2" style={{fontSize:'2.75rem'}}>85+</p>
+              <p className="text-sm font-medium text-stone-500 uppercase" style={{letterSpacing:'0.1em'}}>Sertifikat Diraih</p>
             </div>
           </div>
+        </div>
+      </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[{
-              quote: 'Platform ini membantu saya memahami kesehatan reproduksi dengan penjelasan yang sederhana.',
-              name: 'Siti Aminah',
-              role: 'Pengusaha Kerajinan'
-            }, {
-              quote: 'Setelah ikut modul kewirausahaan, saya berani mulai usaha kecil dari rumah.',
-              name: 'Maya Wati',
-              role: 'Ibu Rumah Tangga'
-            }, {
-              quote: 'Sistem poin dan lencana bikin saya semangat belajar rutin setiap minggu.',
-              name: 'Rina Dewi',
-              role: 'Pengelola UMKM'
-            }].map((item) => (
-              <article key={item.name} className="rounded-2xl bg-white border border-slate-200 p-6 shadow-sm">
-                <div className="flex items-center gap-1 mb-4 text-amber-500">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star key={star} className="w-4 h-4 fill-current" />
-                  ))}
+      {/* VALUE PROPOSITION */}
+      <section id="tentang" style={{padding:'6rem 0'}}>
+        <div className="container-page">
+          <div className="text-center mb-16" style={{maxWidth:'700px', margin:'0 auto 4rem'}}>
+            <h2 className="font-serif text-stone-900 mb-6" style={{fontSize:'2.5rem'}}>Mengapa SELARAS?</h2>
+            <p className="text-stone-600 font-light" style={{fontSize:'1.1rem', lineHeight:'1.8'}}>
+              Platform SELARAS dirancang untuk meningkatkan literasi digital, keterampilan hidup, kemandirian ekonomi, dan penguatan sosial perempuan desa melalui pendekatan yang inklusif, adaptif, dan responsif gender.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4" style={{gap:'1.5rem'}}>
+            {[
+              { icon: <BookOpen className="w-6 h-6" />, bg:'#fff1f2', color:'#9f1239', title:'Literasi Digital', desc:'Kuasai penggunaan perangkat digital, internet aman, dan pemanfaatan teknologi untuk kegiatan sosial-ekonomi.' },
+              { icon: <Heart className="w-6 h-6" />, bg:'#f5f5f4', color:'#44403c', title:'Responsif Gender', desc:'Memahami konsep kesetaraan, keadilan gender, dan pengarusutamaan gender (PUG) dalam pembangunan desa.' },
+              { icon: <Star className="w-6 h-6" />, bg:'#fff1f2', color:'#9f1239', title:'Ekonomi Mandiri', desc:'Pelatihan kewirausahaan, manajemen keuangan usaha, dan pemasaran digital untuk kemandirian ekonomi.' },
+              { icon: <Award className="w-6 h-6" />, bg:'#f5f5f4', color:'#44403c', title:'Pendampingan', desc:'Sistem komunitas dan pendampingan berkelanjutan untuk mendukung keberhasilan setiap pengguna.' },
+            ].map((item, i) => (
+              <div key={i} className="bg-white border border-stone-100" style={{borderRadius:'2rem', padding:'2rem', boxShadow:'0 2px 8px rgba(28,25,23,0.04)', transition:'all 0.4s'}}>
+                <div className="flex items-center justify-center mb-5" style={{width:'56px', height:'56px', borderRadius:'1rem', background:item.bg, color:item.color}}>
+                  {item.icon}
                 </div>
-                <p className="text-slate-600 text-sm md:text-base leading-relaxed italic mb-6">&ldquo;{item.quote}&rdquo;</p>
-                <div className="flex items-center gap-3 pt-4 border-t border-slate-100">
-                  <img src={perempuanDesaImage} alt={item.name} className="w-11 h-11 rounded-full object-cover border border-slate-200" />
+                <h3 className="font-bold text-stone-900 mb-3" style={{fontSize:'1.1rem'}}>{item.title}</h3>
+                <p className="text-stone-500 font-light" style={{fontSize:'0.9rem', lineHeight:'1.7'}}>{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FEATURED MODULES */}
+      <section id="modul" style={{padding:'6rem 0', background:'#f5f5f4', borderTop:'1px solid #e7e5e4', borderBottom:'1px solid #e7e5e4'}}>
+        <div className="container-page">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12" style={{gap:'1.5rem'}}>
+            <div style={{maxWidth:'520px'}}>
+              <h2 className="font-serif text-stone-900 mb-4" style={{fontSize:'2.5rem'}}>Modul Unggulan SELARAS</h2>
+              <p className="text-stone-600 font-light" style={{fontSize:'1.05rem'}}>
+                Materi interaktif yang dirancang berbasis kebutuhan nyata perempuan desa — tersedia kapan saja, di mana saja.
+              </p>
+            </div>
+            <Link to="/login" className="font-semibold" style={{color:'#9f1239', display:'inline-flex', alignItems:'center', gap:'0.5rem', whiteSpace:'nowrap'}}>
+              Lihat Seluruh Modul <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2" style={{gap:'1.5rem'}}>
+            {[
+              { icon: <Sparkles className="w-10 h-10" />, bg:'#fff1f2', color:'#9f1239', title:'Pengarusutamaan Gender (PUG)', desc:'Meningkatkan partisipasi perempuan dalam pembangunan desa, pengambilan keputusan, dan kepemimpinan masyarakat desa.', sesi:'2 Sesi', durasi:'20 Menit/Hari' },
+              { icon: <Heart className="w-10 h-10" />, bg:'#f5f5f4', color:'#44403c', title:'Life Skill & Kesejahteraan', desc:'Pengelolaan keuangan keluarga, komunikasi interpersonal, dan pengembangan diri untuk kualitas hidup yang lebih baik.', sesi:'4 Sesi', durasi:'20 Menit/Hari' },
+            ].map((mod, i) => (
+              <article key={i} className="bg-white border border-stone-100" style={{borderRadius:'2.5rem', boxShadow:'0 2px 8px rgba(28,25,23,0.04)', overflow:'hidden', transition:'all 0.5s'}}>
+                <div className="flex flex-col sm:flex-row items-center" style={{gap:'2rem', padding:'2.5rem'}}>
+                  <div className="flex items-center justify-center shrink-0" style={{width:'96px', height:'96px', borderRadius:'50%', background:mod.bg, color:mod.color}}>
+                    {mod.icon}
+                  </div>
                   <div>
-                    <p className="text-sm font-semibold text-slate-900">{item.name}</p>
-                    <p className="text-xs text-slate-500">{item.role}</p>
+                    <h3 className="font-serif text-stone-900 mb-3" style={{fontSize:'1.4rem', fontWeight:'500'}}>{mod.title}</h3>
+                    <p className="text-stone-500 font-light mb-5" style={{lineHeight:'1.7'}}>{mod.desc}</p>
+                    <div className="flex items-center gap-3 text-stone-400" style={{fontSize:'0.75rem', fontWeight:'700', textTransform:'uppercase', letterSpacing:'0.08em'}}>
+                      <span>{mod.sesi}</span>
+                      <span style={{width:'4px', height:'4px', borderRadius:'50%', background:'#d6d3d1', display:'inline-block'}}></span>
+                      <span>{mod.durasi}</span>
+                    </div>
                   </div>
                 </div>
               </article>
@@ -229,23 +179,85 @@ const LandingPage = () => {
         </div>
       </section>
 
-      <section className="section-pad">
-        <div className="site-container">
-          <div className="rounded-3xl bg-slate-900 border border-slate-800 px-6 md:px-10 py-12 md:py-16 text-center">
-            <h2 className="text-2xl md:text-4xl font-bold text-white mb-4">Siap memulai perjalanan belajar Anda?</h2>
-            <p className="text-slate-300 text-sm md:text-lg mb-8 max-w-2xl mx-auto">
-              Bergabung bersama ribuan perempuan desa yang sedang membangun masa depan lebih mandiri.
-            </p>
-            <Link
-              to="/register"
-              className="inline-flex items-center gap-2 rounded-full bg-teal-500 hover:bg-teal-400 text-slate-900 font-semibold px-7 py-3 transition-colors"
-            >
-              Daftar Sekarang
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+      {/* TESTIMONIALS */}
+      <section id="testimoni" style={{padding:'6rem 0'}}>
+        <div className="container-page text-center">
+          <h2 className="font-serif text-stone-900 mb-4" style={{fontSize:'2.5rem'}}>Suara Pengguna SELARAS</h2>
+          <p className="text-stone-500 font-light mb-12">Cerita nyata dari perempuan desa yang telah merasakan manfaat platform SELARAS.</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3" style={{gap:'1.5rem'}}>
+            {[{
+              quote: 'Sebuah ruang yang sangat elegan dan informatif. Saya menemukan kembali kepercayaan diri untuk merintis usaha.',
+              name: 'Siti Aminah',
+              role: 'Wirausaha Lokal'
+            }, {
+              quote: 'Materi disajikan dengan sangat cantik dan bahasa yang menenangkan. Sangat cocok untuk rutinitas pagi saya.',
+              name: 'Maya Wati',
+              role: 'Ibu Rumah Tangga'
+            }, {
+              quote: 'Platform ini membuktikan bahwa pendidikan bagi perempuan desa bisa dikemas dengan sangat berkelas.',
+              name: 'Rina Dewi',
+              role: 'Penggiat Komunitas'
+            }].map((item, idx) => (
+              <div key={idx} className="bg-white border border-stone-100 text-left" style={{padding:'2.5rem', borderRadius:'2rem', boxShadow:'0 2px 8px rgba(28,25,23,0.04)'}}>
+                <div className="flex gap-1 mb-6">
+                  {[1,2,3,4,5].map(i => <Star key={i} className="w-4 h-4" style={{fill:'#fda4af', color:'#fda4af'}} />)}
+                </div>
+                <p className="text-stone-600 font-serif italic mb-8" style={{fontSize:'1.05rem', lineHeight:'1.8'}}>
+                  "{item.quote}"
+                </p>
+                <div className="flex items-center gap-4">
+                  <div style={{width:'48px', height:'48px', borderRadius:'50%', background:'#f5f5f4'}}></div>
+                  <div>
+                    <h4 className="font-bold text-stone-900">{item.name}</h4>
+                    <p className="text-stone-400 uppercase" style={{fontSize:'0.7rem', letterSpacing:'0.1em'}}>{item.role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
+
+      {/* CTA SECTION */}
+      <section style={{padding:'5rem 0'}}>
+        <div className="container-page">
+          <div className="relative overflow-hidden text-center" style={{borderRadius:'3rem', background:'#1c1917', padding:'5rem 2rem', boxShadow:'0 32px 64px rgba(28,25,23,0.3)'}}>
+            <div className="relative" style={{maxWidth:'680px', margin:'0 auto', position:'relative', zIndex:1}}>
+              <p className="text-rose-300 text-xs font-medium mb-4 uppercase tracking-widest">Bergabunglah bersama SELARAS</p>
+              <h2 className="font-serif text-white mb-6" style={{fontSize:'2.5rem'}}>
+                Mulai Perjalanan Belajarmu Hari Ini
+              </h2>
+              <p className="font-light mb-10" style={{color:'#d6d3d1', fontSize:'1.1rem', lineHeight:'1.8'}}>
+                SELARAS hadir untuk setiap perempuan desa yang ingin tumbuh, belajar, dan berdaya. Akses pembelajaran mandiri melalui perangkat digital — kapan saja, di mana saja.
+              </p>
+              <Link
+                to="/register"
+                className="inline-flex items-center gap-3 text-white font-medium"
+                style={{background:'#9f1239', borderRadius:'999px', padding:'1rem 2.5rem', fontSize:'1.05rem', transition:'background 0.3s'}}
+              >
+                Daftar di SELARAS
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FLOATING HELP */}
+      <button 
+        onClick={() => setShowGuide(true)}
+        className="fixed bottom-8 right-8 w-14 h-14 bg-rose-600 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform z-50 group"
+      >
+        <HelpCircle className="w-6 h-6" />
+        <span className="absolute right-full mr-4 bg-stone-900 text-white text-[10px] py-2 px-4 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+          Butuh Bantuan? Klik di sini
+        </span>
+      </button>
+
+      {/* USER GUIDE MODAL */}
+      <UserGuideModal isOpen={showGuide} onClose={() => setShowGuide(false)} />
+
     </div>
   );
 };

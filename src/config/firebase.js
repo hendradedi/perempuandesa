@@ -4,12 +4,12 @@ import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyARNZB_0NULar-2uxuuti1IOW9d0VmSSZU',
-  authDomain: 'perempuandesa-5ab24.firebaseapp.com',
-  projectId: 'perempuandesa-5ab24',
-  storageBucket: 'perempuandesa-5ab24.firebasestorage.app',
-  messagingSenderId: '8995037957',
-  appId: '1:8995037957:web:5fa859084d2fc2d8f90d6c'
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 const app = initializeApp(firebaseConfig);

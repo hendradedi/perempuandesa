@@ -5,7 +5,7 @@ import {
   signInWithEmailAndPassword,
   signOut
 } from 'firebase/auth';
-import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot, serverTimestamp, setDoc } from 'firebase/firestore';
 import { AuthContext } from './authContextObject';
 import { auth, db } from '../config/firebase';
 
@@ -149,36 +149,29 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+    let unsubscribeSnapshot = null;
+
+    const unsubscribeAuth = onAuthStateChanged(auth, async (firebaseUser) => {
+      // Clean up previous snapshot listener if any
+      if (unsubscribeSnapshot) {
+        unsubscribeSnapshot();
+        unsubscribeSnapshot = null;
+      }
+
       if (!firebaseUser) {
         setUser(null);
         setLoading(false);
         return;
       }
 
-      try {
-        try {
-          const userSnapshot = await getDoc(doc(db, 'users', firebaseUser.uid));
-          if (userSnapshot.exists()) {
-            setUser(normalizeUserData(userSnapshot.data()));
-          } else {
-            setUser(normalizeUserData({
-              uid: firebaseUser.uid,
-              name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Peserta',
-              email: firebaseUser.email,
-              points: 0,
-              badges: [],
-              completedModules: [],
-              certificates: [],
-              role: 'user',
-              active: true
-            }));
-          }
-        } catch (error) {
-          if (!isPermissionDeniedError(error)) {
-            throw error;
-          }
-          console.warn('Firestore read denied on auth state change. Using auth-only profile.');
+      // Start Realtime Listener for User Document
+      const userDocRef = doc(db, 'users', firebaseUser.uid);
+      
+      unsubscribeSnapshot = onSnapshot(userDocRef, (snapshot) => {
+        if (snapshot.exists()) {
+          setUser(normalizeUserData(snapshot.data()));
+        } else {
+          // Fallback for user without a document yet
           setUser(normalizeUserData({
             uid: firebaseUser.uid,
             name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Peserta',
@@ -191,19 +184,43 @@ export const AuthProvider = ({ children }) => {
             active: true
           }));
         }
-      } finally {
         setLoading(false);
-      }
+      }, (error) => {
+        if (!isPermissionDeniedError(error)) {
+          console.error('Error in user snapshot:', error);
+        } else {
+          console.warn('Firestore read denied on snapshot. Using fallback profile.');
+        }
+        
+        // Final fallback if snapshot fails due to permissions
+        setUser(normalizeUserData({
+          uid: firebaseUser.uid,
+          name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Peserta',
+          email: firebaseUser.email,
+          role: 'user',
+          active: true
+        }));
+        setLoading(false);
+      });
     });
 
-    return unsubscribe;
+    return () => {
+      unsubscribeAuth();
+      if (unsubscribeSnapshot) unsubscribeSnapshot();
+    };
   }, []);
+
+  const refreshUser = async () => {
+    // With onSnapshot, refreshUser is redundant but kept for compatibility
+    if (!auth.currentUser) return;
+  };
 
   const value = useMemo(() => ({
     user,
     login,
     register,
     logout,
+    refreshUser,
     isAuthenticated: !!user,
     isAdmin: !!user?.isAdmin,
     isSuperAdmin: !!user?.isSuperAdmin,
@@ -212,4 +229,4 @@ export const AuthProvider = ({ children }) => {
   }), [user, loading]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
+};

@@ -1,8 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+    "../index.html",
+    "../src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
@@ -49,6 +49,7 @@ export default {
       },
       fontFamily: {
         sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+        serif: ['Playfair Display', 'serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',

@@ -11,6 +11,7 @@ import {
 } from 'firebase/firestore';
 import { auth, db } from '../../config/firebase';
 import { useAuth } from '../../context/useAuth';
+import { learningModules } from '../../data/learningModules';
 
 const initialMaterialForm = {
   title: '',
@@ -106,7 +107,7 @@ const normalizeModuleDraft = (draft, createdBy, createdByName) => {
     title: draft.title || 'Modul Baru',
     description: draft.description || 'Deskripsi modul dari AI',
     icon: draft.icon || '📘',
-    color: ['primary', 'teal', 'coral'].includes(draft.color) ? draft.color : 'primary',
+    color: ['primary', 'teal', 'coral', 'indigo', 'rose', 'amber'].includes(draft.color) ? draft.color : 'primary',
     lessons: normalizedLessons,
     quizQuestions: normalizedQuiz,
     improvementNotes: Array.isArray(draft.improvementNotes) ? draft.improvementNotes : [],
@@ -138,6 +139,10 @@ const AdminPanel = ({ isSuperAdmin }) => {
   const [isResettingPassword, setIsResettingPassword] = useState(false);
   const [updatingUserId, setUpdatingUserId] = useState('');
   const [aiModuleDraft, setAiModuleDraft] = useState(null);
+  const [editingModuleId, setEditingModuleId] = useState(null);
+  const [isSyncingModules, setIsSyncingModules] = useState(false);
+  const [certTemplateUrl, setCertTemplateUrl] = useState('');
+  const [isSavingSettings, setIsSavingSettings] = useState(false);
 
   const adminStats = useMemo(() => {
     const totalUsers = users.length;
@@ -183,10 +188,17 @@ const AdminPanel = ({ isSuperAdmin }) => {
         ...item.data()
       }));
 
+      // Fetch settings
+      const settingsSnap = await getDocs(query(collection(db, 'settings'), limit(1)));
+      if (!settingsSnap.empty) {
+        setCertTemplateUrl(settingsSnap.docs[0].data().certTemplate || '');
+      }
+
       setUsers(nextUsers);
       setMaterials(nextMaterials);
       setModules(nextModules);
-    } catch {
+    } catch (error) {
+      console.error('Error fetching data:', error);
       setErrorMessage('Gagal memuat data admin. Cek izin Firestore Anda.');
     } finally {
       setLoading(false);
@@ -289,26 +301,90 @@ const AdminPanel = ({ isSuperAdmin }) => {
     setIsSubmittingModule(true);
 
     try {
-      await addModuleToFirestore({
+      const payload = {
         title,
         description,
         icon: moduleForm.icon || '📘',
-        color: ['primary', 'teal', 'coral'].includes(moduleForm.color) ? moduleForm.color : 'primary',
+        color: ['primary', 'teal', 'coral', 'indigo', 'rose', 'amber'].includes(moduleForm.color) ? moduleForm.color : 'primary',
         lessons,
         quizQuestions,
-        createdBy: user?.uid || '',
-        createdByName: user?.name || user?.email || 'Admin',
-        createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
-      });
+      };
+
+      if (editingModuleId) {
+        await updateDoc(doc(db, 'modules', editingModuleId), payload);
+        setSuccessMessage('Modul berhasil diperbarui.');
+      } else {
+        await addDoc(collection(db, 'modules'), {
+          ...payload,
+          status: 'approved',
+          createdBy: user?.uid || '',
+          createdByName: user?.name || user?.email || 'Admin',
+          createdAt: serverTimestamp()
+        });
+        setSuccessMessage('Modul manual berhasil ditambahkan.');
+      }
 
       setModuleForm(initialModuleForm);
-      setSuccessMessage('Modul manual berhasil ditambahkan.');
+      setEditingModuleId(null);
       await fetchAdminData();
     } catch {
-      setErrorMessage('Modul manual gagal ditambahkan.');
+      setErrorMessage(editingModuleId ? 'Gagal memperbarui modul.' : 'Gagal menambahkan modul.');
     } finally {
       setIsSubmittingModule(false);
+    }
+  };
+
+  const handleEditModule = (mod) => {
+    setEditingModuleId(mod.id);
+    const lTxt = (mod.lessons || []).map(l => `${l.title} | ${l.duration} | ${l.content}`).join('\n');
+    const qTxt = (mod.quizQuestions || []).map(q => 
+      `${q.question} | ${q.options[0]} | ${q.options[1]} | ${q.options[2]} | ${q.options[3]} | ${q.correctAnswer} | ${q.explanation}`
+    ).join('\n');
+
+    setModuleForm({
+      title: mod.title,
+      description: mod.description,
+      icon: mod.icon || '📘',
+      color: mod.color || 'primary',
+      lessonsText: lTxt,
+      quizText: qTxt
+    });
+    window.scrollTo({ top: 600, behavior: 'smooth' });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingModuleId(null);
+    setModuleForm(initialModuleForm);
+  };
+
+  const handleSyncModules = async () => {
+    if (!window.confirm('Sinkronisasi akan memindahkan modul sistem ke database agar bisa diedit. Lanjutkan?')) return;
+    setIsSyncingModules(true);
+    clearMessages();
+    try {
+      let count = 0;
+      for (const mod of learningModules) {
+        const exists = modules.find(m => m.title === mod.title);
+        if (!exists) {
+          await addDoc(collection(db, 'modules'), {
+            ...mod,
+            source: 'system',
+            status: 'approved',
+            createdBy: user?.uid,
+            createdByName: 'System Sync',
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          });
+          count++;
+        }
+      }
+      setSuccessMessage(`Berhasil sinkronisasi ${count} modul baru ke database.`);
+      await fetchAdminData();
+    } catch {
+      setErrorMessage('Gagal melakukan sinkronisasi modul.');
+    } finally {
+      setIsSyncingModules(false);
     }
   };
 
@@ -483,135 +559,150 @@ const AdminPanel = ({ isSuperAdmin }) => {
     }
   };
 
+  const handleSaveSettings = async (e) => {
+    e.preventDefault();
+    setIsSavingSettings(true);
+    clearMessages();
+    try {
+      const settingsSnap = await getDocs(query(collection(db, 'settings'), limit(1)));
+      if (!settingsSnap.empty) {
+        await updateDoc(doc(db, 'settings', settingsSnap.docs[0].id), {
+          certTemplate: certTemplateUrl,
+          updatedAt: serverTimestamp()
+        });
+      } else {
+        await addDoc(collection(db, 'settings'), {
+          certTemplate: certTemplateUrl,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+      }
+      setSuccessMessage('Pengaturan sertifikat berhasil disimpan.');
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      setErrorMessage('Gagal menyimpan pengaturan.');
+    } finally {
+      setIsSavingSettings(false);
+    }
+  };
+
+  const S = {
+    page:    { minHeight:'100vh', background:'#faf9f8', fontFamily:"'Plus Jakarta Sans', sans-serif", color:'#1c1917' },
+    wrap:    { maxWidth:'1280px', margin:'0 auto', padding:'3rem 2rem 5rem' },
+    card:    { background:'#fff', borderRadius:'20px', border:'1px solid #f5f5f4', boxShadow:'0 2px 8px rgba(28,25,23,0.05)', padding:'1.75rem' },
+    badge:   { display:'inline-flex', alignItems:'center', gap:'6px', background:'#f5f5f4', border:'1px solid #e7e5e4', borderRadius:'999px', padding:'4px 14px', fontSize:'11px', fontWeight:600, color:'#78716c', letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:'1rem' },
+    input:   { width:'100%', padding:'10px 14px', borderRadius:'12px', border:'1px solid #e7e5e4', fontSize:'0.875rem', outline:'none', fontFamily:'inherit', boxSizing:'border-box', background:'#fafaf9' },
+    btn:     { width:'100%', padding:'12px', borderRadius:'12px', fontWeight:700, fontSize:'0.9rem', cursor:'pointer', border:'none', transition:'all 0.2s' },
+    label:   { display:'block', fontSize:'11px', fontWeight:700, color:'#a8a29e', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:'6px' },
+  };
+
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center px-4">
-        <p className="text-slate-600">Memuat data admin...</p>
+      <div style={{...S.page, display:'flex', alignItems:'center', justifyContent:'center'}}>
+        <p style={{color:'#78716c'}}>Memuat data admin...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-2">Panel Admin</h1>
-          <p className="text-slate-600">
-            Kelola registrasi pengguna, materi, dan modul. Asisten admin dapat membantu menyusun modul dengan AI.
+    <div style={S.page}>
+      <div style={S.wrap}>
+
+        {/* Header */}
+        <div style={{marginBottom:'2.5rem'}}>
+          <div style={S.badge}>Pusat Kontrol SELARAS</div>
+          <h1 style={{fontFamily:"'Playfair Display', serif", fontSize:'clamp(1.8rem,4vw,2.8rem)', color:'#1c1917', marginBottom:'0.5rem', fontWeight:600}}>
+            Panel <span style={{color:'#9f1239', fontStyle:'italic'}}>Admin</span>
+          </h1>
+          <p style={{color:'#78716c', fontWeight:300, fontSize:'1rem'}}>
+            Kelola pengguna, materi, dan modul platform SELARAS. Asisten admin dapat menyusun modul dengan bantuan AI.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-6 gap-4 mb-8">
-          <div className="card">
-            <p className="text-sm text-slate-600">Total Pengguna</p>
-            <p className="text-3xl font-bold text-primary-700 mt-2">{adminStats.totalUsers}</p>
-          </div>
-          <div className="card">
-            <p className="text-sm text-slate-600">Pengguna Aktif</p>
-            <p className="text-3xl font-bold text-teal-600 mt-2">{adminStats.activeUsers}</p>
-          </div>
-          <div className="card">
-            <p className="text-sm text-slate-600">Admin Utama</p>
-            <p className="text-3xl font-bold text-coral-600 mt-2">{adminStats.adminUsers}</p>
-          </div>
-          <div className="card">
-            <p className="text-sm text-slate-600">Asisten Admin</p>
-            <p className="text-3xl font-bold text-amber-500 mt-2">{adminStats.assistantAdmins}</p>
-          </div>
-          <div className="card">
-            <p className="text-sm text-slate-600">Materi Tambahan</p>
-            <p className="text-3xl font-bold text-primary-700 mt-2">{adminStats.totalMaterials}</p>
-          </div>
-          <div className="card">
-            <p className="text-sm text-slate-600">Modul Aktif</p>
-            <p className="text-3xl font-bold text-teal-600 mt-2">{adminStats.totalModules}</p>
-          </div>
+        {/* Stats Row */}
+        <div style={{display:'grid', gridTemplateColumns:'repeat(6,1fr)', gap:'1rem', marginBottom:'2rem'}}>
+          {[
+            { label:'Total Pengguna',   value: adminStats.totalUsers,      color:'#9f1239', bg:'#fff1f2' },
+            { label:'Pengguna Aktif',   value: adminStats.activeUsers,     color:'#065f46', bg:'#d1fae5' },
+            { label:'Admin Utama',      value: adminStats.adminUsers,      color:'#92400e', bg:'#fef3c7' },
+            { label:'Asisten Admin',    value: adminStats.assistantAdmins, color:'#1e40af', bg:'#dbeafe' },
+            { label:'Materi Tambahan',  value: adminStats.totalMaterials,  color:'#5b21b6', bg:'#ede9fe' },
+            { label:'Modul Aktif',      value: adminStats.totalModules,    color:'#134e4a', bg:'#ccfbf1' },
+          ].map((st,i) => (
+            <div key={i} style={{...S.card, padding:'1.25rem'}}>
+              <p style={{fontSize:'10px', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', color:'#a8a29e', marginBottom:'0.75rem'}}>{st.label}</p>
+              <div style={{display:'flex', alignItems:'center', justifyContent:'space-between'}}>
+                <p style={{fontFamily:"'Playfair Display', serif", fontSize:'2rem', color:'#1c1917', lineHeight:1}}>{st.value}</p>
+                <div style={{width:'36px', height:'36px', borderRadius:'10px', background:st.bg, display:'flex', alignItems:'center', justifyContent:'center'}}>
+                  <div style={{width:'8px', height:'8px', borderRadius:'50%', background:st.color}}></div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
 
-        {errorMessage && (
-          <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {errorMessage}
-          </div>
-        )}
-        {successMessage && (
-          <div className="mb-6 rounded-xl border border-teal-200 bg-teal-50 px-4 py-3 text-sm text-teal-700">
-            {successMessage}
-          </div>
-        )}
+        {/* Alerts */}
+        {errorMessage && <div style={{marginBottom:'1rem', borderRadius:'12px', border:'1px solid #fecaca', background:'#fef2f2', padding:'12px 16px', fontSize:'0.875rem', color:'#991b1b'}}>{errorMessage}</div>}
+        {successMessage && <div style={{marginBottom:'1.5rem', borderRadius:'12px', border:'1px solid #a7f3d0', background:'#f0fdf4', padding:'12px 16px', fontSize:'0.875rem', color:'#065f46'}}>{successMessage}</div>}
 
-        <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
-          <section className="xl:col-span-3 card overflow-hidden">
-            <div className="flex items-center justify-between mb-4 gap-3">
-              <h2 className="text-xl font-bold text-slate-900">Pengguna Registrasi</h2>
-              <button onClick={fetchAdminData} className="btn-outline !px-4 !py-2 text-sm">Refresh</button>
+        {/* Row 1: Users table + Add Material */}
+        <div style={{display:'grid', gridTemplateColumns:'1fr 380px', gap:'1.5rem', marginBottom:'1.5rem', alignItems:'start'}}>
+
+          {/* Users Table */}
+          <div style={S.card}>
+            <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'1.25rem'}}>
+              <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:'1.2rem', color:'#1c1917', fontWeight:600}}>Pengguna Registrasi</h2>
+              <button onClick={fetchAdminData} style={{padding:'8px 16px', borderRadius:'10px', border:'1px solid #e7e5e4', background:'#faf9f8', fontSize:'0.8rem', fontWeight:600, cursor:'pointer', color:'#57534e'}}>Refresh</button>
             </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[860px] text-sm">
+            <div style={{overflowX:'auto'}}>
+              <table style={{width:'100%', borderCollapse:'collapse', fontSize:'0.8rem'}}>
                 <thead>
-                  <tr className="border-b border-slate-200 text-left text-slate-600">
-                    <th className="py-3 pr-3">Nama</th>
-                    <th className="py-3 pr-3">Email</th>
-                    <th className="py-3 pr-3">Role</th>
-                    <th className="py-3 pr-3">Status</th>
-                    <th className="py-3 pr-3">Poin</th>
-                    <th className="py-3">Aksi</th>
+                  <tr style={{borderBottom:'2px solid #f5f5f4', textAlign:'left'}}>
+                    {['Nama','Email','Role','Status','Poin','Aksi'].map(h => (
+                      <th key={h} style={{padding:'10px 12px', fontSize:'10px', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em', color:'#a8a29e'}}>{h}</th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
+                  {users.length === 0 && (
+                    <tr><td colSpan={6} style={{padding:'2rem', textAlign:'center', color:'#a8a29e'}}>Belum ada pengguna terdaftar.</td></tr>
+                  )}
                   {users.map((item) => {
                     const userRole = item.role || 'user';
                     const userActive = item.active !== false;
-
+                    const roleColor = userRole==='admin' ? {bg:'#fff1f2',color:'#9f1239'} : userRole==='assistant_admin' ? {bg:'#fef3c7',color:'#92400e'} : {bg:'#f5f5f4',color:'#57534e'};
                     return (
-                      <tr key={item.id} className="border-b border-slate-100 align-top">
-                        <td className="py-3 pr-3">
-                          <p className="font-semibold text-slate-900">{item.name || '-'}</p>
-                          <p className="text-xs text-slate-500">Dibuat: {formatTimestamp(item.createdAt)}</p>
+                      <tr key={item.id} style={{borderBottom:'1px solid #fafaf9'}}>
+                        <td style={{padding:'12px'}}>
+                          <p style={{fontWeight:600, color:'#1c1917'}}>{item.name || '-'}</p>
+                          <p style={{fontSize:'11px', color:'#a8a29e'}}>{formatTimestamp(item.createdAt)}</p>
                         </td>
-                        <td className="py-3 pr-3 text-slate-700">{item.email || '-'}</td>
-                        <td className="py-3 pr-3">
-                          <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${
-                            userRole === 'admin'
-                              ? 'bg-coral-100 text-coral-700'
-                              : userRole === 'assistant_admin'
-                              ? 'bg-amber-100 text-amber-700'
-                              : 'bg-primary-100 text-primary-700'
-                          }`}>
-                            {userRole}
+                        <td style={{padding:'12px', color:'#57534e', fontSize:'0.8rem'}}>{item.email || '-'}</td>
+                        <td style={{padding:'12px'}}>
+                          <span style={{padding:'3px 10px', borderRadius:'999px', fontSize:'11px', fontWeight:700, background:roleColor.bg, color:roleColor.color}}>{userRole}</span>
+                        </td>
+                        <td style={{padding:'12px'}}>
+                          <span style={{padding:'3px 10px', borderRadius:'999px', fontSize:'11px', fontWeight:700, background: userActive ? '#d1fae5' : '#f5f5f4', color: userActive ? '#065f46' : '#78716c'}}>
+                            {userActive ? 'Aktif' : 'Nonaktif'}
                           </span>
                         </td>
-                        <td className="py-3 pr-3">
-                          <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${
-                            userActive ? 'bg-teal-100 text-teal-700' : 'bg-slate-200 text-slate-700'
-                          }`}>
-                            {userActive ? 'aktif' : 'nonaktif'}
-                          </span>
-                        </td>
-                        <td className="py-3 pr-3 font-semibold text-slate-800">{item.points || 0}</td>
-                        <td className="py-3">
+                        <td style={{padding:'12px', fontWeight:700, color:'#1c1917'}}>{item.points || 0}</td>
+                        <td style={{padding:'12px'}}>
                           {isSuperAdmin ? (
-                            <div className="flex flex-col gap-2 min-w-44">
-                              <select
-                                value={userRole}
-                                onChange={(event) => handleRoleChange(item, event.target.value)}
-                                disabled={updatingUserId === item.id}
-                                className="form-input !py-2 !px-3 text-xs"
-                              >
-                                <option value="user">user</option>
-                                <option value="assistant_admin">assistant_admin</option>
-                                <option value="admin">admin</option>
+                            <div style={{display:'flex', flexDirection:'column', gap:'6px', minWidth:'160px'}}>
+                              <select value={userRole} onChange={(e) => handleRoleChange(item, e.target.value)} disabled={updatingUserId === item.id}
+                                style={{...S.input, fontSize:'12px', padding:'6px 10px'}}>
+                                <option value="user">User</option>
+                                <option value="assistant_admin">Assistant Admin</option>
+                                <option value="admin">Admin</option>
                               </select>
-                              <button
-                                onClick={() => toggleActive(item)}
-                                disabled={updatingUserId === item.id}
-                                className="btn-outline !px-3 !py-1.5 text-xs disabled:opacity-50"
-                              >
+                              <button onClick={() => toggleActive(item)} disabled={updatingUserId === item.id}
+                                style={{padding:'6px 10px', borderRadius:'8px', fontSize:'11px', fontWeight:700, cursor:'pointer', border:'1px solid', background: userActive ? '#fff1f2' : '#f0fdf4', color: userActive ? '#9f1239' : '#065f46', borderColor: userActive ? '#fecdd3' : '#a7f3d0'}}>
                                 {userActive ? 'Nonaktifkan' : 'Aktifkan'}
                               </button>
                             </div>
                           ) : (
-                            <span className="text-xs text-slate-500">Asisten admin hanya dapat melihat data user.</span>
+                            <span style={{fontSize:'12px', color:'#a8a29e', fontStyle:'italic'}}>Hanya lihat</span>
                           )}
                         </td>
                       </tr>
@@ -620,264 +711,204 @@ const AdminPanel = ({ isSuperAdmin }) => {
                 </tbody>
               </table>
             </div>
-          </section>
+          </div>
 
-          <section className="xl:col-span-2 space-y-6">
-            <div className="card">
-              <h2 className="text-xl font-bold text-slate-900 mb-4">Tambah Materi Baru</h2>
-              <form onSubmit={handleAddMaterial} className="space-y-4">
+          {/* Add Material + Reset Password */}
+          <div style={{display:'flex', flexDirection:'column', gap:'1.25rem'}}>
+            <div style={S.card}>
+              <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:'1.15rem', color:'#1c1917', fontWeight:600, marginBottom:'1.25rem'}}>Tambah Materi</h2>
+              <form onSubmit={handleAddMaterial} style={{display:'flex', flexDirection:'column', gap:'12px'}}>
+                {[
+                  {name:'title', placeholder:'Judul materi', label:'Judul'},
+                  {name:'description', placeholder:'Deskripsi singkat', label:'Deskripsi'},
+                  {name:'duration', placeholder:'Contoh: 15 menit', label:'Durasi'},
+                ].map(f => (
+                  <div key={f.name}>
+                    <label style={S.label}>{f.label}</label>
+                    <input name={f.name} value={materialForm[f.name]} onChange={handleMaterialInputChange} placeholder={f.placeholder} style={S.input} />
+                  </div>
+                ))}
                 <div>
-                  <label htmlFor="title" className="form-label">Judul Materi</label>
-                  <input
-                    id="title"
-                    name="title"
-                    value={materialForm.title}
-                    onChange={handleMaterialInputChange}
-                    className="form-input"
-                    placeholder="Contoh: Strategi UMKM Rumahan"
-                  />
+                  <label style={S.label}>Isi Materi</label>
+                  <textarea name="content" value={materialForm.content} onChange={handleMaterialInputChange} placeholder="Isi lengkap materi..." style={{...S.input, minHeight:'100px', resize:'vertical'}} />
                 </div>
-
-                <div>
-                  <label htmlFor="description" className="form-label">Deskripsi Singkat</label>
-                  <input
-                    id="description"
-                    name="description"
-                    value={materialForm.description}
-                    onChange={handleMaterialInputChange}
-                    className="form-input"
-                    placeholder="Ringkasan manfaat materi"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="duration" className="form-label">Durasi</label>
-                  <input
-                    id="duration"
-                    name="duration"
-                    value={materialForm.duration}
-                    onChange={handleMaterialInputChange}
-                    className="form-input"
-                    placeholder="Contoh: 15 menit"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="content" className="form-label">Isi Materi</label>
-                  <textarea
-                    id="content"
-                    name="content"
-                    value={materialForm.content}
-                    onChange={handleMaterialInputChange}
-                    className="form-input min-h-32 resize-y"
-                    placeholder="Isi lengkap materi pembelajaran..."
-                  />
-                </div>
-
-                <button type="submit" disabled={isSubmittingMaterial} className="btn-primary w-full disabled:opacity-50">
+                <button type="submit" disabled={isSubmittingMaterial} style={{...S.btn, background: isSubmittingMaterial ? '#e7e5e4' : '#9f1239', color:'#fff'}}>
                   {isSubmittingMaterial ? 'Menyimpan...' : 'Simpan Materi'}
                 </button>
               </form>
             </div>
 
             {isSuperAdmin && (
-              <div className="card">
-                <h2 className="text-lg font-bold text-slate-900 mb-3">Reset Password User</h2>
-                <p className="text-xs text-slate-600 mb-4">Khusus admin utama untuk membantu user yang lupa password.</p>
-                <form onSubmit={handleResetUserPassword} className="space-y-3">
-                  <input
-                    type="email"
-                    name="targetEmail"
-                    value={resetForm.targetEmail}
-                    onChange={handleResetPasswordInput}
-                    className="form-input"
-                    placeholder="Email user"
-                  />
-                  <input
-                    type="text"
-                    name="newPassword"
-                    value={resetForm.newPassword}
-                    onChange={handleResetPasswordInput}
-                    className="form-input"
-                    placeholder="Password baru sementara (min 8 karakter)"
-                  />
-                  <button type="submit" className="btn-outline w-full" disabled={isResettingPassword}>
+              <div style={{...S.card, background:'#fff9f9', borderColor:'#fecdd3'}}>
+                <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:'1.1rem', color:'#1c1917', fontWeight:600, marginBottom:'4px'}}>Reset Password User</h2>
+                <p style={{fontSize:'12px', color:'#a8a29e', marginBottom:'1rem'}}>Khusus admin utama untuk membantu user yang lupa password.</p>
+                <form onSubmit={handleResetUserPassword} style={{display:'flex', flexDirection:'column', gap:'10px'}}>
+                  <input type="email" name="targetEmail" value={resetForm.targetEmail} onChange={handleResetPasswordInput} placeholder="Email user" style={S.input} />
+                  <input type="text" name="newPassword" value={resetForm.newPassword} onChange={handleResetPasswordInput} placeholder="Password baru (min 8 karakter)" style={S.input} />
+                  <button type="submit" disabled={isResettingPassword} style={{...S.btn, background:'#fff1f2', color:'#9f1239', border:'1px solid #fecdd3'}}>
                     {isResettingPassword ? 'Memproses...' : 'Ubah Password User'}
                   </button>
                 </form>
               </div>
             )}
-          </section>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
-          <section className="card">
-            <h2 className="text-xl font-bold text-slate-900 mb-4">Tambah Modul Manual</h2>
-            <p className="text-sm text-slate-600 mb-4">Format pelajaran per baris: Judul | Durasi | Konten</p>
-            <p className="text-sm text-slate-600 mb-4">Format kuis per baris: Pertanyaan | OpsiA | OpsiB | OpsiC | OpsiD | IndexBenar(0-3) | Penjelasan</p>
+        {/* Row 2: Add Module Manual + AI Module */}
+        <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'1.5rem', marginBottom:'1.5rem'}}>
 
-            <form onSubmit={handleAddManualModule} className="space-y-3">
-              <input
-                name="title"
-                value={moduleForm.title}
-                onChange={handleModuleInputChange}
-                className="form-input"
-                placeholder="Judul modul"
-              />
-              <input
-                name="description"
-                value={moduleForm.description}
-                onChange={handleModuleInputChange}
-                className="form-input"
-                placeholder="Deskripsi modul"
-              />
-
-              <div className="grid grid-cols-2 gap-3">
-                <input
-                  name="icon"
-                  value={moduleForm.icon}
-                  onChange={handleModuleInputChange}
-                  className="form-input"
-                  placeholder="Ikon, contoh 📘"
-                />
-                <select name="color" value={moduleForm.color} onChange={handleModuleInputChange} className="form-input">
-                  <option value="primary">primary</option>
-                  <option value="teal">teal</option>
-                  <option value="coral">coral</option>
+          {/* Manual Module */}
+          <div style={S.card}>
+            <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'1rem'}}>
+              <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:'1.15rem', color:'#1c1917', fontWeight:600}}>{editingModuleId ? 'Edit Modul' : 'Tambah Modul Manual'}</h2>
+              {editingModuleId && (
+                <button onClick={handleCancelEdit} style={{fontSize:'11px', color:'#9f1239', fontWeight:700, background:'none', border:'none', cursor:'pointer'}}>Batal Edit</button>
+              )}
+            </div>
+            <div style={{background:'#fffbeb', border:'1px solid #fde68a', borderRadius:'12px', padding:'12px', marginBottom:'1rem', fontSize:'12px', color:'#92400e'}}>
+              <p><strong>Format pelajaran (per baris):</strong> Judul | Durasi | Konten</p>
+              <p style={{marginTop:'4px'}}><strong>Format kuis (per baris):</strong> Pertanyaan | OpsiA | B | C | D | IndexBenar(0-3) | Penjelasan</p>
+            </div>
+            <form onSubmit={handleAddManualModule} style={{display:'flex', flexDirection:'column', gap:'10px'}}>
+              <input name="title" value={moduleForm.title} onChange={handleModuleInputChange} placeholder="Judul modul" style={S.input} />
+              <input name="description" value={moduleForm.description} onChange={handleModuleInputChange} placeholder="Deskripsi modul" style={S.input} />
+              <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px'}}>
+                <input name="icon" value={moduleForm.icon} onChange={handleModuleInputChange} placeholder="Ikon" style={S.input} />
+                <select name="color" value={moduleForm.color} onChange={handleModuleInputChange} style={S.input}>
+                  <option value="primary">primary (merah)</option>
+                  <option value="teal">teal (hijau)</option>
+                  <option value="coral">coral (orange)</option>
+                  <option value="indigo">indigo (biru)</option>
+                  <option value="rose">rose (pink)</option>
+                  <option value="amber">amber (kuning)</option>
                 </select>
               </div>
-
-              <textarea
-                name="lessonsText"
-                value={moduleForm.lessonsText}
-                onChange={handleModuleInputChange}
-                className="form-input min-h-32"
-                placeholder="Dasar Kewirausahaan | 15 menit | Materi pembuka..."
-              />
-              <textarea
-                name="quizText"
-                value={moduleForm.quizText}
-                onChange={handleModuleInputChange}
-                className="form-input min-h-32"
-                placeholder="Apa itu modal usaha? | Tabungan | Dana usaha | Biaya listrik | Pajak | 1 | Modal usaha adalah..."
-              />
-
-              <button type="submit" className="btn-primary w-full" disabled={isSubmittingModule}>
-                {isSubmittingModule ? 'Menyimpan Modul...' : 'Simpan Modul Manual'}
+              <textarea name="lessonsText" value={moduleForm.lessonsText} onChange={handleModuleInputChange} placeholder="Dasar Kewirausahaan | 15 menit | Materi pembuka..." style={{...S.input, minHeight:'90px', resize:'vertical'}} />
+              <textarea name="quizText" value={moduleForm.quizText} onChange={handleModuleInputChange} placeholder="Apa itu modal? | Tabungan | Dana | Listrik | Pajak | 1 | Modal adalah..." style={{...S.input, minHeight:'90px', resize:'vertical'}} />
+              <button type="submit" disabled={isSubmittingModule} style={{...S.btn, background: isSubmittingModule ? '#e7e5e4' : (editingModuleId ? '#4338ca' : '#065f46'), color:'#fff'}}>
+                {isSubmittingModule ? 'Menyimpan...' : (editingModuleId ? 'Update Modul' : 'Simpan Modul Manual')}
               </button>
             </form>
-          </section>
+          </div>
 
-          <section className="card">
-            <h2 className="text-xl font-bold text-slate-900 mb-4">Asisten Admin AI (Penyusun Modul)</h2>
-            <form onSubmit={handleGenerateModuleDraft} className="space-y-3">
-              <input
-                name="topic"
-                value={aiModuleForm.topic}
-                onChange={handleAiModuleInputChange}
-                className="form-input"
-                placeholder="Topik modul, contoh: Literasi Keuangan Keluarga"
-              />
-              <input
-                name="targetLevel"
-                value={aiModuleForm.targetLevel}
-                onChange={handleAiModuleInputChange}
-                className="form-input"
-                placeholder="Level peserta"
-              />
-              <input
-                name="learningGoal"
-                value={aiModuleForm.learningGoal}
-                onChange={handleAiModuleInputChange}
-                className="form-input"
-                placeholder="Tujuan belajar"
-              />
-              <input
-                type="number"
-                min={3}
-                max={7}
-                name="lessonCount"
-                value={aiModuleForm.lessonCount}
-                onChange={handleAiModuleInputChange}
-                className="form-input"
-                placeholder="Jumlah pelajaran"
-              />
-
-              <button type="submit" className="btn-outline w-full" disabled={isGeneratingModule}>
+          {/* AI Module */}
+          <div style={{...S.card, background:'linear-gradient(135deg, #fff 0%, #f5f3ff 100%)'}}>
+            <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:'1.15rem', color:'#1c1917', fontWeight:600, marginBottom:'4px'}}>
+              Asisten Admin AI
+            </h2>
+            <p style={{fontSize:'12px', color:'#a8a29e', marginBottom:'1.25rem'}}>Penyusun modul otomatis menggunakan kecerdasan buatan.</p>
+            <form onSubmit={handleGenerateModuleDraft} style={{display:'flex', flexDirection:'column', gap:'10px'}}>
+              <input name="topic" value={aiModuleForm.topic} onChange={handleAiModuleInputChange} placeholder="Topik modul" style={S.input} />
+              <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px'}}>
+                <input name="targetLevel" value={aiModuleForm.targetLevel} onChange={handleAiModuleInputChange} placeholder="Level peserta" style={S.input} />
+                <input type="number" min={3} max={7} name="lessonCount" value={aiModuleForm.lessonCount} onChange={handleAiModuleInputChange} placeholder="Jumlah pelajaran" style={S.input} />
+              </div>
+              <input name="learningGoal" value={aiModuleForm.learningGoal} onChange={handleAiModuleInputChange} placeholder="Tujuan belajar" style={S.input} />
+              <button type="submit" disabled={isGeneratingModule} style={{...S.btn, background:'#fff', color:'#5b21b6', border:'2px solid #ddd6fe'}}>
                 {isGeneratingModule ? 'AI Menyusun Draft...' : 'Generate Draft Modul AI'}
               </button>
             </form>
 
             {aiModuleDraft && (
-              <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <p className="font-semibold text-slate-900 mb-1">{aiModuleDraft.title}</p>
-                <p className="text-sm text-slate-600 mb-3">{aiModuleDraft.description}</p>
-
-                <div className="text-xs text-slate-700 space-y-1 mb-3">
-                  <p>Pelajaran: {aiModuleDraft?.lessons?.length || 0}</p>
-                  <p>Soal Kuis: {aiModuleDraft?.quizQuestions?.length || 0}</p>
+              <div style={{marginTop:'1.25rem', borderRadius:'14px', border:'1px solid #ddd6fe', background:'#fff', padding:'1rem'}}>
+                <p style={{fontWeight:700, fontSize:'1rem', color:'#1c1917', marginBottom:'4px'}}>{aiModuleDraft.title}</p>
+                <p style={{fontSize:'12px', color:'#78716c', marginBottom:'12px'}}>{aiModuleDraft.description}</p>
+                <div style={{display:'flex', gap:'12px', fontSize:'12px', fontWeight:700, color:'#5b21b6', background:'#f5f3ff', borderRadius:'10px', padding:'10px', marginBottom:'12px'}}>
+                  <span>Pelajaran: {aiModuleDraft?.lessons?.length || 0}</span>
+                  <span>Soal: {aiModuleDraft?.quizQuestions?.length || 0}</span>
                 </div>
-
-                {Array.isArray(aiModuleDraft?.improvementNotes) && aiModuleDraft.improvementNotes.length > 0 && (
-                  <div className="mb-3">
-                    <p className="text-xs font-semibold text-slate-700 mb-1">Masukan AI:</p>
-                    <ul className="list-disc list-inside text-xs text-slate-600 space-y-0.5">
-                      {aiModuleDraft.improvementNotes.map((note, index) => (
-                        <li key={index}>{note}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                <button onClick={handleApproveAiDraft} disabled={isApprovingDraft} className="btn-primary w-full">
-                  {isApprovingDraft ? 'Menyimpan...' : 'Setujui Draft AI dan Simpan Modul'}
+                <button onClick={handleApproveAiDraft} disabled={isApprovingDraft} style={{...S.btn, background:'#5b21b6', color:'#fff'}}>
+                  {isApprovingDraft ? 'Menyimpan...' : 'Setujui dan Simpan Modul'}
                 </button>
               </div>
             )}
-          </section>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
-          <section className="card">
-            <h2 className="text-lg font-bold text-slate-900 mb-3">Materi Terbaru</h2>
-            <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
-              {materials.length === 0 && (
-                <p className="text-sm text-slate-600">Belum ada materi tambahan.</p>
-              )}
-              {materials.map((item) => (
-                <div key={item.id} className="rounded-xl border border-slate-200 p-4 bg-white">
-                  <p className="font-semibold text-slate-900 mb-1">{item.title}</p>
-                  <p className="text-sm text-slate-600 mb-2">{item.description}</p>
-                  <div className="flex items-center justify-between text-xs text-slate-500 gap-2">
+        {/* Row 3: Materials list + Modules list */}
+        <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'1.5rem'}}>
+          {/* Materials List */}
+          <div style={S.card}>
+            <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:'1.15rem', color:'#1c1917', fontWeight:600, marginBottom:'1.25rem'}}>Materi Terbaru</h2>
+            <div style={{display:'flex', flexDirection:'column', gap:'10px', maxHeight:'400px', overflowY:'auto'}}>
+              {materials.length === 0 && <p style={{textAlign:'center', color:'#a8a29e', padding:'2rem', fontSize:'14px'}}>Belum ada materi tambahan.</p>}
+              {materials.map(item => (
+                <div key={item.id} style={{borderRadius:'14px', border:'1px solid #f5f5f4', padding:'14px', background:'#fafaf9'}}>
+                  <p style={{fontWeight:600, color:'#1c1917', marginBottom:'4px'}}>{item.title}</p>
+                  <p style={{fontSize:'12px', color:'#78716c', marginBottom:'8px'}}>{item.description}</p>
+                  <div style={{display:'flex', justifyContent:'space-between', fontSize:'11px', color:'#a8a29e', fontWeight:700}}>
                     <span>{item.duration || '10 menit'}</span>
                     <span>{formatTimestamp(item.createdAt)}</span>
                   </div>
                 </div>
               ))}
             </div>
-          </section>
+          </div>
 
-          <section className="card">
-            <h2 className="text-lg font-bold text-slate-900 mb-3">Modul Tersimpan</h2>
-            <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
-              {modules.length === 0 && (
-                <p className="text-sm text-slate-600">Belum ada modul buatan admin.</p>
-              )}
-              {modules.map((item) => (
-                <div key={item.id} className="rounded-xl border border-slate-200 p-4 bg-white">
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="font-semibold text-slate-900">{item.icon || '📘'} {item.title}</p>
-                    <span className="text-[10px] rounded-full bg-primary-50 text-primary-700 px-2 py-1">{item.status || 'approved'}</span>
+          {/* Modules List */}
+          <div style={S.card}>
+            <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'1.25rem'}}>
+              <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:'1.15rem', color:'#1c1917', fontWeight:600}}>Modul Tersimpan</h2>
+              <button 
+                onClick={handleSyncModules} 
+                disabled={isSyncingModules}
+                style={{fontSize:'10px', fontWeight:700, background:'#f0fdf4', color:'#065f46', border:'1px solid #a7f3d0', padding:'6px 12px', borderRadius:'10px', cursor:'pointer'}}
+              >
+                {isSyncingModules ? 'Sinkronisasi...' : 'Sinkron Modul Sistem'}
+              </button>
+            </div>
+            <div style={{display:'flex', flexDirection:'column', gap:'10px', maxHeight:'400px', overflowY:'auto'}}>
+              {modules.length === 0 && <p style={{textAlign:'center', color:'#a8a29e', padding:'2rem', fontSize:'14px'}}>Belum ada modul buatan admin.</p>}
+              {modules.map(item => (
+                <div key={item.id} style={{borderRadius:'14px', border:'1px solid #f5f5f4', padding:'14px', background:'#fafaf9', position:'relative'}}>
+                  <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'6px'}}>
+                    <p style={{fontWeight:600, color:'#1c1917'}}>{item.icon || '📘'} {item.title}</p>
+                    <div style={{display:'flex', gap:'8px', alignItems:'center'}}>
+                      <span style={{fontSize:'10px', padding:'3px 10px', borderRadius:'999px', background:'#d1fae5', color:'#065f46', fontWeight:700}}>{item.status || 'approved'}</span>
+                      <button onClick={() => handleEditModule(item)} style={{fontSize:'10px', fontWeight:700, color:'#4338ca', background:'#eef2ff', border:'1px solid #c7d2fe', padding:'3px 10px', borderRadius:'999px', cursor:'pointer'}}>Edit</button>
+                    </div>
                   </div>
-                  <p className="text-sm text-slate-600 mt-1">{item.description}</p>
-                  <div className="text-xs text-slate-500 mt-2 flex items-center justify-between">
-                    <span>{item.lessons?.length || 0} pelajaran</span>
+                  <p style={{fontSize:'12px', color:'#78716c', marginBottom:'8px'}}>{item.description}</p>
+                  <div style={{display:'flex', justifyContent:'space-between', fontSize:'11px', color:'#a8a29e', fontWeight:700}}>
+                    <span style={{color:'#5b21b6'}}>{item.lessons?.length || 0} Pelajaran</span>
                     <span>{formatTimestamp(item.createdAt)}</span>
                   </div>
                 </div>
               ))}
             </div>
-          </section>
+          </div>
+        </div>
+
+        {/* Row 4: Certificate Management */}
+        <div style={{marginTop:'1.5rem'}}>
+          <div style={{...S.card, background:'linear-gradient(to right, #fff, #faf9f8)'}}>
+            <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:'1.15rem', color:'#1c1917', fontWeight:600, marginBottom:'4px'}}>Manajemen Sertifikat</h2>
+            <p style={{fontSize:'12px', color:'#78716c', marginBottom:'1.5rem'}}>Atur desain sertifikat yang akan otomatis memuat nama peserta saat diunduh.</p>
+            
+            <form onSubmit={handleSaveSettings} style={{display:'grid', gridTemplateColumns:'1fr 200px', gap:'1rem', alignItems:'end'}}>
+              <div>
+                <label style={S.label}>URL Template Sertifikat (Gambar PNG/JPG)</label>
+                <input 
+                  value={certTemplateUrl} 
+                  onChange={(e) => setCertTemplateUrl(e.target.value)} 
+                  placeholder="https://example.com/sertifikat-template.png" 
+                  style={S.input} 
+                />
+              </div>
+              <button type="submit" disabled={isSavingSettings} style={{...S.btn, background:'#1c1917', color:'#fff'}}>
+                {isSavingSettings ? 'Menyimpan...' : 'Simpan Template'}
+              </button>
+            </form>
+
+            {certTemplateUrl && (
+              <div style={{marginTop:'1.5rem'}}>
+                <p style={S.label}>Preview Template:</p>
+                <div style={{borderRadius:'12px', overflow:'hidden', border:'1px solid #e7e5e4', maxWidth:'400px', background:'#f5f5f4'}}>
+                  <img src={certTemplateUrl} alt="Template Preview" style={{width:'100%', display:'block'}} />
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
