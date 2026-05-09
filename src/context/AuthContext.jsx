@@ -108,6 +108,14 @@ export const AuthProvider = ({ children }) => {
 
   const register = async ({ name, email, password }) => {
     const credential = await createUserWithEmailAndPassword(auth, email, password);
+    const emailLower = email.toLowerCase();
+
+    let role = 'user';
+    if (adminEmails.includes(emailLower)) {
+      role = 'admin';
+    } else if (assistantAdminEmails.includes(emailLower)) {
+      role = 'assistant_admin';
+    }
 
     const newUserData = {
       uid: credential.user.uid,
@@ -117,7 +125,7 @@ export const AuthProvider = ({ children }) => {
       badges: [],
       completedModules: [],
       certificates: [],
-      role: 'user',
+      role,
       active: true,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
