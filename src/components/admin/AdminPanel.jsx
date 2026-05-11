@@ -45,10 +45,7 @@ const initialAiModuleForm = {
   lessonCount: 3
 };
 
-const initialResetForm = {
-  targetEmail: '',
-  newPassword: ''
-};
+
 
 const formatTimestamp = (rawTimestamp) => {
   if (!rawTimestamp || !rawTimestamp.toDate) {
@@ -155,7 +152,6 @@ const AdminPanel = ({ isSuperAdmin }) => {
   const [materialForm, setMaterialForm] = useState(initialMaterialForm);
   const [moduleForm, setModuleForm] = useState(initialModuleForm);
   const [aiModuleForm, setAiModuleForm] = useState(initialAiModuleForm);
-  const [resetForm, setResetForm] = useState(initialResetForm);
   const [isSubmittingMaterial, setIsSubmittingMaterial] = useState(false);
   const [isSubmittingModule, setIsSubmittingModule] = useState(false);
   const [isGeneratingModule, setIsGeneratingModule] = useState(false);
@@ -551,27 +547,20 @@ const AdminPanel = ({ isSuperAdmin }) => {
     await updateUserField(targetUser, { active: !(targetUser.active !== false) });
   };
 
-  const handleResetPasswordInput = (event) => {
-    const { name, value } = event.target;
-    setResetForm((prev) => ({
-      ...prev,
-      [name]: value
-    }));
-  };
 
-  const handleResetUserPassword = async (event) => {
-    event.preventDefault();
 
+  const handleResetUserPassword = async (targetEmail) => {
     if (!isSuperAdmin) {
       setErrorMessage('Fitur reset password hanya untuk admin utama.');
       return;
     }
 
-    const targetEmail = resetForm.targetEmail.trim();
-    const newPassword = resetForm.newPassword.trim();
-
-    if (!targetEmail || !newPassword) {
-      setErrorMessage('Email user dan password baru wajib diisi.');
+    const newPassword = window.prompt(`Masukkan password baru untuk ${targetEmail} (min 8 karakter):`);
+    
+    if (newPassword === null) return; // Cancelled
+    
+    if (newPassword.trim().length < 8) {
+      setErrorMessage('Password baru minimal 8 karakter.');
       return;
     }
 
@@ -591,7 +580,7 @@ const AdminPanel = ({ isSuperAdmin }) => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${idToken}`
         },
-        body: JSON.stringify({ targetEmail, newPassword })
+        body: JSON.stringify({ targetEmail: targetEmail.trim(), newPassword: newPassword.trim() })
       });
 
       const data = await response.json();
@@ -600,8 +589,7 @@ const AdminPanel = ({ isSuperAdmin }) => {
         throw new Error(data?.error || 'Gagal reset password user.');
       }
 
-      setResetForm(initialResetForm);
-      setSuccessMessage('Password user berhasil diubah oleh admin utama.');
+      setSuccessMessage(`Password untuk ${targetEmail} berhasil diperbarui.`);
     } catch (error) {
       setErrorMessage(error.message || 'Terjadi kesalahan saat reset password user.');
     } finally {
@@ -750,6 +738,10 @@ const AdminPanel = ({ isSuperAdmin }) => {
                                 style={{padding:'6px 10px', borderRadius:'8px', fontSize:'11px', fontWeight:700, cursor:'pointer', border:'1px solid', background: userActive ? '#fff1f2' : '#f0fdf4', color: userActive ? '#9f1239' : '#065f46', borderColor: userActive ? '#fecdd3' : '#a7f3d0'}}>
                                 {userActive ? 'Nonaktifkan' : 'Aktifkan'}
                               </button>
+                              <button onClick={() => handleResetUserPassword(item.email)} disabled={isResettingPassword}
+                                style={{padding:'6px 10px', borderRadius:'8px', fontSize:'11px', fontWeight:700, cursor:'pointer', border:'1px solid #e7e5e4', background:'#fff', color:'#1c1917'}}>
+                                🔐 Reset PW
+                              </button>
                             </div>
                           ) : (
                             <span style={{fontSize:'12px', color:'#a8a29e', fontStyle:'italic'}}>Hanya lihat</span>
@@ -787,20 +779,6 @@ const AdminPanel = ({ isSuperAdmin }) => {
                 </button>
               </form>
             </div>
-
-            {isSuperAdmin && (
-              <div style={{...S.card, background:'#fff9f9', borderColor:'#fecdd3'}}>
-                <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:'1.1rem', color:'#1c1917', fontWeight:600, marginBottom:'4px'}}>Reset Password User</h2>
-                <p style={{fontSize:'12px', color:'#a8a29e', marginBottom:'1rem'}}>Khusus admin utama untuk membantu user yang lupa password.</p>
-                <form onSubmit={handleResetUserPassword} style={{display:'flex', flexDirection:'column', gap:'10px'}}>
-                  <input type="email" name="targetEmail" value={resetForm.targetEmail} onChange={handleResetPasswordInput} placeholder="Email user" style={S.input} />
-                  <input type="text" name="newPassword" value={resetForm.newPassword} onChange={handleResetPasswordInput} placeholder="Password baru (min 8 karakter)" style={S.input} />
-                  <button type="submit" disabled={isResettingPassword} style={{...S.btn, background:'#fff1f2', color:'#9f1239', border:'1px solid #fecdd3'}}>
-                    {isResettingPassword ? 'Memproses...' : 'Ubah Password User'}
-                  </button>
-                </form>
-              </div>
-            )}
           </div>
         </div>
 

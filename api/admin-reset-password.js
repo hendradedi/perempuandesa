@@ -1,6 +1,6 @@
 import { getAdminAuth, getAdminDb } from './_firebaseAdmin.js';
 
-const superAdminEmails = (process.env.SUPER_ADMIN_EMAILS || '')
+const superAdminEmails = ((process.env.SUPER_ADMIN_EMAILS || process.env.VITE_ADMIN_EMAILS || ''))
   .split(',')
   .map((item) => item.trim().toLowerCase())
   .filter(Boolean);
@@ -36,7 +36,10 @@ export default async function handler(req, res) {
     const isSuperAdmin = requesterRole === 'admin' || superAdminEmails.includes(requesterEmail);
 
     if (!isSuperAdmin) {
-      return res.status(403).json({ error: 'Hanya admin utama yang boleh reset password.' });
+      console.warn(`Unauthorized password reset attempt from: ${requesterEmail} (Role: ${requesterRole})`);
+      return res.status(403).json({ 
+        error: `Akses ditolak. Email ${requesterEmail} tidak terdaftar sebagai Super Admin di database (role: ${requesterRole}) maupun environment variable.` 
+      });
     }
 
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
