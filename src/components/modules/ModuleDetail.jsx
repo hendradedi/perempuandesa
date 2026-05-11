@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  BookOpen, 
-  Lightbulb, 
-  Info, 
-  CheckCircle2, 
-  Circle, 
-  ChevronRight, 
+import {
+  ArrowLeft,
+  BookOpen,
+  Lightbulb,
+  Info,
+  CheckCircle2,
+  Circle,
+  ChevronRight,
   ChevronLeft,
   Trophy,
   Puzzle,
@@ -72,11 +72,10 @@ function MatchingGame({ game }) {
             {game.pairs.map(p => (
               <button key={p.term} disabled={matched.includes(p.term)}
                 onClick={() => handleTerm(p.term)}
-                className={`w-full text-left px-5 py-4 rounded-2xl text-sm font-semibold border transition-all duration-300 ${
-                  matched.includes(p.term) ? 'bg-emerald-50 border-emerald-200 text-emerald-700 opacity-60 cursor-default' :
+                className={`w-full text-left px-5 py-4 rounded-2xl text-sm font-semibold border transition-all duration-300 ${matched.includes(p.term) ? 'bg-emerald-50 border-emerald-200 text-emerald-700 opacity-60 cursor-default' :
                   selected.term === p.term ? 'bg-rose-600 border-rose-600 text-white shadow-lg shadow-rose-200 -translate-y-0.5' :
-                  'bg-stone-50 border-stone-100 text-stone-700 hover:border-rose-300 hover:bg-white hover:shadow-md'
-                }`}>{p.term}</button>
+                    'bg-stone-50 border-stone-100 text-stone-700 hover:border-rose-300 hover:bg-white hover:shadow-md'
+                  }`}>{p.term}</button>
             ))}
           </div>
           <div className="space-y-3">
@@ -84,12 +83,11 @@ function MatchingGame({ game }) {
             {shuffledDefs.map(p => (
               <button key={p.def} disabled={matched.includes(p.term)}
                 onClick={() => handleDef(p.def)}
-                className={`w-full text-left px-5 py-4 rounded-2xl text-sm leading-relaxed border transition-all duration-300 ${
-                  matched.find(t => game.pairs.find(pair => pair.term === t && pair.def === p.def))
-                    ? 'bg-emerald-50 border-emerald-200 text-emerald-700 opacity-60 cursor-default' :
+                className={`w-full text-left px-5 py-4 rounded-2xl text-sm leading-relaxed border transition-all duration-300 ${matched.find(t => game.pairs.find(pair => pair.term === t && pair.def === p.def))
+                  ? 'bg-emerald-50 border-emerald-200 text-emerald-700 opacity-60 cursor-default' :
                   wrong ? 'bg-red-50 border-red-300 animate-shake text-red-700' :
-                  'bg-stone-50 border-stone-100 text-stone-600 hover:border-rose-300 hover:bg-white hover:shadow-md'
-                }`}>{p.def}</button>
+                    'bg-stone-50 border-stone-100 text-stone-600 hover:border-rose-300 hover:bg-white hover:shadow-md'
+                  }`}>{p.def}</button>
             ))}
           </div>
         </div>
@@ -153,7 +151,7 @@ function TrueFalseGame({ game }) {
           {current + 1} / {game.questions.length}
         </div>
       </div>
-      
+
       <div className="bg-[#fdfbf9] rounded-3xl p-8 mb-8 border border-stone-100 min-h-[120px] flex items-center justify-center">
         <p className="text-stone-800 font-serif text-xl text-center leading-relaxed italic">"{q.statement}"</p>
       </div>
@@ -162,12 +160,11 @@ function TrueFalseGame({ game }) {
         {[true, false].map(val => (
           <button key={String(val)} onClick={() => answer(val)}
             disabled={answered !== null}
-            className={`group py-6 rounded-3xl font-bold text-lg border-2 transition-all duration-300 flex flex-col items-center gap-2 ${
-              answered === null ? 'bg-white border-stone-100 hover:border-rose-400 hover:shadow-lg hover:shadow-rose-100' :
+            className={`group py-6 rounded-3xl font-bold text-lg border-2 transition-all duration-300 flex flex-col items-center gap-2 ${answered === null ? 'bg-white border-stone-100 hover:border-rose-400 hover:shadow-lg hover:shadow-rose-100' :
               val === q.answer ? 'bg-emerald-50 border-emerald-500 text-emerald-700' :
-              answered === val ? 'bg-red-50 border-red-400 text-red-700' :
-              'bg-white border-stone-100 opacity-40'
-            }`}>
+                answered === val ? 'bg-red-50 border-red-400 text-red-700' :
+                  'bg-white border-stone-100 opacity-40'
+              }`}>
             <span className="text-2xl mb-1">{val ? '✅' : '❌'}</span>
             <span className="tracking-widest uppercase text-xs">{val ? 'Benar' : 'Salah'}</span>
           </button>
@@ -175,9 +172,8 @@ function TrueFalseGame({ game }) {
       </div>
 
       {answered !== null && (
-        <div className={`rounded-2xl p-6 transition-all duration-500 animate-in fade-in slide-in-from-top-2 ${
-          answered === q.answer ? 'bg-emerald-50 text-emerald-900 border border-emerald-100' : 'bg-rose-50 text-rose-900 border border-rose-100'
-        }`}>
+        <div className={`rounded-2xl p-6 transition-all duration-500 animate-in fade-in slide-in-from-top-2 ${answered === q.answer ? 'bg-emerald-50 text-emerald-900 border border-emerald-100' : 'bg-rose-50 text-rose-900 border border-rose-100'
+          }`}>
           <div className="flex items-center gap-2 mb-2">
             <Sparkles size={18} className={answered === q.answer ? 'text-emerald-600' : 'text-rose-600'} />
             <span className="font-bold text-sm">{answered === q.answer ? 'Luar Biasa!' : 'Penjelasan:'}</span>
@@ -220,12 +216,11 @@ function OrderingGame({ game }) {
       <p className="text-sm text-stone-500 mb-6 bg-stone-50 p-4 rounded-2xl border border-stone-100">
         💡 Gunakan tombol ↑ ↓ untuk mengurutkan langkah-langkah di bawah ini dengan urutan yang benar.
       </p>
-      
+
       <div className="space-y-3 mb-8">
         {items.map((item, i) => (
-          <div key={item} className={`flex items-center gap-4 p-4 rounded-2xl border transition-all duration-300 ${
-            checked ? (item === game.correctOrder[i] ? 'bg-emerald-50 border-emerald-300' : 'bg-red-50 border-red-300') : 'bg-white border-stone-100 hover:shadow-md'
-          }`}>
+          <div key={item} className={`flex items-center gap-4 p-4 rounded-2xl border transition-all duration-300 ${checked ? (item === game.correctOrder[i] ? 'bg-emerald-50 border-emerald-300' : 'bg-red-50 border-red-300') : 'bg-white border-stone-100 hover:shadow-md'
+            }`}>
             <span className="w-8 h-8 rounded-xl bg-stone-900 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-sm">{i + 1}</span>
             <span className="flex-1 text-sm font-semibold text-stone-800">{item}</span>
             {!checked && (
@@ -241,7 +236,7 @@ function OrderingGame({ game }) {
           </div>
         ))}
       </div>
-      
+
       {!checked ? (
         <button onClick={check} className="w-full py-4 bg-stone-900 text-white rounded-2xl font-bold hover:shadow-xl hover:shadow-stone-200 transition-all transform hover:-translate-y-0.5">
           Periksa Urutan
@@ -333,85 +328,82 @@ const ModuleDetail = () => {
   const progress = Math.round((completedCount / module.lessons.length) * 100);
 
   return (
-    <div className="min-h-screen bg-[#fdfbf9] pb-20">
-      
+    <div className="min-h-screen bg-[#fdfbf9]">
+
       {/* Decorative Background */}
       <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
         <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] rounded-full bg-rose-50/50 blur-[120px]"></div>
         <div className="absolute bottom-[-10%] left-[-5%] w-[30%] h-[30%] rounded-full bg-emerald-50/50 blur-[100px]"></div>
       </div>
 
-      <div className="max-w-[1200px] mx-auto px-4 md:px-8">
-        
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+
         {/* Top Navigation */}
-        <div className="py-8 flex items-center justify-between">
+        <div className="py-6 sm:py-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <Link to="/dashboard" className="flex items-center gap-2 text-stone-400 hover:text-stone-900 font-bold text-xs uppercase tracking-widest transition-all">
             <ArrowLeft size={16} /> Dashboard
           </Link>
-          <div className="flex items-center gap-4">
-             <div className="hidden sm:flex flex-col items-end">
-               <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Progress Modul</span>
-               <span className="text-sm font-serif font-bold text-stone-900">{progress}%</span>
-             </div>
-             <div className="w-24 h-1.5 bg-stone-200 rounded-full overflow-hidden">
-               <div className="h-full transition-all duration-1000" style={{ width: `${progress}%`, backgroundColor: progressColor }}></div>
-             </div>
+          <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
+            <div className="flex flex-col items-end">
+              <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Progress Modul</span>
+              <span className="text-sm font-serif font-bold text-stone-900">{progress}%</span>
+            </div>
+            <div className="w-24 sm:w-32 h-1.5 bg-stone-200 rounded-full overflow-hidden">
+              <div className="h-full transition-all duration-1000" style={{ width: `${progress}%`, backgroundColor: progressColor }}></div>
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start pb-12">
+
           {/* Sidebar Lesson Navigation */}
-          <aside className="lg:col-span-4 lg:sticky lg:top-8 order-2 lg:order-1">
-            <div className="bg-white rounded-[2.5rem] border border-stone-100 p-8 shadow-xl shadow-stone-200/50">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="text-4xl">{module.icon}</div>
-                <div>
-                  <h2 className="font-serif text-xl font-bold text-stone-900 leading-tight">{module.title}</h2>
+          <aside className="lg:col-span-4 lg:sticky lg:top-6 order-2 lg:order-1">
+            <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] border border-stone-100 p-6 sm:p-8 shadow-xl shadow-stone-200/50">
+              <div className="flex items-center gap-3 mb-6 sm:mb-8">
+                <div className="text-3xl sm:text-4xl">{module.icon}</div>
+                <div className="flex-1 min-w-0">
+                  <h2 className="font-serif text-lg sm:text-xl font-bold text-stone-900 leading-tight truncate">{module.title}</h2>
                   <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mt-1">Langkah Belajar</p>
                 </div>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 {module.lessons.map((lesson, idx) => {
                   const isActive = selectedLessonId === lesson.id;
                   const isDone = isLessonCompleted(lesson.id);
                   return (
-                    <button 
-                      key={lesson.id} 
+                    <button
+                      key={lesson.id}
                       onClick={() => selectLesson(lesson.id)}
-                      className={`group w-full text-left p-5 rounded-2xl border transition-all duration-300 relative overflow-hidden ${
-                        isActive 
-                        ? 'bg-stone-900 border-stone-900 text-white shadow-xl shadow-stone-200' 
+                      className={`group w-full text-left p-4 sm:p-5 rounded-xl sm:rounded-2xl border transition-all duration-300 relative overflow-hidden ${isActive
+                        ? 'bg-stone-900 border-stone-900 text-white shadow-xl shadow-stone-200'
                         : 'bg-white border-stone-100 text-stone-600 hover:border-rose-200 hover:shadow-sm'
-                      }`}>
-                      <div className="flex items-center gap-4 relative z-10">
-                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all ${
-                          isActive ? 'bg-white/20' : isDone ? 'bg-emerald-100' : 'bg-stone-50 border border-stone-100'
                         }`}>
+                      <div className="flex items-center gap-3 sm:gap-4 relative z-10">
+                        <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl flex items-center justify-center shrink-0 transition-all ${isActive ? 'bg-white/20' : isDone ? 'bg-emerald-100' : 'bg-stone-50 border border-stone-100'
+                          }`}>
                           {isDone ? (
-                            <CheckCircle2 size={18} className={isActive ? 'text-white' : 'text-emerald-600'} />
+                            <CheckCircle2 size={16} className={isActive ? 'text-white' : 'text-emerald-600'} />
                           ) : (
-                            <Circle size={18} className={isActive ? 'text-white/50' : 'text-stone-300'} />
+                            <Circle size={16} className={isActive ? 'text-white/50' : 'text-stone-300'} />
                           )}
                         </div>
-                        <div className="flex-1">
-                          <p className={`text-[10px] font-bold uppercase tracking-[0.15em] mb-1 ${isActive ? 'text-white/60' : 'text-stone-400'}`}>Pelajaran {idx + 1}</p>
-                          <p className={`text-sm font-bold leading-snug ${isActive ? 'text-white' : 'text-stone-800'}`}>{lesson.title}</p>
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.15em] mb-0.5 sm:mb-1 ${isActive ? 'text-white/60' : 'text-stone-400'}`}>Pelajaran {idx + 1}</p>
+                          <p className={`text-xs sm:text-sm font-bold leading-snug ${isActive ? 'text-white' : 'text-stone-800'}`}>{lesson.title}</p>
                         </div>
-                        {isActive && <ChevronRight size={16} className="text-white/50 animate-pulse" />}
+                        {isActive && <ChevronRight size={14} className="text-white/50 animate-pulse shrink-0" />}
                       </div>
                     </button>
                   );
                 })}
-                
+
                 {/* Quiz Unlock Indicator */}
-                <div className={`mt-6 p-4 rounded-2xl border border-dashed text-center transition-all ${
-                  progress === 100 ? 'bg-emerald-50 border-emerald-300' : 'bg-stone-50 border-stone-200'
-                }`}>
-                   <p className={`text-xs font-bold ${progress === 100 ? 'text-emerald-700' : 'text-stone-400'}`}>
-                     {progress === 100 ? '🎉 Kuis Siap Dikerjakan!' : '🔒 Selesaikan Semua Pelajaran'}
-                   </p>
+                <div className={`mt-4 sm:mt-6 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-dashed text-center transition-all ${progress === 100 ? 'bg-emerald-50 border-emerald-300' : 'bg-stone-50 border-stone-200'
+                  }`}>
+                  <p className={`text-[11px] sm:text-xs font-bold ${progress === 100 ? 'text-emerald-700' : 'text-stone-400'}`}>
+                    {progress === 100 ? '🎉 Kuis Siap Dikerjakan!' : '🔒 Selesaikan Semua Pelajaran'}
+                  </p>
                 </div>
               </div>
             </div>
@@ -421,54 +413,54 @@ const ModuleDetail = () => {
           <main className="lg:col-span-8 order-1 lg:order-2">
             {selectedLesson && (
               <div className="animate-in fade-in slide-in-from-bottom-6 duration-700">
-                
+
                 {/* Content Header Card */}
-                <div className="bg-white rounded-[2.5rem] border border-stone-100 p-8 sm:p-12 mb-8 shadow-xl shadow-stone-200/50">
-                  <div className="flex items-center flex-wrap gap-3 mb-8">
-                    <div className="px-5 py-2 bg-stone-100 rounded-full text-[11px] font-bold text-stone-600 tracking-widest uppercase border border-stone-200/50">
-                      <Clock size={12} className="inline mr-2 -mt-0.5" />
+                <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] border border-stone-100 p-6 sm:p-8 lg:p-12 mb-6 sm:mb-8 shadow-xl shadow-stone-200/50">
+                  <div className="flex items-center flex-wrap gap-2 sm:gap-3 mb-6 sm:mb-8">
+                    <div className="px-3 sm:px-5 py-1.5 sm:py-2 bg-stone-100 rounded-full text-[10px] sm:text-[11px] font-bold text-stone-600 tracking-widest uppercase border border-stone-200/50">
+                      <Clock size={11} className="inline mr-1.5 -mt-0.5" />
                       {selectedLesson.duration?.toLowerCase().replace('menit', '').trim()} Menit
                     </div>
                     {isLessonCompleted(selectedLesson.id) && (
-                      <div className="px-5 py-2 bg-emerald-50 text-emerald-700 rounded-full text-[11px] font-bold tracking-widest uppercase border border-emerald-100 flex items-center gap-2">
-                        <CheckCircle2 size={12} />
+                      <div className="px-3 sm:px-5 py-1.5 sm:py-2 bg-emerald-50 text-emerald-700 rounded-full text-[10px] sm:text-[11px] font-bold tracking-widest uppercase border border-emerald-100 flex items-center gap-1.5 sm:gap-2">
+                        <CheckCircle2 size={11} />
                         Lulus Pelajaran
                       </div>
                     )}
                   </div>
-                  
-                  <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl text-stone-900 mb-10 leading-[1.15]">
+
+                  <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-stone-900 mb-6 sm:mb-8 lg:mb-10 leading-[1.15]">
                     {selectedLesson.title}
                   </h1>
 
                   <div className="relative">
-                    <div className="flex items-center gap-4 mb-8 text-stone-900">
-                      <div className="p-3 bg-rose-50 rounded-2xl shadow-sm border border-rose-100">
-                        <BookOpen size={24} className="text-rose-600" />
+                    <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8 text-stone-900">
+                      <div className="p-2 sm:p-3 bg-rose-50 rounded-xl sm:rounded-2xl shadow-sm border border-rose-100">
+                        <BookOpen size={20} className="text-rose-600 sm:w-6 sm:h-6" />
                       </div>
-                      <h3 className="text-2xl font-bold font-serif m-0">Materi Belajar</h3>
+                      <h3 className="text-xl sm:text-2xl font-bold font-serif m-0">Materi Belajar</h3>
                     </div>
-                    <div className="text-stone-600 text-lg leading-[1.8] font-light whitespace-pre-line bg-stone-50/30 p-2 rounded-2xl">
+                    <div className="text-stone-600 text-base sm:text-lg leading-[1.8] font-light whitespace-pre-line bg-stone-50/30 p-4 sm:p-6 rounded-xl sm:rounded-2xl">
                       {selectedLesson.content}
                     </div>
                   </div>
                 </div>
 
                 {/* Key Insights & Tips Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
                   {selectedLesson.keyPoints && (
-                    <div className="bg-white rounded-[2.5rem] border border-stone-100 p-8 shadow-sm">
-                      <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2 bg-rose-50 rounded-xl text-rose-600">
-                          <Lightbulb size={20} />
+                    <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] border border-stone-100 p-6 sm:p-8 shadow-sm">
+                      <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                        <div className="p-2 bg-rose-50 rounded-lg sm:rounded-xl text-rose-600">
+                          <Lightbulb size={18} className="sm:w-5 sm:h-5" />
                         </div>
-                        <h4 className="font-serif font-bold text-lg text-stone-900">Poin Utama</h4>
+                        <h4 className="font-serif font-bold text-base sm:text-lg text-stone-900">Poin Utama</h4>
                       </div>
-                      <ul className="space-y-4">
+                      <ul className="space-y-3 sm:space-y-4">
                         {selectedLesson.keyPoints.map((pt, i) => (
-                          <li key={i} className="flex items-start gap-3 group">
-                            <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-rose-400 group-hover:scale-150 transition-all duration-300"></div>
-                            <span className="text-sm text-stone-600 leading-relaxed font-medium">{pt}</span>
+                          <li key={i} className="flex items-start gap-2 sm:gap-3 group">
+                            <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-rose-400 group-hover:scale-150 transition-all duration-300 shrink-0"></div>
+                            <span className="text-xs sm:text-sm text-stone-600 leading-relaxed font-medium">{pt}</span>
                           </li>
                         ))}
                       </ul>
@@ -476,14 +468,14 @@ const ModuleDetail = () => {
                   )}
 
                   {selectedLesson.tips && (
-                    <div className="bg-stone-900 rounded-[2.5rem] p-8 text-white shadow-xl shadow-stone-200">
-                      <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2 bg-white/10 rounded-xl text-rose-400">
-                          <Info size={20} />
+                    <div className="bg-stone-900 rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 text-white shadow-xl shadow-stone-200">
+                      <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                        <div className="p-2 bg-white/10 rounded-lg sm:rounded-xl text-rose-400">
+                          <Info size={18} className="sm:w-5 sm:h-5" />
                         </div>
-                        <h4 className="font-serif font-bold text-lg">Saran Belajar</h4>
+                        <h4 className="font-serif font-bold text-base sm:text-lg">Saran Belajar</h4>
                       </div>
-                      <p className="text-stone-400 text-sm leading-relaxed italic">
+                      <p className="text-stone-400 text-xs sm:text-sm leading-relaxed italic">
                         "{selectedLesson.tips}"
                       </p>
                     </div>
@@ -491,41 +483,41 @@ const ModuleDetail = () => {
                 </div>
 
                 {/* Game / Interaction Area */}
-                <div className="mb-12">
-                   <GameSection game={selectedLesson.game} />
+                <div className="mb-8 sm:mb-12">
+                  <GameSection game={selectedLesson.game} />
                 </div>
 
                 {/* Bottom Navigation Actions */}
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-6 py-12 border-t border-stone-200">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 py-8 sm:py-12 border-t border-stone-200">
                   <button
                     onClick={() => {
                       const idx = module.lessons.findIndex(l => l.id === selectedLesson.id);
                       if (idx > 0) selectLesson(module.lessons[idx - 1].id);
                     }}
                     disabled={module.lessons.findIndex(l => l.id === selectedLesson.id) === 0}
-                    className="flex items-center gap-3 text-stone-400 font-bold text-xs uppercase tracking-widest disabled:opacity-30 disabled:pointer-events-none hover:text-stone-900 transition-all">
-                    <ChevronLeft size={18} /> Sebelumnya
+                    className="flex items-center gap-2 sm:gap-3 text-stone-400 font-bold text-[10px] sm:text-xs uppercase tracking-widest disabled:opacity-30 disabled:pointer-events-none hover:text-stone-900 transition-all">
+                    <ChevronLeft size={16} /> Sebelumnya
                   </button>
 
                   {!isLessonCompleted(selectedLesson.id) ? (
-                    <button 
-                      onClick={handleCompleteLesson} 
-                      className="group bg-stone-900 text-white px-10 py-5 rounded-[2rem] font-bold flex items-center gap-4 hover:shadow-2xl hover:shadow-stone-300 transition-all transform hover:-translate-y-1">
+                    <button
+                      onClick={handleCompleteLesson}
+                      className="group bg-stone-900 text-white px-6 sm:px-10 py-3 sm:py-5 rounded-[1.5rem] sm:rounded-[2rem] font-bold text-sm sm:text-base flex items-center gap-3 sm:gap-4 hover:shadow-2xl hover:shadow-stone-300 transition-all transform hover:-translate-y-1 w-full sm:w-auto justify-center">
                       <span>Tandai Selesai</span>
-                      <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-emerald-500 transition-all">
-                        <CheckCircle2 size={16} />
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-emerald-500 transition-all">
+                        <CheckCircle2 size={14} className="sm:w-4 sm:h-4" />
                       </div>
                     </button>
                   ) : (
-                    <button 
+                    <button
                       onClick={() => {
                         const idx = module.lessons.findIndex(l => l.id === selectedLesson.id);
                         if (idx < module.lessons.length - 1) selectLesson(module.lessons[idx + 1].id);
                         else navigate(`/quiz/${module.routeId}`);
-                      }} 
-                      className="group bg-rose-600 text-white px-10 py-5 rounded-[2rem] font-bold flex items-center gap-4 hover:shadow-2xl hover:shadow-rose-300 transition-all transform hover:-translate-y-1">
+                      }}
+                      className="group bg-rose-600 text-white px-6 sm:px-10 py-3 sm:py-5 rounded-[1.5rem] sm:rounded-[2rem] font-bold text-sm sm:text-base flex items-center gap-3 sm:gap-4 hover:shadow-2xl hover:shadow-rose-300 transition-all transform hover:-translate-y-1 w-full sm:w-auto justify-center">
                       <span>{module.lessons.findIndex(l => l.id === selectedLesson.id) === module.lessons.length - 1 ? 'Mulai Kuis' : 'Lanjut Belajar'}</span>
-                      <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                      <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
                     </button>
                   )}
                 </div>
@@ -537,15 +529,15 @@ const ModuleDetail = () => {
 
       {/* Modern Congrats Notification */}
       {showCongrats && (
-        <div className="fixed inset-x-0 top-10 flex items-center justify-center z-[100] px-4">
-          <div className="bg-stone-900 text-white rounded-[2rem] px-8 py-5 flex items-center gap-6 shadow-2xl animate-in zoom-in slide-in-from-top-10 duration-500">
-             <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-2xl">🎉</div>
-             <div>
-               <p className="font-bold text-sm">Pelajaran Selesai!</p>
-               <p className="text-[10px] text-stone-400 uppercase tracking-widest font-bold">+10 Poin SELARAS</p>
-             </div>
-             <div className="w-px h-10 bg-white/10"></div>
-             <Trophy className="text-amber-400" size={24} />
+        <div className="fixed inset-x-0 top-6 sm:top-10 flex items-center justify-center z-[100] px-4">
+          <div className="bg-stone-900 text-white rounded-[1.5rem] sm:rounded-[2rem] px-6 sm:px-8 py-4 sm:py-5 flex items-center gap-4 sm:gap-6 shadow-2xl animate-in zoom-in slide-in-from-top-10 duration-500 max-w-md w-full">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/10 rounded-xl sm:rounded-2xl flex items-center justify-center text-xl sm:text-2xl shrink-0">🎉</div>
+            <div className="flex-1 min-w-0">
+              <p className="font-bold text-xs sm:text-sm">Pelajaran Selesai!</p>
+              <p className="text-[9px] sm:text-[10px] text-stone-400 uppercase tracking-widest font-bold">+10 Poin SELARAS</p>
+            </div>
+            <div className="hidden sm:block w-px h-10 bg-white/10"></div>
+            <Trophy className="text-amber-400 shrink-0" size={20} />
           </div>
         </div>
       )}
