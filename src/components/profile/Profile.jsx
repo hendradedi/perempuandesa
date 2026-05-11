@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   Crown, 
   Award, 
@@ -15,29 +15,18 @@ import {
   MapPin,
   User,
   Save,
-  Loader2
+  Loader2,
+  Mail,
+  ChevronRight
 } from 'lucide-react';
-import { doc, updateDoc, setDoc, getDoc, collection, getDocs, query, limit } from 'firebase/firestore';
+import { doc, setDoc, collection, getDocs, query, limit } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { useAuth } from '../../context/useAuth';
 import perempuanDesaImage from '../../assets/srikandi-desa.webp';
 
-const s = {
-  page:    { minHeight: '100vh', background: '#fdfbf9', fontFamily: "'Plus Jakarta Sans', sans-serif", color: '#1c1917' },
-  main:    { maxWidth: '1000px', margin: '0 auto', padding: '2rem 1.5rem 5rem' },
-  card:    { background: '#fff', borderRadius: '24px', padding: '2rem', border: '1px solid #f5f5f4', boxShadow: '0 4px 20px rgba(28,25,23,0.03)', marginBottom: '1.5rem' },
-  statCard:{ background: '#fff', borderRadius: '20px', padding: '1.25rem', border: '1px solid #f5f5f4', display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 },
-  badge:   { display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#f5f5f4', border: '1px solid #e7e5e4', borderRadius: '999px', padding: '4px 14px', fontSize: '11px', fontWeight: 600, color: '#78716c', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '1rem' },
-  avatar:  { width: '100px', height: '100px', borderRadius: '24px', objectFit: 'cover', border: '3px solid #fff', boxShadow: '0 8px 24px rgba(28,25,23,0.08)' },
-  btn:     { padding: '10px 20px', borderRadius: '999px', fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', border: 'none', transition: 'all 0.3s', display: 'flex', alignItems: 'center', gap: '8px' },
-  modal:   { position: 'fixed', inset: 0, background: 'rgba(28,25,23,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem' },
-  modalContent: { background: '#fff', borderRadius: '28px', width: '100%', maxWidth: '450px', padding: '2rem', position: 'relative', boxShadow: '0 20px 50px rgba(0,0,0,0.1)' },
-  input:   { width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid #e7e5e4', fontSize: '0.95rem', outline: 'none', background: '#faf9f8', transition: 'all 0.2s' },
-  inputLabel: { display: 'block', fontSize: '12px', fontWeight: 700, color: '#78716c', marginBottom: '6px', marginLeft: '4px' }
-};
-
 const Profile = () => {
   const { user, refreshUser } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -63,7 +52,6 @@ const Profile = () => {
     }
   }, [user]);
 
-  // Fetch certificate template from admin settings
   useEffect(() => {
     const fetchTemplate = async () => {
       try {
@@ -94,23 +82,17 @@ const Profile = () => {
       setIsEditModalOpen(false);
     } catch (err) {
       console.error('Error updating profile:', err);
-      if (err.code === 'permission-denied') {
-        alert('Gagal memperbarui profil: Izin ditolak. Silakan lapor admin.');
-      } else {
-        alert('Gagal memperbarui profil. Silakan coba lagi.');
-      }
+      alert('Gagal memperbarui profil. Silakan coba lagi.');
     } finally {
       setIsSaving(false);
     }
   };
 
   const downloadCertificate = async (cert) => {
-    // Validation: Check if profile is complete
     const isProfileComplete = user?.fullName && user?.address && user?.phone;
-    
     if (!isProfileComplete) {
-      alert('Silakan lengkapi data profil Anda (Nama Lengkap, Alamat, No. HP) sebelum mengunduh sertifikat.');
-      setIsEditModalOpen(true); // Open modal for them
+      alert('Silakan lengkapi data profil Anda sebelum mengunduh sertifikat.');
+      setIsEditModalOpen(true);
       return;
     }
 
@@ -121,40 +103,31 @@ const Profile = () => {
     const ctx = canvas.getContext('2d');
     const img = new Image();
     img.crossOrigin = 'anonymous';
-    // Use admin template or default fallback
     img.src = certTemplate || 'https://perempuandesa-5ab24.firebasestorage.app/o/templates%2Fcertificate_default.png?alt=media';
 
     img.onload = () => {
-      // Set canvas size to match image
       canvas.width = img.width;
       canvas.height = img.height;
-      
-      // Draw template
       ctx.drawImage(img, 0, 0);
       
-      // Add User Name
       ctx.font = 'bold 80px "Playfair Display", serif';
       ctx.fillStyle = '#1c1917';
       ctx.textAlign = 'center';
       
-      // Calculate center position
       const centerX = canvas.width / 2;
-      const centerY = canvas.height * 0.48; // Adjust based on template design
+      const centerY = canvas.height * 0.48;
       
       const displayName = user?.fullName;
       ctx.fillText(displayName, centerX, centerY);
       
-      // Add Module Name
       ctx.font = '500 40px "Plus Jakarta Sans", sans-serif';
       ctx.fillStyle = '#78716c';
       ctx.fillText(cert.module, centerX, centerY + 100);
 
-      // Add Date
       ctx.font = '400 24px "Plus Jakarta Sans", sans-serif';
       const dateText = new Date(cert.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
       ctx.fillText(`Diterbitkan pada: ${dateText}`, centerX, canvas.height * 0.85);
 
-      // Trigger Download
       const link = document.createElement('a');
       link.download = `Sertifikat_SELARAS_${displayName.replace(/\s+/g, '_')}.png`;
       link.href = canvas.toDataURL('image/png');
@@ -163,93 +136,107 @@ const Profile = () => {
     };
 
     img.onerror = () => {
-      alert('Gagal memuat desain sertifikat. Silakan hubungi admin.');
+      alert('Gagal memuat desain sertifikat.');
       setIsDownloading(null);
     };
   };
 
   const badges = [
-    { id: 1, name: 'Pemula', icon: '🌱', description: 'Menyelesaikan modul pertama', color: '#065f46', bg: '#d1fae5' },
-    { id: 2, name: 'Ahli Kesehatan', icon: '🩺', description: 'Lulus modul Kesehatan Reproduksi', color: '#1e40af', bg: '#dbeafe' },
-    { id: 3, name: 'Pengusaha Muda', icon: '💼', description: 'Lulus modul Kewirausahaan', color: '#92400e', bg: '#fef3c7' },
-    { id: 4, name: 'Bintang Belajar', icon: '⭐', description: 'Menyelesaikan 5 kuis', color: '#9f1239', bg: '#fff1f2' }
+    { id: 1, name: 'Pemula', icon: '🌱', description: 'Menyelesaikan modul pertama', color: 'text-emerald-700', bg: 'bg-emerald-50' },
+    { id: 2, name: 'Ahli Kesehatan', icon: '🩺', description: 'Lulus modul Kesehatan Reproduksi', color: 'text-blue-700', bg: 'bg-blue-50' },
+    { id: 3, name: 'Pengusaha Muda', icon: '💼', description: 'Lulus modul Kewirausahaan', color: 'text-amber-700', bg: 'bg-amber-50' },
+    { id: 4, name: 'Bintang Belajar', icon: '⭐', description: 'Menyelesaikan 5 kuis', color: 'text-rose-700', bg: 'bg-rose-50' }
   ];
 
-  const certificates = user?.certificates || [
-    { id: 1, module: 'Literasi Digital', date: '2026-05-01', icon: <Award className="w-8 h-8" /> },
-    { id: 2, module: 'Ekonomi Kreatif', date: '2026-05-05', icon: <Award className="w-8 h-8" /> }
-  ];
+  const certificates = user?.certificates || [];
 
   return (
-    <div style={s.page}>
-      <main style={s.main}>
+    <div className="min-h-screen bg-[#fdfbf9] text-[#1c1917] font-sans pb-20">
+      <main className="max-w-[1000px] mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12">
+        
         {/* Navigation */}
-        <div style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Link to="/dashboard" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: '#a8a29e', fontSize: '0.85rem', fontWeight: 600 }}>
-            <ArrowLeft size={16} /> Dashboard
-          </Link>
+        <div className="flex items-center justify-between mb-8">
+          <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 text-stone-400 hover:text-stone-900 font-bold text-xs uppercase tracking-widest transition-all">
+            <ArrowLeft size={16} /> Kembali
+          </button>
           <button 
             onClick={() => setIsEditModalOpen(true)}
-            style={{ ...s.btn, background: '#1c1917', color: '#fff' }}>
-            <Edit3 size={16} /> Edit Profil
+            className="inline-flex items-center gap-2 bg-stone-900 hover:bg-stone-800 text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-bold shadow-lg transition-all transform hover:-translate-y-0.5">
+            <Edit3 size={16} /> <span className="hidden xs:inline">Edit Profil</span>
           </button>
         </div>
 
-        {/* Simplified Header */}
-        <div style={s.card}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '2rem' }}>
-            <img src={perempuanDesaImage} alt="Profil" style={s.avatar} />
-            <div style={{ flex: 1, minWidth: '250px' }}>
-              <div style={s.badge}>Peserta SELARAS</div>
-              <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '2rem', fontWeight: 700, color: '#1c1917', marginBottom: '0.25rem' }}>
+        {/* Profile Header Card */}
+        <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 border border-stone-100 shadow-xl shadow-stone-200/50 mb-8 overflow-hidden relative">
+          <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none hidden sm:block">
+            <User size={150} />
+          </div>
+          
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-8 relative z-10">
+            <div className="relative group">
+              <img src={perempuanDesaImage} alt="Profil" className="w-24 h-24 sm:w-32 sm:h-32 rounded-3xl object-cover border-4 border-white shadow-xl group-hover:scale-105 transition-transform duration-500" />
+              <div className="absolute -bottom-2 -right-2 w-8 h-8 sm:w-10 sm:h-10 bg-rose-600 text-white rounded-xl flex items-center justify-center shadow-lg border-2 border-white">
+                <Sparkles size={16} />
+              </div>
+            </div>
+            
+            <div className="flex-1 text-center md:text-left min-w-0">
+              <div className="inline-flex items-center gap-2 bg-rose-50 border border-rose-100 rounded-full px-3 py-1 text-[10px] font-bold text-rose-800 uppercase tracking-widest mb-3">
+                Peserta SELARAS
+              </div>
+              <h1 className="font-serif text-3xl sm:text-4xl font-bold text-stone-900 leading-tight mb-2 truncate">
                 {user?.fullName || user?.name || 'Peserta'}
               </h1>
-              <p style={{ color: '#a8a29e', fontSize: '0.9rem', marginBottom: '1rem' }}>{user?.email}</p>
+              <p className="text-stone-400 text-sm mb-6 flex items-center justify-center md:justify-start gap-2">
+                <Mail size={14} /> {user?.email}
+              </p>
               
-              <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#78716c', fontSize: '0.85rem' }}>
-                  <MapPin size={14} /> {user?.address || 'Alamat belum diatur'}
+              <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 sm:gap-6">
+                <div className="flex items-center gap-2 text-stone-600 text-sm font-medium">
+                  <div className="p-1.5 bg-stone-100 rounded-lg"><MapPin size={14} className="text-stone-500" /></div>
+                  <span className="truncate max-w-[150px] sm:max-w-none">{user?.address || 'Alamat belum diatur'}</span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#78716c', fontSize: '0.85rem' }}>
-                  <Phone size={14} /> {user?.phone || 'Nomor HP belum diatur'}
+                <div className="flex items-center gap-2 text-stone-600 text-sm font-medium">
+                  <div className="p-1.5 bg-stone-100 rounded-lg"><Phone size={14} className="text-stone-500" /></div>
+                  <span>{user?.phone || 'Nomor HP belum diatur'}</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem', flexWrap: 'wrap' }}>
-            <div style={s.statCard}>
-              <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#fff1f2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Crown size={18} color="#9f1239" />
+          <div className="grid grid-cols-1 xs:grid-cols-3 gap-3 sm:gap-4 mt-10">
+            <div className="bg-rose-50/50 border border-rose-100 p-4 rounded-2xl flex items-center gap-4 transition-all hover:bg-rose-50">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-white flex items-center justify-center shadow-sm text-rose-800 shrink-0">
+                <Crown size={20} />
               </div>
-              <div>
-                <p style={{ fontSize: '10px', fontWeight: 700, color: '#a8a29e', textTransform: 'uppercase' }}>Poin</p>
-                <p style={{ fontSize: '1.1rem', fontWeight: 700 }}>{user?.points || 0}</p>
-              </div>
-            </div>
-            <div style={s.statCard}>
-              <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#fef3c7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Trophy size={18} color="#92400e" />
-              </div>
-              <div>
-                <p style={{ fontSize: '10px', fontWeight: 700, color: '#a8a29e', textTransform: 'uppercase' }}>Badge</p>
-                <p style={{ fontSize: '1.1rem', fontWeight: 700 }}>{user?.badges?.length || 0}</p>
+              <div className="min-w-0">
+                <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Poin</p>
+                <p className="text-lg sm:text-xl font-serif font-bold text-stone-900">{user?.points || 0}</p>
               </div>
             </div>
-            <div style={s.statCard}>
-              <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#ede9fe', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Award size={18} color="#5b21b6" />
+            <div className="bg-amber-50/50 border border-amber-100 p-4 rounded-2xl flex items-center gap-4 transition-all hover:bg-amber-50">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-white flex items-center justify-center shadow-sm text-amber-600 shrink-0">
+                <Trophy size={20} />
               </div>
-              <div>
-                <p style={{ fontSize: '10px', fontWeight: 700, color: '#a8a29e', textTransform: 'uppercase' }}>Sertifikat</p>
-                <p style={{ fontSize: '1.1rem', fontWeight: 700 }}>{certificates.length || 0}</p>
+              <div className="min-w-0">
+                <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Badge</p>
+                <p className="text-lg sm:text-xl font-serif font-bold text-stone-900">{user?.badges?.length || 0}</p>
+              </div>
+            </div>
+            <div className="bg-indigo-50/50 border border-indigo-100 p-4 rounded-2xl flex items-center gap-4 transition-all hover:bg-indigo-50">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-white flex items-center justify-center shadow-sm text-indigo-600 shrink-0">
+                <Award size={20} />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Sertifikat</p>
+                <p className="text-lg sm:text-xl font-serif font-bold text-stone-900">{certificates.length}</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Tab Navigation */}
-        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
+        <div className="flex gap-2 sm:gap-4 mb-8 overflow-x-auto pb-2 scrollbar-hide no-scrollbar">
           {[
             { id: 'overview', label: 'Ringkasan', icon: <TrendingUp size={16} /> },
             { id: 'badges', label: 'Badge', icon: <Trophy size={16} /> },
@@ -258,13 +245,11 @@ const Profile = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              style={{
-                ...s.btn,
-                background: activeTab === tab.id ? '#1c1917' : 'transparent',
-                color: activeTab === tab.id ? '#fff' : '#78716c',
-                border: '1px solid',
-                borderColor: activeTab === tab.id ? '#1c1917' : '#e7e5e4',
-              }}
+              className={`flex items-center gap-2 px-6 py-3 rounded-full text-xs sm:text-sm font-bold whitespace-nowrap border transition-all ${
+                activeTab === tab.id 
+                ? 'bg-stone-900 border-stone-900 text-white shadow-lg' 
+                : 'bg-white border-stone-100 text-stone-500 hover:border-rose-200'
+              }`}
             >
               {tab.icon} {tab.label}
             </button>
@@ -272,42 +257,50 @@ const Profile = () => {
         </div>
 
         {/* Tab Content */}
-        <div className="animate-in fade-in duration-500">
+        <div className="animate-in fade-in duration-700">
           {activeTab === 'overview' && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
-              <div style={s.card}>
-                <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <BookOpen size={18} color="#9f1239" /> Statistik Belajar
-                </h3>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+              <div className="bg-white rounded-3xl p-6 sm:p-8 border border-stone-100 shadow-sm">
+                <div className="flex items-center gap-3 mb-6 sm:mb-8">
+                  <div className="p-2 bg-rose-50 rounded-xl">
+                    <BookOpen size={20} className="text-rose-800" />
+                  </div>
+                  <h3 className="font-serif text-lg text-stone-900 font-bold">Statistik Belajar</h3>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
                   {[
-                    { label: 'Modul Lulus', value: user?.completedModules?.length || 0, bg: '#fff1f2', color: '#9f1239' },
-                    { label: 'Rata-rata Skor', value: '95', bg: '#f0faf9', color: '#3f6b6c' },
+                    { label: 'Modul Lulus', value: user?.completedModules?.length || 0, bg: 'bg-rose-50', color: 'text-rose-800' },
+                    { label: 'Skor Rata-rata', value: '95', bg: 'bg-emerald-50', color: 'text-emerald-800' },
                   ].map((item, i) => (
-                    <div key={i} style={{ padding: '1rem', borderRadius: '16px', background: item.bg, textAlign: 'center' }}>
-                      <p style={{ fontSize: '1.5rem', fontWeight: 700, color: item.color }}>{item.value}</p>
-                      <p style={{ fontSize: '10px', fontWeight: 700, color: item.color, opacity: 0.7 }}>{item.label}</p>
+                    <div key={i} className={`${item.bg} p-6 rounded-2xl text-center border border-white/50`}>
+                      <p className={`text-3xl sm:text-4xl font-serif font-bold ${item.color} mb-1`}>{item.value}</p>
+                      <p className={`text-[10px] font-bold uppercase tracking-widest ${item.color} opacity-70`}>{item.label}</p>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div style={s.card}>
-                <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Calendar size={18} color="#9f1239" /> Aktivitas Terbaru
-                </h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div className="bg-white rounded-3xl p-6 sm:p-8 border border-stone-100 shadow-sm">
+                <div className="flex items-center gap-3 mb-6 sm:mb-8">
+                  <div className="p-2 bg-stone-100 rounded-xl">
+                    <Calendar size={20} className="text-stone-700" />
+                  </div>
+                  <h3 className="font-serif text-lg text-stone-900 font-bold">Aktivitas Terbaru</h3>
+                </div>
+                <div className="space-y-4">
                   {[
                     { icon: '🎉', title: 'Lulus Kuis', date: 'Terbaru', points: '+50' },
                     { icon: '✅', title: 'Materi Selesai', date: 'Kemarin', points: '+10' },
                   ].map((act, i) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', borderBottom: i === 1 ? 'none' : '1px solid #f5f5f4', paddingBottom: i === 1 ? 0 : '0.75rem' }}>
-                      <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#faf9f8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{act.icon}</div>
-                      <div style={{ flex: 1 }}>
-                        <p style={{ fontSize: '0.85rem', fontWeight: 600 }}>{act.title}</p>
-                        <p style={{ fontSize: '11px', color: '#a8a29e' }}>{act.date}</p>
+                    <div key={i} className="flex items-center justify-between p-4 rounded-2xl border border-stone-50 hover:bg-stone-50/50 transition-colors">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm text-lg shrink-0">{act.icon}</div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold text-stone-900 truncate">{act.title}</p>
+                          <p className="text-[10px] text-stone-400 font-medium">{act.date}</p>
+                        </div>
                       </div>
-                      <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#9f1239' }}>{act.points}</span>
+                      <span className="text-sm font-bold text-rose-800">{act.points}</span>
                     </div>
                   ))}
                 </div>
@@ -316,94 +309,95 @@ const Profile = () => {
           )}
 
           {activeTab === 'badges' && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
+            <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-4">
               {badges.map(badge => (
-                <div key={badge.id} style={{ ...s.card, textAlign: 'center' }}>
-                  <div style={{ width: '64px', height: '64px', borderRadius: '20px', background: badge.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', margin: '0 auto 1rem' }}>
+                <div key={badge.id} className="bg-white rounded-3xl p-6 border border-stone-100 shadow-sm text-center hover:shadow-md transition-shadow group">
+                  <div className={`w-16 h-16 rounded-2xl ${badge.bg} flex items-center justify-center text-3xl mx-auto mb-4 shadow-sm group-hover:scale-110 transition-transform duration-500`}>
                     {badge.icon}
                   </div>
-                  <h4 style={{ fontSize: '0.9rem', fontWeight: 700 }}>{badge.name}</h4>
-                  <p style={{ fontSize: '0.75rem', color: '#78716c' }}>{badge.description}</p>
+                  <h4 className="text-sm font-bold text-stone-900 mb-1">{badge.name}</h4>
+                  <p className="text-[10px] text-stone-500 leading-relaxed px-2">{badge.description}</p>
                 </div>
               ))}
             </div>
           )}
 
           {activeTab === 'certificates' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <div className="space-y-4">
               {!(user?.fullName && user?.address && user?.phone) && (
-                <div style={{ ...s.card, background: '#fff9f9', borderColor: '#fecdd3', padding: '1rem 1.5rem', marginBottom: '1rem' }}>
-                  <p style={{ color: '#991b1b', fontSize: '0.85rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    ⚠️ Profil belum lengkap. Lengkapi Nama Lengkap, Alamat, dan No. HP untuk mengaktifkan unduh sertifikat.
+                <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-4">
+                  <span className="text-amber-600 text-xl shrink-0">⚠️</span>
+                  <p className="text-amber-900 text-xs sm:text-sm font-medium leading-relaxed">
+                    Profil Anda belum lengkap. Silakan isi <span className="font-bold">Nama Lengkap</span>, <span className="font-bold">Alamat</span>, dan <span className="font-bold">No. HP</span> untuk dapat mengunduh sertifikat.
                   </p>
                 </div>
               )}
               
               {certificates.length === 0 ? (
-                <div style={{ ...s.card, textAlign: 'center', padding: '3rem 1rem' }}>
-                  <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🎓</div>
-                  <h4 style={{ fontWeight: 700, marginBottom: '0.5rem' }}>Belum Ada Sertifikat</h4>
-                  <p style={{ fontSize: '0.85rem', color: '#78716c' }}>Selesaikan modul dan lulus kuis untuk mendapatkan sertifikat.</p>
-                  <Link to="/dashboard" style={{ ...s.btn, background: '#1c1917', color: '#fff', margin: '1.5rem auto 0', width: 'fit-content' }}>
-                    Mulai Belajar
+                <div className="bg-white rounded-[2rem] p-12 text-center border border-stone-100 shadow-sm">
+                  <div className="w-20 h-20 bg-stone-50 rounded-full flex items-center justify-center text-4xl mx-auto mb-6 grayscale opacity-50">🎓</div>
+                  <h4 className="font-serif text-xl font-bold text-stone-900 mb-2">Belum Ada Sertifikat</h4>
+                  <p className="text-stone-500 text-sm max-w-xs mx-auto mb-8">Selesaikan modul pembelajaran dan lulus kuis untuk meraih sertifikat kelulusan.</p>
+                  <Link to="/dashboard" className="inline-flex items-center gap-2 bg-stone-900 text-white px-8 py-3.5 rounded-full font-bold text-sm shadow-xl transition-all hover:-translate-y-1">
+                    Mulai Belajar <ChevronRight size={16} />
                   </Link>
                 </div>
               ) : (
-                certificates.map(cert => (
-                  <div key={cert.id} style={{ ...s.card, padding: '1rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap', opacity: (user?.fullName && user?.address && user?.phone) ? 1 : 0.6 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: '#f5f3ff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#5b21b6' }}>
-                        <Award size={24} />
+                <div className="grid grid-cols-1 gap-3">
+                  {certificates.map(cert => (
+                    <div key={cert.id} className={`bg-white rounded-2xl p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 border border-stone-100 shadow-sm transition-all ${!(user?.fullName && user?.address && user?.phone) ? 'opacity-60 grayscale-[0.5]' : 'hover:shadow-md hover:border-rose-100'}`}>
+                      <div className="flex items-center gap-4 w-full sm:w-auto">
+                        <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0">
+                          <Award size={24} />
+                        </div>
+                        <div className="min-w-0">
+                          <h4 className="text-sm sm:text-base font-bold text-stone-900 truncate">{cert.module}</h4>
+                          <p className="text-[10px] sm:text-xs text-stone-400 font-medium">Diterbitkan: {new Date(cert.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h4 style={{ fontSize: '0.95rem', fontWeight: 700 }}>{cert.module}</h4>
-                        <p style={{ fontSize: '11px', color: '#a8a29e' }}>Diterbitkan: {new Date(cert.date).toLocaleDateString('id-ID')}</p>
-                      </div>
+                      <button 
+                        onClick={() => downloadCertificate(cert)}
+                        disabled={isDownloading === cert.id}
+                        className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs sm:text-sm font-bold border transition-all ${
+                          (user?.fullName && user?.address && user?.phone)
+                          ? 'bg-stone-50 border-stone-200 text-stone-800 hover:bg-rose-600 hover:border-rose-600 hover:text-white hover:shadow-lg'
+                          : 'bg-stone-50 border-stone-100 text-stone-300 cursor-not-allowed'
+                        }`}>
+                        {isDownloading === cert.id ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />} 
+                        Unduh Sertifikat
+                      </button>
                     </div>
-                    <button 
-                      onClick={() => downloadCertificate(cert)}
-                      disabled={isDownloading === cert.id}
-                      style={{ 
-                        ...s.btn, 
-                        background: (user?.fullName && user?.address && user?.phone) ? '#f5f5f4' : '#f5f5f4', 
-                        color: (user?.fullName && user?.address && user?.phone) ? '#1c1917' : '#a8a29e', 
-                        border: '1px solid #e7e5e4',
-                        cursor: (user?.fullName && user?.address && user?.phone) ? 'pointer' : 'not-allowed'
-                      }}>
-                      {isDownloading === cert.id ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />} 
-                      Unduh
-                    </button>
-                  </div>
-                ))
+                  ))}
+                </div>
               )}
             </div>
           )}
         </div>
 
         {/* Hidden Canvas for Certificate Generation */}
-        <canvas ref={canvasRef} style={{ display: 'none' }} />
+        <canvas ref={canvasRef} className="hidden" />
 
         {/* Edit Profile Modal */}
         {isEditModalOpen && (
-          <div style={s.modal} onClick={() => setIsEditModalOpen(false)}>
-            <div style={s.modalContent} onClick={e => e.stopPropagation()}>
+          <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-md animate-in fade-in duration-300" onClick={() => setIsEditModalOpen(false)}>
+            <div className="bg-white rounded-[2.5rem] w-full max-w-lg p-8 sm:p-10 relative shadow-2xl animate-in zoom-in-95 duration-300" onClick={e => e.stopPropagation()}>
               <button 
                 onClick={() => setIsEditModalOpen(false)}
-                style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'none', border: 'none', cursor: 'pointer', color: '#a8a29e' }}>
-                <X size={20} />
+                className="absolute top-6 right-6 p-2 text-stone-300 hover:text-stone-900 transition-colors">
+                <X size={24} />
               </button>
               
-              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>Edit Profil</h2>
-              <p style={{ fontSize: '0.85rem', color: '#78716c', marginBottom: '2rem' }}>Lengkapi data diri Anda untuk keperluan sertifikat.</p>
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-stone-900 mb-2">Edit Profil</h2>
+              <p className="text-xs sm:text-sm text-stone-400 mb-8">Lengkapi data diri Anda secara akurat untuk keperluan pencetakan sertifikat.</p>
               
-              <form onSubmit={handleUpdateProfile} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                <div>
-                  <label style={s.inputLabel}>Nama Lengkap (Untuk Sertifikat)</label>
-                  <div style={{ position: 'relative' }}>
-                    <User size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#a8a29e' }} />
+              <form onSubmit={handleUpdateProfile} className="space-y-5">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-stone-500 uppercase tracking-widest ml-1">Nama Lengkap (Sesuai Sertifikat)</label>
+                  <div className="relative group">
+                    <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-300 group-focus-within:text-rose-600 transition-colors" />
                     <input 
-                      style={{ ...s.input, paddingLeft: '40px' }}
-                      placeholder="Contoh: Siti Rahayu"
+                      className="w-full bg-stone-50 border border-stone-100 rounded-2xl py-3.5 pl-12 pr-4 text-sm outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all"
+                      placeholder="Masukkan nama lengkap..."
                       value={formData.fullName}
                       onChange={e => setFormData({ ...formData, fullName: e.target.value })}
                       required
@@ -411,26 +405,26 @@ const Profile = () => {
                   </div>
                 </div>
 
-                <div>
-                  <label style={s.inputLabel}>Alamat Domisili</label>
-                  <div style={{ position: 'relative' }}>
-                    <MapPin size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#a8a29e' }} />
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-stone-500 uppercase tracking-widest ml-1">Alamat Domisili</label>
+                  <div className="relative group">
+                    <MapPin size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-300 group-focus-within:text-rose-600 transition-colors" />
                     <input 
-                      style={{ ...s.input, paddingLeft: '40px' }}
-                      placeholder="Alamat lengkap di desa"
+                      className="w-full bg-stone-50 border border-stone-100 rounded-2xl py-3.5 pl-12 pr-4 text-sm outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all"
+                      placeholder="Alamat lengkap saat ini..."
                       value={formData.address}
                       onChange={e => setFormData({ ...formData, address: e.target.value })}
                     />
                   </div>
                 </div>
 
-                <div>
-                  <label style={s.inputLabel}>Nomor WhatsApp/HP</label>
-                  <div style={{ position: 'relative' }}>
-                    <Phone size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#a8a29e' }} />
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-stone-500 uppercase tracking-widest ml-1">Nomor WhatsApp / HP</label>
+                  <div className="relative group">
+                    <Phone size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-300 group-focus-within:text-rose-600 transition-colors" />
                     <input 
-                      style={{ ...s.input, paddingLeft: '40px' }}
-                      placeholder="0812xxxxxxx"
+                      className="w-full bg-stone-50 border border-stone-100 rounded-2xl py-3.5 pl-12 pr-4 text-sm outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all"
+                      placeholder="Contoh: 08123456789"
                       value={formData.phone}
                       onChange={e => setFormData({ ...formData, phone: e.target.value })}
                     />
@@ -440,7 +434,7 @@ const Profile = () => {
                 <button 
                   type="submit"
                   disabled={isSaving}
-                  style={{ ...s.btn, background: '#9f1239', color: '#fff', width: '100%', justifyContent: 'center', marginTop: '1rem', padding: '14px' }}>
+                  className="w-full bg-stone-900 hover:bg-stone-800 text-white rounded-2xl py-4 font-bold text-sm shadow-xl shadow-stone-200 transition-all flex items-center justify-center gap-3 transform hover:-translate-y-0.5 active:translate-y-0 mt-4">
                   {isSaving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />} 
                   Simpan Perubahan
                 </button>

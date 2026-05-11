@@ -66,27 +66,27 @@ function MatchingGame({ game }) {
           <p className="text-emerald-700 mt-1">Anda telah memahami istilah-istilah penting ini.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-3">
-            <p className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em] mb-4">Pilih Istilah</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+          <div className="space-y-2 sm:space-y-3">
+            <p className="text-[9px] sm:text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em] mb-2 sm:mb-4">Pilih Istilah</p>
             {game.pairs.map(p => (
               <button key={p.term} disabled={matched.includes(p.term)}
                 onClick={() => handleTerm(p.term)}
-                className={`w-full text-left px-5 py-4 rounded-2xl text-sm font-semibold border transition-all duration-300 ${matched.includes(p.term) ? 'bg-emerald-50 border-emerald-200 text-emerald-700 opacity-60 cursor-default' :
+                className={`w-full text-left px-4 sm:px-5 py-3 sm:py-4 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-semibold border transition-all duration-300 ${matched.includes(p.term) ? 'bg-emerald-50 border-emerald-200 text-emerald-700 opacity-60 cursor-default' :
                   selected.term === p.term ? 'bg-rose-600 border-rose-600 text-white shadow-lg shadow-rose-200 -translate-y-0.5' :
-                    'bg-stone-50 border-stone-100 text-stone-700 hover:border-rose-300 hover:bg-white hover:shadow-md'
+                    'bg-white border-stone-100 text-stone-700 hover:border-rose-300 hover:shadow-md'
                   }`}>{p.term}</button>
             ))}
           </div>
-          <div className="space-y-3">
-            <p className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em] mb-4">Pilih Definisi</p>
+          <div className="space-y-2 sm:space-y-3">
+            <p className="text-[9px] sm:text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em] mb-2 sm:mb-4">Pilih Definisi</p>
             {shuffledDefs.map(p => (
               <button key={p.def} disabled={matched.includes(p.term)}
                 onClick={() => handleDef(p.def)}
-                className={`w-full text-left px-5 py-4 rounded-2xl text-sm leading-relaxed border transition-all duration-300 ${matched.find(t => game.pairs.find(pair => pair.term === t && pair.def === p.def))
+                className={`w-full text-left px-4 sm:px-5 py-3 sm:py-4 rounded-xl sm:rounded-2xl text-xs sm:text-sm leading-relaxed border transition-all duration-300 ${matched.find(t => game.pairs.find(pair => pair.term === t && pair.def === p.def))
                   ? 'bg-emerald-50 border-emerald-200 text-emerald-700 opacity-60 cursor-default' :
                   wrong ? 'bg-red-50 border-red-300 animate-shake text-red-700' :
-                    'bg-stone-50 border-stone-100 text-stone-600 hover:border-rose-300 hover:bg-white hover:shadow-md'
+                    'bg-white border-stone-100 text-stone-600 hover:border-rose-300 hover:shadow-md'
                   }`}>{p.def}</button>
             ))}
           </div>
@@ -156,17 +156,17 @@ function TrueFalseGame({ game }) {
         <p className="text-stone-800 font-serif text-xl text-center leading-relaxed italic">"{q.statement}"</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-8">
+      <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 sm:gap-4 mb-8">
         {[true, false].map(val => (
           <button key={String(val)} onClick={() => answer(val)}
             disabled={answered !== null}
-            className={`group py-6 rounded-3xl font-bold text-lg border-2 transition-all duration-300 flex flex-col items-center gap-2 ${answered === null ? 'bg-white border-stone-100 hover:border-rose-400 hover:shadow-lg hover:shadow-rose-100' :
+            className={`group py-4 sm:py-6 rounded-2xl sm:rounded-3xl font-bold text-base sm:text-lg border-2 transition-all duration-300 flex flex-col items-center gap-1 sm:gap-2 ${answered === null ? 'bg-white border-stone-100 hover:border-rose-400 hover:shadow-lg hover:shadow-rose-100' :
               val === q.answer ? 'bg-emerald-50 border-emerald-500 text-emerald-700' :
                 answered === val ? 'bg-red-50 border-red-400 text-red-700' :
                   'bg-white border-stone-100 opacity-40'
               }`}>
-            <span className="text-2xl mb-1">{val ? '✅' : '❌'}</span>
-            <span className="tracking-widest uppercase text-xs">{val ? 'Benar' : 'Salah'}</span>
+            <span className="text-xl sm:text-2xl mb-1">{val ? '✅' : '❌'}</span>
+            <span className="tracking-widest uppercase text-[10px] sm:text-xs">{val ? 'Benar' : 'Salah'}</span>
           </button>
         ))}
       </div>
@@ -217,19 +217,21 @@ function OrderingGame({ game }) {
         💡 Gunakan tombol ↑ ↓ untuk mengurutkan langkah-langkah di bawah ini dengan urutan yang benar.
       </p>
 
-      <div className="space-y-3 mb-8">
+      <div className="space-y-2 sm:space-y-3 mb-8">
         {items.map((item, i) => (
-          <div key={item} className={`flex items-center gap-4 p-4 rounded-2xl border transition-all duration-300 ${checked ? (item === game.correctOrder[i] ? 'bg-emerald-50 border-emerald-300' : 'bg-red-50 border-red-300') : 'bg-white border-stone-100 hover:shadow-md'
+          <div key={item} className={`flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-4 rounded-xl sm:rounded-2xl border transition-all duration-300 ${checked ? (item === game.correctOrder[i] ? 'bg-emerald-50 border-emerald-300' : 'bg-red-50 border-red-300') : 'bg-white border-stone-100 hover:shadow-md'
             }`}>
-            <span className="w-8 h-8 rounded-xl bg-stone-900 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-sm">{i + 1}</span>
-            <span className="flex-1 text-sm font-semibold text-stone-800">{item}</span>
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <span className="w-8 h-8 rounded-lg sm:rounded-xl bg-stone-900 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-sm">{i + 1}</span>
+              <span className="flex-1 text-xs sm:text-sm font-semibold text-stone-800">{item}</span>
+            </div>
             {!checked && (
-              <div className="flex gap-2">
-                <button onClick={() => move(i, -1)} className="w-9 h-9 rounded-xl bg-stone-50 text-stone-400 hover:bg-stone-900 hover:text-white transition-all flex items-center justify-center border border-stone-200">
-                  <ChevronLeft size={16} className="rotate-90" />
+              <div className="flex gap-2 ml-11 sm:ml-auto">
+                <button onClick={() => move(i, -1)} className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-stone-50 text-stone-400 hover:bg-stone-900 hover:text-white transition-all flex items-center justify-center border border-stone-200">
+                  <ChevronLeft size={14} className="rotate-90 sm:w-4 sm:h-4" />
                 </button>
-                <button onClick={() => move(i, 1)} className="w-9 h-9 rounded-xl bg-stone-50 text-stone-400 hover:bg-stone-900 hover:text-white transition-all flex items-center justify-center border border-stone-200">
-                  <ChevronLeft size={16} className="-rotate-90" />
+                <button onClick={() => move(i, 1)} className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-stone-50 text-stone-400 hover:bg-stone-900 hover:text-white transition-all flex items-center justify-center border border-stone-200">
+                  <ChevronLeft size={14} className="-rotate-90 sm:w-4 sm:h-4" />
                 </button>
               </div>
             )}
