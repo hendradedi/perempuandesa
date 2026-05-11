@@ -21,12 +21,20 @@ const initialMaterialForm = {
   content: ''
 };
 
+const initialLesson = () => ({
+  title: '',
+  duration: '15 menit',
+  content: '',
+  keyPoints: '',
+  tips: ''
+});
+
 const initialModuleForm = {
   title: '',
   description: '',
   icon: '📘',
   color: 'primary',
-  lessonsText: '',
+  lessons: [initialLesson()],
   quizText: ''
 };
 
@@ -83,6 +91,19 @@ const normalizeQuizFromText = (rawText) => {
       explanation: explanation || 'Penjelasan jawaban disiapkan admin.'
     };
   });
+};
+
+const normalizeLessonsFromForm = (formLessons) => {
+  return formLessons.map((l, index) => ({
+    id: index + 1,
+    title: l.title.trim() || `Pelajaran ${index + 1}`,
+    duration: l.duration.trim() || '15 menit',
+    content: l.content.trim() || 'Materi sedang dipersiapkan.',
+    keyPoints: l.keyPoints
+      ? l.keyPoints.split('\n').map(k => k.trim()).filter(Boolean)
+      : [],
+    tips: l.tips.trim() || ''
+  }));
 };
 
 const normalizeModuleDraft = (draft, createdBy, createdByName) => {
@@ -293,11 +314,11 @@ const AdminPanel = ({ isSuperAdmin }) => {
 
     const title = moduleForm.title.trim();
     const description = moduleForm.description.trim();
-    const lessons = normalizeLessonsFromText(moduleForm.lessonsText);
+    const lessons = normalizeLessonsFromForm(moduleForm.lessons);
     const quizQuestions = normalizeQuizFromText(moduleForm.quizText);
 
-    if (!title || !description || lessons.length < 3 || quizQuestions.length < 3) {
-      setErrorMessage('Judul, deskripsi, minimal 3 pelajaran, dan minimal 3 soal kuis wajib diisi.');
+    if (!title || !description || lessons.length < 1) {
+      setErrorMessage('Judul, deskripsi, dan minimal 1 pelajaran wajib diisi.');
       return;
     }
 
@@ -340,20 +361,46 @@ const AdminPanel = ({ isSuperAdmin }) => {
 
   const handleEditModule = (mod) => {
     setEditingModuleId(mod.id);
-    const lTxt = (mod.lessons || []).map(l => `${l.title} | ${l.duration} | ${l.content}`).join('\n');
-    const qTxt = (mod.quizQuestions || []).map(q => 
-      `${q.question} | ${q.options[0]} | ${q.options[1]} | ${q.options[2]} | ${q.options[3]} | ${q.correctAnswer} | ${q.explanation}`
+    const qTxt = (mod.quizQuestions || []).map(q =>
+      `${q.question} | ${(q.options||[]).join(' | ')} | ${q.correctAnswer} | ${q.explanation}`
     ).join('\n');
 
+    const formLessons = (mod.lessons || []).map(l => ({
+      title: l.title || '',
+      duration: l.duration || '15 menit',
+      content: l.content || '',
+      keyPoints: Array.isArray(l.keyPoints) ? l.keyPoints.join('\n') : (l.keyPoints || ''),
+      tips: l.tips || ''
+    }));
+
     setModuleForm({
-      title: mod.title,
-      description: mod.description,
+      title: mod.title || '',
+      description: mod.description || '',
       icon: mod.icon || '📘',
       color: mod.color || 'primary',
-      lessonsText: lTxt,
+      lessons: formLessons.length > 0 ? formLessons : [initialLesson()],
       quizText: qTxt
     });
-    window.scrollTo({ top: 600, behavior: 'smooth' });
+    // Scroll to the edit form
+    setTimeout(() => {
+      document.getElementById('module-editor')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  };
+
+  const handleLessonChange = (index, field, value) => {
+    setModuleForm(prev => {
+      const lessons = [...prev.lessons];
+      lessons[index] = { ...lessons[index], [field]: value };
+      return { ...prev, lessons };
+    });
+  };
+
+  const handleAddLesson = () => {
+    setModuleForm(prev => ({ ...prev, lessons: [...prev.lessons, initialLesson()] }));
+  };
+
+  const handleRemoveLesson = (index) => {
+    setModuleForm(prev => ({ ...prev, lessons: prev.lessons.filter((_, i) => i !== index) }));
   };
 
   const handleCancelEdit = () => {
@@ -760,36 +807,118 @@ const AdminPanel = ({ isSuperAdmin }) => {
         {/* Row 2: Add Module Manual + AI Module */}
         <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'1.5rem', marginBottom:'1.5rem'}}>
 
-          {/* Manual Module */}
-          <div style={S.card}>
-            <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'1rem'}}>
-              <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:'1.15rem', color:'#1c1917', fontWeight:600}}>{editingModuleId ? 'Edit Modul' : 'Tambah Modul Manual'}</h2>
+          {/* Visual Module Editor */}
+          <div id="module-editor" style={S.card}>
+            <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'1.25rem'}}>
+              <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:'1.15rem', color:'#1c1917', fontWeight:600}}>
+                {editingModuleId ? '✏️ Edit Modul' : '➕ Tambah Modul Baru'}
+              </h2>
               {editingModuleId && (
-                <button onClick={handleCancelEdit} style={{fontSize:'11px', color:'#9f1239', fontWeight:700, background:'none', border:'none', cursor:'pointer'}}>Batal Edit</button>
+                <button onClick={handleCancelEdit} style={{fontSize:'11px', color:'#9f1239', fontWeight:700, background:'#fff1f2', border:'1px solid #fecdd3', borderRadius:'8px', padding:'5px 12px', cursor:'pointer'}}>✕ Batal Edit</button>
               )}
             </div>
-            <div style={{background:'#fffbeb', border:'1px solid #fde68a', borderRadius:'12px', padding:'12px', marginBottom:'1rem', fontSize:'12px', color:'#92400e'}}>
-              <p><strong>Format pelajaran (per baris):</strong> Judul | Durasi | Konten</p>
-              <p style={{marginTop:'4px'}}><strong>Format kuis (per baris):</strong> Pertanyaan | OpsiA | B | C | D | IndexBenar(0-3) | Penjelasan</p>
-            </div>
-            <form onSubmit={handleAddManualModule} style={{display:'flex', flexDirection:'column', gap:'10px'}}>
-              <input name="title" value={moduleForm.title} onChange={handleModuleInputChange} placeholder="Judul modul" style={S.input} />
-              <input name="description" value={moduleForm.description} onChange={handleModuleInputChange} placeholder="Deskripsi modul" style={S.input} />
+
+            <form onSubmit={handleAddManualModule} style={{display:'flex', flexDirection:'column', gap:'14px'}}>
+              {/* Meta Info */}
               <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px'}}>
-                <input name="icon" value={moduleForm.icon} onChange={handleModuleInputChange} placeholder="Ikon" style={S.input} />
-                <select name="color" value={moduleForm.color} onChange={handleModuleInputChange} style={S.input}>
-                  <option value="primary">primary (merah)</option>
-                  <option value="teal">teal (hijau)</option>
-                  <option value="coral">coral (orange)</option>
-                  <option value="indigo">indigo (biru)</option>
-                  <option value="rose">rose (pink)</option>
-                  <option value="amber">amber (kuning)</option>
-                </select>
+                <div>
+                  <label style={S.label}>Judul Modul</label>
+                  <input name="title" value={moduleForm.title} onChange={handleModuleInputChange} placeholder="Nama modul..." style={S.input} required />
+                </div>
+                <div>
+                  <label style={S.label}>Deskripsi Singkat</label>
+                  <input name="description" value={moduleForm.description} onChange={handleModuleInputChange} placeholder="Deskripsi modul..." style={S.input} />
+                </div>
               </div>
-              <textarea name="lessonsText" value={moduleForm.lessonsText} onChange={handleModuleInputChange} placeholder="Dasar Kewirausahaan | 15 menit | Materi pembuka..." style={{...S.input, minHeight:'90px', resize:'vertical'}} />
-              <textarea name="quizText" value={moduleForm.quizText} onChange={handleModuleInputChange} placeholder="Apa itu modal? | Tabungan | Dana | Listrik | Pajak | 1 | Modal adalah..." style={{...S.input, minHeight:'90px', resize:'vertical'}} />
-              <button type="submit" disabled={isSubmittingModule} style={{...S.btn, background: isSubmittingModule ? '#e7e5e4' : (editingModuleId ? '#4338ca' : '#065f46'), color:'#fff'}}>
-                {isSubmittingModule ? 'Menyimpan...' : (editingModuleId ? 'Update Modul' : 'Simpan Modul Manual')}
+              <div style={{display:'grid', gridTemplateColumns:'80px 1fr', gap:'10px'}}>
+                <div>
+                  <label style={S.label}>Ikon</label>
+                  <input name="icon" value={moduleForm.icon} onChange={handleModuleInputChange} style={{...S.input, textAlign:'center', fontSize:'1.5rem'}} />
+                </div>
+                <div>
+                  <label style={S.label}>Warna Tema</label>
+                  <select name="color" value={moduleForm.color} onChange={handleModuleInputChange} style={S.input}>
+                    <option value="primary">🔴 primary (merah)</option>
+                    <option value="teal">🟢 teal (hijau)</option>
+                    <option value="coral">🟠 coral (orange)</option>
+                    <option value="indigo">🔵 indigo (biru)</option>
+                    <option value="rose">🌸 rose (pink)</option>
+                    <option value="amber">🟡 amber (kuning)</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Lessons Editor */}
+              <div>
+                <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'10px'}}>
+                  <label style={{...S.label, marginBottom:0}}>📚 Pelajaran ({moduleForm.lessons.length})</label>
+                  <button type="button" onClick={handleAddLesson}
+                    style={{fontSize:'11px', fontWeight:700, background:'#f0fdf4', color:'#065f46', border:'1px solid #a7f3d0', padding:'5px 12px', borderRadius:'8px', cursor:'pointer'}}>
+                    + Tambah Pelajaran
+                  </button>
+                </div>
+
+                <div style={{display:'flex', flexDirection:'column', gap:'12px'}}>
+                  {moduleForm.lessons.map((lesson, idx) => (
+                    <div key={idx} style={{border:'1px solid #e7e5e4', borderRadius:'16px', padding:'16px', background:'#fafaf9', position:'relative'}}>
+                      <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'10px'}}>
+                        <span style={{fontSize:'12px', fontWeight:700, color:'#9f1239', background:'#fff1f2', padding:'3px 10px', borderRadius:'999px'}}>Pelajaran {idx + 1}</span>
+                        {moduleForm.lessons.length > 1 && (
+                          <button type="button" onClick={() => handleRemoveLesson(idx)}
+                            style={{fontSize:'11px', color:'#dc2626', background:'none', border:'none', cursor:'pointer', fontWeight:700}}>🗑 Hapus</button>
+                        )}
+                      </div>
+                      <div style={{display:'grid', gridTemplateColumns:'1fr 130px', gap:'8px', marginBottom:'8px'}}>
+                        <div>
+                          <label style={S.label}>Judul Pelajaran</label>
+                          <input value={lesson.title} onChange={e => handleLessonChange(idx, 'title', e.target.value)}
+                            placeholder="Judul pelajaran..." style={S.input} />
+                        </div>
+                        <div>
+                          <label style={S.label}>Durasi</label>
+                          <input value={lesson.duration} onChange={e => handleLessonChange(idx, 'duration', e.target.value)}
+                            placeholder="15 menit" style={S.input} />
+                        </div>
+                      </div>
+                      <div style={{marginBottom:'8px'}}>
+                        <label style={S.label}>Isi Materi</label>
+                        <textarea value={lesson.content} onChange={e => handleLessonChange(idx, 'content', e.target.value)}
+                          placeholder="Tulis isi materi pelajaran di sini..." rows={3}
+                          style={{...S.input, resize:'vertical', minHeight:'80px'}} />
+                      </div>
+                      <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px'}}>
+                        <div>
+                          <label style={S.label}>Poin Utama (satu per baris)</label>
+                          <textarea value={lesson.keyPoints} onChange={e => handleLessonChange(idx, 'keyPoints', e.target.value)}
+                            placeholder={`Poin 1\nPoin 2\nPoin 3`} rows={4}
+                            style={{...S.input, resize:'vertical', minHeight:'80px'}} />
+                        </div>
+                        <div>
+                          <label style={S.label}>Tips / Saran Belajar</label>
+                          <textarea value={lesson.tips} onChange={e => handleLessonChange(idx, 'tips', e.target.value)}
+                            placeholder="Saran atau tips menarik untuk peserta..." rows={4}
+                            style={{...S.input, resize:'vertical', minHeight:'80px'}} />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Quiz */}
+              <div>
+                <label style={S.label}>🧠 Soal Kuis (per baris: Pertanyaan | OpsiA | B | C | D | IndexBenar | Penjelasan)</label>
+                <div style={{background:'#fffbeb', border:'1px solid #fde68a', borderRadius:'10px', padding:'10px', marginBottom:'6px', fontSize:'11px', color:'#92400e'}}>
+                  Contoh: <code>Apa itu hoax? | Fakta | Berita palsu | Berita viral | Gosip | 1 | Hoax adalah informasi palsu...</code>
+                </div>
+                <textarea name="quizText" value={moduleForm.quizText} onChange={handleModuleInputChange}
+                  placeholder="Soal 1 | OpsiA | B | C | D | 0 | Penjelasan..." rows={5}
+                  style={{...S.input, minHeight:'100px', resize:'vertical', fontFamily:'monospace', fontSize:'12px'}} />
+              </div>
+
+              <button type="submit" disabled={isSubmittingModule}
+                style={{...S.btn, background: isSubmittingModule ? '#e7e5e4' : (editingModuleId ? '#4338ca' : '#065f46'), color:'#fff', fontSize:'1rem', padding:'14px'}}>
+                {isSubmittingModule ? 'Menyimpan...' : (editingModuleId ? '💾 Simpan Perubahan Modul' : '✅ Simpan Modul Baru')}
               </button>
             </form>
           </div>
@@ -848,36 +977,65 @@ const AdminPanel = ({ isSuperAdmin }) => {
             </div>
           </div>
 
-          {/* Modules List */}
+          {/* Modules List - all modules */}
           <div style={S.card}>
             <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'1.25rem'}}>
-              <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:'1.15rem', color:'#1c1917', fontWeight:600}}>Modul Tersimpan</h2>
-              <button 
-                onClick={handleSyncModules} 
+              <h2 style={{fontFamily:"'Playfair Display', serif", fontSize:'1.15rem', color:'#1c1917', fontWeight:600}}>Semua Modul</h2>
+              <button
+                onClick={handleSyncModules}
                 disabled={isSyncingModules}
                 style={{fontSize:'10px', fontWeight:700, background:'#f0fdf4', color:'#065f46', border:'1px solid #a7f3d0', padding:'6px 12px', borderRadius:'10px', cursor:'pointer'}}
               >
-                {isSyncingModules ? 'Sinkronisasi...' : 'Sinkron Modul Sistem'}
+                {isSyncingModules ? 'Sinkronisasi...' : '🔄 Sinkron Modul Sistem'}
               </button>
             </div>
-            <div style={{display:'flex', flexDirection:'column', gap:'10px', maxHeight:'400px', overflowY:'auto'}}>
-              {modules.length === 0 && <p style={{textAlign:'center', color:'#a8a29e', padding:'2rem', fontSize:'14px'}}>Belum ada modul buatan admin.</p>}
+            <p style={{fontSize:'11px', color:'#a8a29e', marginBottom:'1rem'}}>Klik <strong>Edit</strong> untuk mengubah modul. Modul bawaan sistem perlu di-sinkron dulu agar bisa diedit.</p>
+            <div style={{display:'flex', flexDirection:'column', gap:'10px', maxHeight:'500px', overflowY:'auto'}}>
+              {/* Firestore modules */}
               {modules.map(item => (
-                <div key={item.id} style={{borderRadius:'14px', border:'1px solid #f5f5f4', padding:'14px', background:'#fafaf9', position:'relative'}}>
+                <div key={item.id} style={{borderRadius:'14px', border:'1px solid #e7e5e4', padding:'14px', background:'#fff', position:'relative'}}>
                   <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'6px'}}>
                     <p style={{fontWeight:600, color:'#1c1917'}}>{item.icon || '📘'} {item.title}</p>
                     <div style={{display:'flex', gap:'8px', alignItems:'center'}}>
-                      <span style={{fontSize:'10px', padding:'3px 10px', borderRadius:'999px', background:'#d1fae5', color:'#065f46', fontWeight:700}}>{item.status || 'approved'}</span>
-                      <button onClick={() => handleEditModule(item)} style={{fontSize:'10px', fontWeight:700, color:'#4338ca', background:'#eef2ff', border:'1px solid #c7d2fe', padding:'3px 10px', borderRadius:'999px', cursor:'pointer'}}>Edit</button>
+                      <span style={{fontSize:'10px', padding:'3px 8px', borderRadius:'999px', background: item.source === 'ai' || item.source === 'admin' ? '#f5f3ff' : '#dbeafe', color: item.source === 'ai' || item.source === 'admin' ? '#5b21b6' : '#1e40af', fontWeight:700}}>
+                        {item.source === 'ai' ? '🤖 AI' : item.source === 'system' ? '⚙️ Sistem' : '👤 Admin'}
+                      </span>
+                      <button onClick={() => handleEditModule(item)}
+                        style={{fontSize:'10px', fontWeight:700, color:'#4338ca', background:'#eef2ff', border:'1px solid #c7d2fe', padding:'4px 12px', borderRadius:'999px', cursor:'pointer'}}>✏️ Edit</button>
                     </div>
                   </div>
-                  <p style={{fontSize:'12px', color:'#78716c', marginBottom:'8px'}}>{item.description}</p>
+                  <p style={{fontSize:'12px', color:'#78716c', marginBottom:'6px'}}>{item.description}</p>
                   <div style={{display:'flex', justifyContent:'space-between', fontSize:'11px', color:'#a8a29e', fontWeight:700}}>
-                    <span style={{color:'#5b21b6'}}>{item.lessons?.length || 0} Pelajaran</span>
+                    <span style={{color:'#5b21b6'}}>📖 {item.lessons?.length || 0} Pelajaran</span>
                     <span>{formatTimestamp(item.createdAt)}</span>
                   </div>
                 </div>
               ))}
+              {/* Static modules not yet synced */}
+              {learningModules
+                .filter(sm => !modules.some(cm => cm.title === sm.title))
+                .map(sm => (
+                  <div key={sm.id} style={{borderRadius:'14px', border:'1px dashed #e7e5e4', padding:'14px', background:'#faf9f8', opacity: 0.75}}>
+                    <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'6px'}}>
+                      <p style={{fontWeight:600, color:'#57534e'}}>{sm.icon} {sm.title}</p>
+                      <div style={{display:'flex', gap:'8px', alignItems:'center'}}>
+                        <span style={{fontSize:'10px', padding:'3px 8px', borderRadius:'999px', background:'#f5f5f4', color:'#78716c', fontWeight:700}}>📦 Bawaan</span>
+                        <button
+                          onClick={handleSyncModules}
+                          disabled={isSyncingModules}
+                          style={{fontSize:'10px', fontWeight:700, color:'#065f46', background:'#f0fdf4', border:'1px solid #a7f3d0', padding:'4px 10px', borderRadius:'999px', cursor:'pointer'}}>
+                          Sinkron dulu
+                        </button>
+                      </div>
+                    </div>
+                    <p style={{fontSize:'12px', color:'#a8a29e'}}>{sm.description}</p>
+                    <p style={{fontSize:'11px', color:'#a8a29e', fontWeight:700, marginTop:'4px'}}>📖 {sm.lessons?.length || 0} Pelajaran · Belum tersinkron ke database</p>
+                  </div>
+                ))
+              }
+              {modules.length === 0 && learningModules.length === 0 && (
+                <p style={{textAlign:'center', color:'#a8a29e', padding:'2rem', fontSize:'14px'}}>Belum ada modul.</p>
+              )}
             </div>
           </div>
         </div>
