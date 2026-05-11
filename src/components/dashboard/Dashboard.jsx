@@ -17,17 +17,15 @@ const MOD_STYLE = {
 };
 
 const s = {
-  page:    { minHeight: '100vh', background: '#faf9f8', fontFamily: "'Plus Jakarta Sans', sans-serif", color: '#1c1917' },
-  nav:     { position: 'sticky', top: 0, zIndex: 50, background: 'rgba(255,255,255,0.95)', borderBottom: '1px solid #e7e5e4', backdropFilter: 'blur(16px)', boxShadow: '0 2px 8px rgba(28,25,23,0.05)' },
-  navInner:{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '72px' },
-  logo:    { display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' },
-  logoIcon:{ width: '38px', height: '38px', borderRadius: '50%', background: '#fff1f2', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9f1239' },
+  page:    { minHeight: '100vh', background: '#fdfbf9', fontFamily: "'Plus Jakarta Sans', sans-serif", color: '#1c1917' },
+  nav:     { position: 'sticky', top: 0, zIndex: 50, background: 'rgba(255,255,255,0.8)', borderBottom: '1px solid rgba(231,229,228,0.5)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' },
+  navInner:{ maxWidth: '1280px', margin: '0 auto', padding: '0 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '80px' },
+  logo:    { display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' },
+  logoIcon:{ width: '42px', height: '42px', borderRadius: '14px', background: 'linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9f1239', boxShadow: '0 4px 12px rgba(159,18,57,0.08)' },
   main:    { maxWidth: '1280px', margin: '0 auto' },
-  grid2:   {}, // Digantikan oleh class Tailwind
-  statsRow:{}, // Digantikan oleh class Tailwind
-  statCard:{ background: '#fff', borderRadius: '20px', padding: '1.5rem', border: '1px solid #f5f5f4', boxShadow: '0 2px 8px rgba(28,25,23,0.04)' },
-  card:    { background: '#fff', borderRadius: '24px', padding: '2rem', border: '1px solid #f5f5f4', boxShadow: '0 2px 8px rgba(28,25,23,0.04)', marginBottom: '1.5rem' },
-  sideCard:{ background: '#fff', borderRadius: '24px', padding: '2rem', border: '1px solid #f5f5f4', boxShadow: '0 2px 8px rgba(28,25,23,0.04)', position: 'sticky', top: '90px' },
+  card:    { background: '#fff', borderRadius: '32px', padding: '2.5rem', border: '1px solid #f5f5f4', boxShadow: '0 4px 20px rgba(28,25,23,0.03)', marginBottom: '2rem' },
+  statCard:{ background: '#fff', borderRadius: '28px', padding: '1.75rem', border: '1px solid #f5f5f4', boxShadow: '0 4px 12px rgba(28,25,23,0.02)', transition: 'all 0.3s ease' },
+  sideCard:{ background: '#fff', borderRadius: '32px', padding: '2rem', border: '1px solid #f5f5f4', boxShadow: '0 4px 20px rgba(28,25,23,0.03)', position: 'sticky', top: '100px' },
 };
 
 export default function Dashboard() {
@@ -84,36 +82,47 @@ export default function Dashboard() {
       </nav>
 
       {/* ── MAIN ──────────────────────────────────────────────── */}
-      <main style={s.main} className="pt-8 md:pt-12 pb-20 px-4 md:px-8">
+      <main style={s.main} className="pt-10 md:pt-16 pb-24 px-4 md:px-8">
 
-        {/* Greeting */}
-        <div style={{ marginBottom: '2.5rem' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#f5f5f4', border: '1px solid #e7e5e4', borderRadius: '999px', padding: '4px 14px', fontSize: '11px', fontWeight: 600, color: '#78716c', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '1rem' }}>
-            <Sparkles size={12} color="#9f1239" /> Ruang Belajar Anda
+        {/* Greeting Section */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#fff', border: '1px solid #e7e5e4', borderRadius: '12px', padding: '6px 16px', fontSize: '11px', fontWeight: 700, color: '#9f1239', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1.25rem', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+              <div className="w-2 h-2 rounded-full bg-[#9f1239] animate-pulse"></div>
+              Ruang Belajar Mandiri
+            </div>
+            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(2.5rem, 5vw, 3.5rem)', color: '#1c1917', lineHeight: 1.1, marginBottom: '0.75rem', fontWeight: 600 }}>
+              Halo, <span style={{ color: '#9f1239', fontStyle: 'italic' }}>{user?.name || 'Peserta'}</span>
+            </h1>
+            <p style={{ color: '#78716c', fontWeight: 400, fontSize: '1.1rem', maxWidth: '600px', lineHeight: 1.6 }}>
+              Selamat datang kembali di <strong style={{color: '#1c1917'}}>SELARAS</strong>. Terus asah potensi Anda dan jadilah perempuan yang mandiri dan berdaya.
+            </p>
           </div>
-          <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(2rem, 4vw, 3rem)', color: '#1c1917', lineHeight: 1.15, marginBottom: '0.5rem', fontWeight: 600 }}>
-            Selamat Datang,{' '}
-            <span style={{ color: '#9f1239', fontStyle: 'italic' }}>{user?.name || 'Peserta'}</span>
-          </h1>
-          <p style={{ color: '#78716c', fontWeight: 300, fontSize: '1rem' }}>
-            Mari lanjutkan perjalanan belajar Anda. Setiap langkah adalah kemajuan berarti.
-          </p>
+          <div className="hidden lg:block">
+            <div style={{ padding: '1.5rem 2rem', background: '#fff', border: '1px solid #f5f5f4', borderRadius: '24px', boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}>
+               <p style={{ fontSize: '11px', fontWeight: 700, color: '#a8a29e', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Motto Hari Ini</p>
+               <p style={{ fontStyle: 'italic', color: '#1c1917', fontSize: '0.95rem', maxWidth: '240px', lineHeight: 1.5 }}>
+                 "Kecantikan terbaik adalah kemandirian pikiran dan hati."
+               </p>
+            </div>
+          </div>
         </div>
 
         {/* ── STATS ROW ─────────────────────────────────────── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {[
-            { label: 'Total Poin',         value: user?.points || 0,          icon: <Crown size={20} color="#9f1239" />,      bg: '#fff1f2' },
-            { label: 'Modul Selesai',      value: `${completedMods}/${modules.length}`, icon: <BookOpen size={20} color="#78716c" />,   bg: '#f5f5f4' },
-            { label: 'Pelajaran Selesai',  value: `${completedLessons}/${totalLessons}`, icon: <CheckCircle2 size={20} color="#9f1239" />, bg: '#fff1f2' },
-            { label: 'Sertifikat',         value: user?.certificates?.length || 0, icon: <Award size={20} color="#78716c" />,      bg: '#f5f5f4' },
+            { label: 'Total Poin',         value: user?.points || 0,          icon: <Crown size={22} />,      color: '#9f1239', bg: '#fff1f2' },
+            { label: 'Modul Selesai',      value: `${completedMods}/${modules.length}`, icon: <BookOpen size={22} />,   color: '#134e4a', bg: '#f0faf9' },
+            { label: 'Pelajaran Selesai',  value: `${completedLessons}/${totalLessons}`, icon: <CheckCircle2 size={22} />, color: '#4338ca', bg: '#eef2ff' },
+            { label: 'Sertifikat',         value: user?.certificates?.length || 0, icon: <Award size={22} />,      color: '#b45309', bg: '#fffbeb' },
           ].map((st, i) => (
-            <div key={i} style={s.statCard}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
-                <p style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#a8a29e' }}>{st.label}</p>
-                <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: st.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{st.icon}</div>
+            <div key={i} style={s.statCard} className="hover:shadow-lg hover:-translate-y-1">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: st.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', color: st.color }}>{st.icon}</div>
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: st.color, opacity: 0.2 }}></div>
               </div>
-              <p style={{ fontFamily: "'Playfair Display', serif", fontSize: '2.25rem', color: '#1c1917', lineHeight: 1 }}>{st.value}</p>
+              <p style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#a8a29e', marginBottom: '6px' }}>{st.label}</p>
+              <p style={{ fontFamily: "'Playfair Display', serif", fontSize: '2.5rem', color: '#1c1917', lineHeight: 1, fontWeight: 600 }}>{st.value}</p>
             </div>
           ))}
         </div>
@@ -140,9 +149,14 @@ export default function Dashboard() {
 
             {/* Module List */}
             <div style={s.card}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.5rem' }}>
-                <BookOpen size={18} color="#44403c" />
-                <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.2rem', color: '#1c1917', fontWeight: 600 }}>Modul Pembelajaran</h2>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: '#f5f5f4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <BookOpen size={20} color="#1c1917" />
+                  </div>
+                  <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.5rem', color: '#1c1917', fontWeight: 600 }}>Modul Pembelajaran</h2>
+                </div>
+                <div style={{ fontSize: '12px', color: '#a8a29e', fontWeight: 600 }}>{modules.length} Tersedia</div>
               </div>
 
               {loading ? (
@@ -160,33 +174,37 @@ export default function Dashboard() {
 
                     return (
                       <Link key={mod.routeId} to={`/module/${mod.routeId}`} style={{ textDecoration: 'none' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.1rem 1.25rem', borderRadius: '18px', border: `1px solid ${c.border}`, background: c.bg, transition: 'all 0.25s', cursor: 'pointer' }}
-                          onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(28,25,23,0.08)'; }}
-                          onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', padding: '1.25rem 1.5rem', borderRadius: '24px', border: `1px solid ${c.border}`, background: '#fff', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}
+                          className="group hover:border-[#9f1239]/20 hover:shadow-xl hover:shadow-[#9f1239]/5">
+                          
+                          {/* Accent line */}
+                          <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '4px', background: c.accent, opacity: 0.8 }}></div>
 
-                          {/* Icon */}
-                          <div style={{ width: '52px', height: '52px', borderRadius: '14px', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', boxShadow: '0 2px 8px rgba(28,25,23,0.06)', flexShrink: 0 }}>
+                          {/* Icon container */}
+                          <div style={{ width: '64px', height: '64px', borderRadius: '20px', background: c.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', flexShrink: 0, transition: 'transform 0.3s' }} className="group-hover:scale-110">
                             {mod.icon}
                           </div>
-
+ 
                           {/* Info */}
                           <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                              <h3 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#1c1917', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{mod.title}</h3>
-                              {done_ && <span style={{ flexShrink: 0, fontSize: '10px', padding: '2px 8px', borderRadius: '999px', background: '#d1fae5', color: '#065f46', border: '1px solid #a7f3d0', fontWeight: 600 }}>✓ Selesai</span>}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#1c1917', transition: 'color 0.3s' }} className="group-hover:text-[#9f1239]">{mod.title}</h3>
+                              {done_ && <div style={{ flexShrink: 0, background: '#d1fae5', color: '#065f46', borderRadius: '8px', padding: '2px 10px', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>✓ Selesai</div>}
                             </div>
-                            <p style={{ fontSize: '12px', color: '#a8a29e', marginBottom: '8px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{mod.description}</p>
-
-                            {/* Progress bar */}
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <div style={{ flex: 1, height: '5px', background: 'rgba(255,255,255,0.8)', borderRadius: '999px', overflow: 'hidden' }}>
-                                <div style={{ height: '100%', width: `${pctMod}%`, background: c.accent, borderRadius: '999px', transition: 'width 0.8s ease' }}></div>
+                            <p style={{ fontSize: '13px', color: '#78716c', marginBottom: '1rem', lineHeight: 1.5 }}>{mod.description}</p>
+ 
+                            {/* Progress bar container */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                              <div style={{ flex: 1, height: '6px', background: '#f5f5f4', borderRadius: '999px', overflow: 'hidden' }}>
+                                <div style={{ height: '100%', width: `${pctMod}%`, background: `linear-gradient(90deg, ${c.accent}, ${c.accent}dd)`, borderRadius: '999px', transition: 'width 1s ease' }}></div>
                               </div>
-                              <span style={{ fontSize: '11px', fontWeight: 700, color: c.accent, flexShrink: 0 }}>{done}/{total}</span>
+                              <span style={{ fontSize: '11px', fontWeight: 800, color: c.accent, fontFamily: 'monospace' }}>{pctMod}%</span>
                             </div>
                           </div>
-
-                          <ChevronRight size={18} color="#d6d3d1" style={{ flexShrink: 0 }} />
+ 
+                          <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: '#fdfbf9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#d6d3d1', transition: 'all 0.3s' }} className="group-hover:bg-[#9f1239] group-hover:text-white">
+                            <ChevronRight size={20} />
+                          </div>
                         </div>
                       </Link>
                     );

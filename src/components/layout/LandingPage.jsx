@@ -126,12 +126,12 @@ const LandingPage = () => {
               { icon: <Star className="w-6 h-6" />, bg:'#fff1f2', color:'#9f1239', title:'Ekonomi Mandiri', desc:'Pelatihan kewirausahaan, manajemen keuangan usaha, dan pemasaran digital untuk kemandirian ekonomi.' },
               { icon: <Award className="w-6 h-6" />, bg:'#f5f5f4', color:'#44403c', title:'Pendampingan', desc:'Sistem komunitas dan pendampingan berkelanjutan untuk mendukung keberhasilan setiap pengguna.' },
             ].map((item, i) => (
-              <div key={i} className="bg-white border border-stone-100" style={{borderRadius:'2rem', padding:'2rem', boxShadow:'0 2px 8px rgba(28,25,23,0.04)', transition:'all 0.4s'}}>
-                <div className="flex items-center justify-center mb-5" style={{width:'56px', height:'56px', borderRadius:'1rem', background:item.bg, color:item.color}}>
+              <div key={i} className="bg-white border border-stone-100 group" style={{borderRadius:'2.5rem', padding:'2.5rem', boxShadow:'0 4px 20px rgba(28,25,23,0.03)', transition:'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)'}}>
+                <div className="flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500" style={{width:'64px', height:'64px', borderRadius:'1.25rem', background:item.bg, color:item.color}}>
                   {item.icon}
                 </div>
-                <h3 className="font-bold text-stone-900 mb-3" style={{fontSize:'1.1rem'}}>{item.title}</h3>
-                <p className="text-stone-500 font-light" style={{fontSize:'0.9rem', lineHeight:'1.7'}}>{item.desc}</p>
+                <h3 className="font-bold text-stone-900 mb-4" style={{fontSize:'1.2rem'}}>{item.title}</h3>
+                <p className="text-stone-500 font-light" style={{fontSize:'0.95rem', lineHeight:'1.7'}}>{item.desc}</p>
               </div>
             ))}
           </div>
@@ -185,7 +185,7 @@ const LandingPage = () => {
           <h2 className="font-serif text-stone-900 mb-4" style={{fontSize:'2.5rem'}}>Suara Pengguna SELARAS</h2>
           <p className="text-stone-500 font-light mb-12">Cerita nyata dari perempuan desa yang telah merasakan manfaat platform SELARAS.</p>
           
-          <div className="grid grid-cols-1 md:grid-cols-3" style={{gap:'1.5rem'}}>
+          <div className="grid grid-cols-1 md:grid-cols-3" style={{gap:'2rem'}}>
             {[{
               quote: 'Sebuah ruang yang sangat elegan dan informatif. Saya menemukan kembali kepercayaan diri untuk merintis usaha.',
               name: 'Siti Aminah',
@@ -199,18 +199,18 @@ const LandingPage = () => {
               name: 'Rina Dewi',
               role: 'Penggiat Komunitas'
             }].map((item, idx) => (
-              <div key={idx} className="bg-white border border-stone-100 text-left" style={{padding:'2.5rem', borderRadius:'2rem', boxShadow:'0 2px 8px rgba(28,25,23,0.04)'}}>
-                <div className="flex gap-1 mb-6">
+              <div key={idx} className="bg-white border border-stone-100 text-left hover:shadow-xl transition-all duration-500" style={{padding:'3rem', borderRadius:'2.5rem', boxShadow:'0 4px 20px rgba(28,25,23,0.03)'}}>
+                <div className="flex gap-1.5 mb-8">
                   {[1,2,3,4,5].map(i => <Star key={i} className="w-4 h-4" style={{fill:'#fda4af', color:'#fda4af'}} />)}
                 </div>
-                <p className="text-stone-600 font-serif italic mb-8" style={{fontSize:'1.05rem', lineHeight:'1.8'}}>
+                <p className="text-stone-700 font-serif italic mb-10" style={{fontSize:'1.15rem', lineHeight:'1.8'}}>
                   "{item.quote}"
                 </p>
-                <div className="flex items-center gap-4">
-                  <div style={{width:'48px', height:'48px', borderRadius:'50%', background:'#f5f5f4'}}></div>
+                <div className="flex items-center gap-5">
+                  <div style={{width:'56px', height:'56px', borderRadius:'50%', background:'#f5f5f4', border:'2px solid #fff', boxShadow:'0 4px 12px rgba(0,0,0,0.05)'}}></div>
                   <div>
-                    <h4 className="font-bold text-stone-900">{item.name}</h4>
-                    <p className="text-stone-400 uppercase" style={{fontSize:'0.7rem', letterSpacing:'0.1em'}}>{item.role}</p>
+                    <h4 className="font-bold text-stone-900" style={{fontSize:'1.1rem'}}>{item.name}</h4>
+                    <p className="text-stone-400 font-bold uppercase" style={{fontSize:'0.75rem', letterSpacing:'0.12em'}}>{item.role}</p>
                   </div>
                 </div>
               </div>

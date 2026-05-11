@@ -25,15 +25,15 @@ import perempuanDesaImage from '../../assets/srikandi-desa.webp';
 const s = {
   page:    { minHeight: '100vh', background: '#fdfbf9', fontFamily: "'Plus Jakarta Sans', sans-serif", color: '#1c1917' },
   main:    { maxWidth: '1000px', margin: '0 auto' },
-  card:    { background: '#fff', borderRadius: '24px', padding: '2rem', border: '1px solid #f5f5f4', boxShadow: '0 4px 20px rgba(28,25,23,0.03)', marginBottom: '1.5rem' },
-  statCard:{ background: '#fff', borderRadius: '20px', padding: '1.25rem', border: '1px solid #f5f5f4', display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 },
-  badge:   { display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#f5f5f4', border: '1px solid #e7e5e4', borderRadius: '999px', padding: '4px 14px', fontSize: '11px', fontWeight: 600, color: '#78716c', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '1rem' },
-  avatar:  { width: '100px', height: '100px', borderRadius: '24px', objectFit: 'cover', border: '3px solid #fff', boxShadow: '0 8px 24px rgba(28,25,23,0.08)' },
-  btn:     { padding: '10px 20px', borderRadius: '999px', fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', border: 'none', transition: 'all 0.3s', display: 'flex', alignItems: 'center', gap: '8px' },
-  modal:   { position: 'fixed', inset: 0, background: 'rgba(28,25,23,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem' },
-  modalContent: { background: '#fff', borderRadius: '28px', width: '100%', maxWidth: '450px', position: 'relative', boxShadow: '0 20px 50px rgba(0,0,0,0.1)' },
-  input:   { width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid #e7e5e4', fontSize: '0.95rem', outline: 'none', background: '#faf9f8', transition: 'all 0.2s' },
-  inputLabel: { display: 'block', fontSize: '12px', fontWeight: 700, color: '#78716c', marginBottom: '6px', marginLeft: '4px' }
+  card:    { background: '#fff', borderRadius: '32px', padding: '2.5rem', border: '1px solid #f5f5f4', boxShadow: '0 4px 20px rgba(28,25,23,0.03)', marginBottom: '2rem' },
+  statCard:{ background: '#fff', borderRadius: '24px', padding: '1.5rem', border: '1px solid #f5f5f4', display: 'flex', alignItems: 'center', gap: '1.25rem', flex: 1, boxShadow: '0 2px 8px rgba(0,0,0,0.02)', transition: 'all 0.3s' },
+  badge:   { display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: '12px', padding: '6px 16px', fontSize: '11px', fontWeight: 700, color: '#9f1239', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '1.25rem' },
+  avatar:  { width: '120px', height: '120px', borderRadius: '32px', objectFit: 'cover', border: '4px solid #fff', boxShadow: '0 12px 32px rgba(28,25,23,0.1)' },
+  btn:     { padding: '12px 24px', borderRadius: '999px', fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', border: 'none', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', display: 'flex', alignItems: 'center', gap: '10px' },
+  modal:   { position: 'fixed', inset: 0, background: 'rgba(28,25,23,0.4)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem' },
+  modalContent: { background: '#fff', borderRadius: '32px', width: '100%', maxWidth: '480px', position: 'relative', boxShadow: '0 30px 60px rgba(0,0,0,0.12)', padding: '2.5rem' },
+  input:   { width: '100%', padding: '14px 18px', borderRadius: '16px', border: '1px solid #e7e5e4', fontSize: '0.95rem', outline: 'none', background: '#faf9f8', transition: 'all 0.2s' },
+  inputLabel: { display: 'block', fontSize: '12px', fontWeight: 800, color: '#78716c', marginBottom: '8px', marginLeft: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }
 };
 
 const Profile = () => {
@@ -192,54 +192,59 @@ const Profile = () => {
           </button>
         </div>
 
-        {/* Simplified Header */}
+        {/* Profile Header */}
         <div style={s.card}>
-          <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-6 md:gap-8">
-            <img src={perempuanDesaImage} alt="Profil" style={s.avatar} />
+          <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-8 md:gap-12">
+            <div style={{ position: 'relative' }}>
+              <img src={perempuanDesaImage} alt="Profil" style={s.avatar} />
+              <div style={{ position: 'absolute', bottom: '-8px', right: '-8px', background: '#9f1239', color: '#fff', width: '36px', height: '36px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '4px solid #fff', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+                <Crown size={16} />
+              </div>
+            </div>
             <div style={{ flex: 1, minWidth: '250px' }}>
-              <div style={s.badge}>Peserta SELARAS</div>
-              <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '2rem', fontWeight: 700, color: '#1c1917', marginBottom: '0.25rem' }}>
+              <div style={s.badge}>Peserta Srikandi Desa</div>
+              <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(2rem, 4vw, 2.75rem)', fontWeight: 700, color: '#1c1917', marginBottom: '0.5rem', lineHeight: 1.1 }}>
                 {user?.fullName || user?.name || 'Peserta'}
               </h1>
-              <p style={{ color: '#a8a29e', fontSize: '0.9rem', marginBottom: '1rem' }}>{user?.email}</p>
+              <p style={{ color: '#a8a29e', fontSize: '1rem', marginBottom: '1.5rem', fontWeight: 500 }}>{user?.email}</p>
               
-              <div className="flex flex-col sm:flex-row items-center md:items-start gap-4 sm:gap-6">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#78716c', fontSize: '0.85rem' }}>
-                  <MapPin size={14} /> {user?.address || 'Alamat belum diatur'}
+              <div className="flex flex-col sm:flex-row items-center md:items-start gap-4 sm:gap-8">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#78716c', fontSize: '0.9rem', fontWeight: 500 }}>
+                  <MapPin size={16} color="#9f1239" /> {user?.address || 'Alamat belum diatur'}
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#78716c', fontSize: '0.85rem' }}>
-                  <Phone size={14} /> {user?.phone || 'Nomor HP belum diatur'}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#78716c', fontSize: '0.9rem', fontWeight: 500 }}>
+                  <Phone size={16} color="#9f1239" /> {user?.phone || 'Nomor HP belum diatur'}
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
-            <div style={s.statCard}>
-              <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#fff1f2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Crown size={18} color="#9f1239" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-12">
+            <div style={s.statCard} className="hover:shadow-md hover:-translate-y-1">
+              <div style={{ width: '52px', height: '52px', borderRadius: '16px', background: '#fff1f2', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(159,18,57,0.08)' }}>
+                <Crown size={22} color="#9f1239" />
               </div>
               <div>
-                <p style={{ fontSize: '10px', fontWeight: 700, color: '#a8a29e', textTransform: 'uppercase' }}>Poin</p>
-                <p style={{ fontSize: '1.1rem', fontWeight: 700 }}>{user?.points || 0}</p>
+                <p style={{ fontSize: '11px', fontWeight: 800, color: '#a8a29e', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Poin</p>
+                <p style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1c1917', lineHeight: 1.2 }}>{user?.points || 0}</p>
               </div>
             </div>
-            <div style={s.statCard}>
-              <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#fef3c7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Trophy size={18} color="#92400e" />
+            <div style={s.statCard} className="hover:shadow-md hover:-translate-y-1">
+              <div style={{ width: '52px', height: '52px', borderRadius: '16px', background: '#f0faf9', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(19,78,74,0.08)' }}>
+                <Trophy size={22} color="#134e4a" />
               </div>
               <div>
-                <p style={{ fontSize: '10px', fontWeight: 700, color: '#a8a29e', textTransform: 'uppercase' }}>Badge</p>
-                <p style={{ fontSize: '1.1rem', fontWeight: 700 }}>{user?.badges?.length || 0}</p>
+                <p style={{ fontSize: '11px', fontWeight: 800, color: '#a8a29e', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Badge Koleksi</p>
+                <p style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1c1917', lineHeight: 1.2 }}>{user?.badges?.length || 0}</p>
               </div>
             </div>
-            <div style={s.statCard}>
-              <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#ede9fe', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Award size={18} color="#5b21b6" />
+            <div style={s.statCard} className="hover:shadow-md hover:-translate-y-1">
+              <div style={{ width: '52px', height: '52px', borderRadius: '16px', background: '#eef2ff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(67,56,202,0.08)' }}>
+                <Award size={22} color="#4338ca" />
               </div>
               <div>
-                <p style={{ fontSize: '10px', fontWeight: 700, color: '#a8a29e', textTransform: 'uppercase' }}>Sertifikat</p>
-                <p style={{ fontSize: '1.1rem', fontWeight: 700 }}>{certificates.length || 0}</p>
+                <p style={{ fontSize: '11px', fontWeight: 800, color: '#a8a29e', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Sertifikat</p>
+                <p style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1c1917', lineHeight: 1.2 }}>{certificates.length || 0}</p>
               </div>
             </div>
           </div>

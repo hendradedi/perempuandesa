@@ -625,13 +625,13 @@ const AdminPanel = ({ isSuperAdmin }) => {
   };
 
   const S = {
-    page:    { minHeight:'100vh', background:'#faf9f8', fontFamily:"'Plus Jakarta Sans', sans-serif", color:'#1c1917' },
+    page:    { minHeight:'100vh', background:'#fdfbf9', fontFamily:"'Plus Jakarta Sans', sans-serif", color:'#1c1917' },
     wrap:    { maxWidth:'1280px', margin:'0 auto', padding:'3rem 2rem 5rem' },
-    card:    { background:'#fff', borderRadius:'20px', border:'1px solid #f5f5f4', boxShadow:'0 2px 8px rgba(28,25,23,0.05)', padding:'1.75rem' },
-    badge:   { display:'inline-flex', alignItems:'center', gap:'6px', background:'#f5f5f4', border:'1px solid #e7e5e4', borderRadius:'999px', padding:'4px 14px', fontSize:'11px', fontWeight:600, color:'#78716c', letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:'1rem' },
-    input:   { width:'100%', padding:'10px 14px', borderRadius:'12px', border:'1px solid #e7e5e4', fontSize:'0.875rem', outline:'none', fontFamily:'inherit', boxSizing:'border-box', background:'#fafaf9' },
-    btn:     { width:'100%', padding:'12px', borderRadius:'12px', fontWeight:700, fontSize:'0.9rem', cursor:'pointer', border:'none', transition:'all 0.2s' },
-    label:   { display:'block', fontSize:'11px', fontWeight:700, color:'#a8a29e', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:'6px' },
+    card:    { background:'#fff', borderRadius:'32px', border:'1px solid #f5f5f4', boxShadow:'0 4px 20px rgba(28,25,23,0.03)', padding:'2rem' },
+    badge:   { display:'inline-flex', alignItems:'center', gap:'8px', background:'#fff1f2', border:'1px solid #fecdd3', borderRadius:'12px', padding:'6px 16px', fontSize:'11px', fontWeight:700, color:'#9f1239', letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:'1.25rem' },
+    input:   { width:'100%', padding:'12px 16px', borderRadius:'16px', border:'1px solid #e7e5e4', fontSize:'0.875rem', outline:'none', fontFamily:'inherit', boxSizing:'border-box', background:'#fafaf9' },
+    btn:     { width:'100%', padding:'14px', borderRadius:'16px', fontWeight:700, fontSize:'0.9rem', cursor:'pointer', border:'none', transition:'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)' },
+    label:   { display:'block', fontSize:'11px', fontWeight:800, color:'#a8a29e', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:'6px' },
   };
 
   if (loading) {
@@ -658,7 +658,7 @@ const AdminPanel = ({ isSuperAdmin }) => {
         </div>
 
         {/* Stats Row */}
-        <div style={{display:'grid', gridTemplateColumns:'repeat(6,1fr)', gap:'1rem', marginBottom:'2rem'}}>
+        <div style={{display:'grid', gridTemplateColumns:'repeat(6,1fr)', gap:'1.25rem', marginBottom:'2.5rem'}}>
           {[
             { label:'Total Pengguna',   value: adminStats.totalUsers,      color:'#9f1239', bg:'#fff1f2' },
             { label:'Pengguna Aktif',   value: adminStats.activeUsers,     color:'#065f46', bg:'#d1fae5' },
@@ -667,12 +667,12 @@ const AdminPanel = ({ isSuperAdmin }) => {
             { label:'Materi Tambahan',  value: adminStats.totalMaterials,  color:'#5b21b6', bg:'#ede9fe' },
             { label:'Modul Aktif',      value: adminStats.totalModules,    color:'#134e4a', bg:'#ccfbf1' },
           ].map((st,i) => (
-            <div key={i} style={{...S.card, padding:'1.25rem'}}>
-              <p style={{fontSize:'10px', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', color:'#a8a29e', marginBottom:'0.75rem'}}>{st.label}</p>
+            <div key={i} style={{...S.card, padding:'1.5rem', borderRadius:'24px'}} className="hover:shadow-lg transition-all duration-300">
+              <p style={{fontSize:'10px', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.08em', color:'#a8a29e', marginBottom:'1rem'}}>{st.label}</p>
               <div style={{display:'flex', alignItems:'center', justifyContent:'space-between'}}>
-                <p style={{fontFamily:"'Playfair Display', serif", fontSize:'2rem', color:'#1c1917', lineHeight:1}}>{st.value}</p>
-                <div style={{width:'36px', height:'36px', borderRadius:'10px', background:st.bg, display:'flex', alignItems:'center', justifyContent:'center'}}>
-                  <div style={{width:'8px', height:'8px', borderRadius:'50%', background:st.color}}></div>
+                <p style={{fontFamily:"'Playfair Display', serif", fontSize:'2.25rem', color:'#1c1917', lineHeight:1, fontWeight:600}}>{st.value}</p>
+                <div style={{width:'40px', height:'40px', borderRadius:'12px', background:st.bg, display:'flex', alignItems:'center', justifyContent:'center'}}>
+                  <div style={{width:'8px', height:'8px', borderRadius:'50%', background:st.color, opacity:0.6}}></div>
                 </div>
               </div>
             </div>
