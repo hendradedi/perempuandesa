@@ -90,7 +90,9 @@ const normalizeModuleDraft = (draft, createdBy, createdByName) => {
     id: index + 1,
     title: lesson.title || `Pelajaran ${index + 1}`,
     duration: lesson.duration || '15 menit',
-    content: lesson.content || 'Materi sedang dipersiapkan.'
+    content: lesson.content || 'Materi sedang dipersiapkan.',
+    keyPoints: Array.isArray(lesson.keyPoints) ? lesson.keyPoints : [],
+    tips: lesson.tips || ''
   }));
 
   const normalizedQuiz = (draft.quizQuestions || []).slice(0, 3).map((question) => ({

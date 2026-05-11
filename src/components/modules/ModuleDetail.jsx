@@ -380,26 +380,26 @@ const ModuleDetail = () => {
                     <button 
                       key={lesson.id} 
                       onClick={() => selectLesson(lesson.id)}
-                      className={`group w-full text-left p-4 rounded-2xl border transition-all duration-300 relative overflow-hidden ${
+                      className={`group w-full text-left p-5 rounded-2xl border transition-all duration-300 relative overflow-hidden ${
                         isActive 
                         ? 'bg-stone-900 border-stone-900 text-white shadow-xl shadow-stone-200' 
-                        : 'bg-stone-50 border-stone-100 text-stone-600 hover:border-stone-200 hover:bg-white'
+                        : 'bg-white border-stone-100 text-stone-600 hover:border-rose-200 hover:shadow-sm'
                       }`}>
                       <div className="flex items-center gap-4 relative z-10">
-                        <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all ${
-                          isActive ? 'bg-white/20' : isDone ? 'bg-emerald-100' : 'bg-white border border-stone-100'
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all ${
+                          isActive ? 'bg-white/20' : isDone ? 'bg-emerald-100' : 'bg-stone-50 border border-stone-100'
                         }`}>
                           {isDone ? (
-                            <CheckCircle2 size={16} className={isActive ? 'text-white' : 'text-emerald-600'} />
+                            <CheckCircle2 size={18} className={isActive ? 'text-white' : 'text-emerald-600'} />
                           ) : (
-                            <Circle size={16} className={isActive ? 'text-white/50' : 'text-stone-300'} />
+                            <Circle size={18} className={isActive ? 'text-white/50' : 'text-stone-300'} />
                           )}
                         </div>
                         <div className="flex-1">
-                          <p className={`text-[10px] font-bold uppercase tracking-widest mb-0.5 ${isActive ? 'text-white/60' : 'text-stone-400'}`}>Pelajaran {idx + 1}</p>
-                          <p className={`text-sm font-bold line-clamp-1 ${isActive ? 'text-white' : 'text-stone-900'}`}>{lesson.title}</p>
+                          <p className={`text-[10px] font-bold uppercase tracking-[0.15em] mb-1 ${isActive ? 'text-white/60' : 'text-stone-400'}`}>Pelajaran {idx + 1}</p>
+                          <p className={`text-sm font-bold leading-snug ${isActive ? 'text-white' : 'text-stone-800'}`}>{lesson.title}</p>
                         </div>
-                        {isActive && <ChevronRight size={16} className="text-white/50" />}
+                        {isActive && <ChevronRight size={16} className="text-white/50 animate-pulse" />}
                       </div>
                     </button>
                   );
@@ -424,31 +424,33 @@ const ModuleDetail = () => {
                 
                 {/* Content Header Card */}
                 <div className="bg-white rounded-[2.5rem] border border-stone-100 p-8 sm:p-12 mb-8 shadow-xl shadow-stone-200/50">
-                  <div className="flex items-center gap-2 mb-6">
-                    <div className="px-4 py-1.5 bg-stone-100 rounded-full text-[10px] font-bold text-stone-500 tracking-widest uppercase">
-                      {selectedLesson.duration} Menit
+                  <div className="flex items-center flex-wrap gap-3 mb-8">
+                    <div className="px-5 py-2 bg-stone-100 rounded-full text-[11px] font-bold text-stone-600 tracking-widest uppercase border border-stone-200/50">
+                      <Clock size={12} className="inline mr-2 -mt-0.5" />
+                      {selectedLesson.duration?.toLowerCase().replace('menit', '').trim()} Menit
                     </div>
                     {isLessonCompleted(selectedLesson.id) && (
-                      <div className="px-4 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-bold tracking-widest uppercase border border-emerald-100">
+                      <div className="px-5 py-2 bg-emerald-50 text-emerald-700 rounded-full text-[11px] font-bold tracking-widest uppercase border border-emerald-100 flex items-center gap-2">
+                        <CheckCircle2 size={12} />
                         Lulus Pelajaran
                       </div>
                     )}
                   </div>
                   
-                  <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-stone-900 mb-8 leading-tight">
+                  <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl text-stone-900 mb-10 leading-[1.15]">
                     {selectedLesson.title}
                   </h1>
 
-                  <div className="prose prose-stone max-w-none">
-                    <div className="flex items-center gap-3 mb-6 text-stone-900">
-                      <div className="p-2 bg-rose-50 rounded-xl">
+                  <div className="relative">
+                    <div className="flex items-center gap-4 mb-8 text-stone-900">
+                      <div className="p-3 bg-rose-50 rounded-2xl shadow-sm border border-rose-100">
                         <BookOpen size={24} className="text-rose-600" />
                       </div>
-                      <h3 className="text-xl font-bold font-serif m-0">Materi Belajar</h3>
+                      <h3 className="text-2xl font-bold font-serif m-0">Materi Belajar</h3>
                     </div>
-                    <p className="text-stone-600 text-lg leading-relaxed font-light">
+                    <div className="text-stone-600 text-lg leading-[1.8] font-light whitespace-pre-line bg-stone-50/30 p-2 rounded-2xl">
                       {selectedLesson.content}
-                    </p>
+                    </div>
                   </div>
                 </div>
 

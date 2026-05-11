@@ -34,7 +34,9 @@ export const buildCustomModules = async () => {
               id: lesson.id || index + 1,
               title: lesson.title || `Pelajaran ${index + 1}`,
               duration: lesson.duration || '15 menit',
-              content: lesson.content || 'Materi sedang dipersiapkan admin.'
+              content: lesson.content || 'Materi sedang dipersiapkan admin.',
+              keyPoints: Array.isArray(lesson.keyPoints) ? lesson.keyPoints : [],
+              tips: lesson.tips || ''
             }))
           : [],
         quizQuestions: Array.isArray(item.quizQuestions)
