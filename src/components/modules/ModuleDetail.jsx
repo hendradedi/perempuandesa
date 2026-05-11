@@ -25,6 +25,14 @@ const getStoredProgress = () => {
   catch { return {}; }
 };
 
+const s = {
+  page:    { minHeight: '100vh', background: '#faf9f8', fontFamily: "'Plus Jakarta Sans', sans-serif", color: '#1c1917' },
+  main:    { maxWidth: '1280px', margin: '0 auto' },
+  card:    { background: '#fff', borderRadius: '24px', padding: '2rem', border: '1px solid #f5f5f4', boxShadow: '0 2px 8px rgba(28,25,23,0.04)', marginBottom: '1.5rem' },
+  sideCard:{ background: '#fff', borderRadius: '24px', padding: '2rem', border: '1px solid #f5f5f4', boxShadow: '0 2px 8px rgba(28,25,23,0.04)', position: 'sticky', top: '90px' },
+  btn:     { padding: '12px 24px', borderRadius: '999px', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer', border: 'none', transition: 'all 0.3s', display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }
+};
+
 // ── Game Components ─────────────────────────────────────────────────────────
 
 function MatchingGame({ game }) {
@@ -328,7 +336,7 @@ const ModuleDetail = () => {
   const progress = Math.round((completedCount / module.lessons.length) * 100);
 
   return (
-    <div className="min-h-screen bg-[#fdfbf9]">
+    <div style={s.page}>
 
       {/* Decorative Background */}
       <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
@@ -336,7 +344,7 @@ const ModuleDetail = () => {
         <div className="absolute bottom-[-10%] left-[-5%] w-[30%] h-[30%] rounded-full bg-emerald-50/50 blur-[100px]"></div>
       </div>
 
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div style={s.main} className="px-4 md:px-8">
 
         {/* Top Navigation */}
         <div className="py-6 sm:py-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -357,8 +365,8 @@ const ModuleDetail = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start pb-12">
 
           {/* Sidebar Lesson Navigation */}
-          <aside className="lg:col-span-4 lg:sticky lg:top-6 order-2 lg:order-1">
-            <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] border border-stone-100 p-6 sm:p-8 shadow-xl shadow-stone-200/50">
+          <aside className="lg:col-span-4 order-2 lg:order-1">
+            <div style={s.sideCard}>
               <div className="flex items-center gap-3 mb-6 sm:mb-8">
                 <div className="text-3xl sm:text-4xl">{module.icon}</div>
                 <div className="flex-1 min-w-0">
@@ -415,7 +423,7 @@ const ModuleDetail = () => {
               <div className="animate-in fade-in slide-in-from-bottom-6 duration-700">
 
                 {/* Content Header Card */}
-                <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] border border-stone-100 p-6 sm:p-8 lg:p-12 mb-6 sm:mb-8 shadow-xl shadow-stone-200/50">
+                <div style={s.card}>
                   <div className="flex items-center flex-wrap gap-2 sm:gap-3 mb-6 sm:mb-8">
                     <div className="px-3 sm:px-5 py-1.5 sm:py-2 bg-stone-100 rounded-full text-[10px] sm:text-[11px] font-bold text-stone-600 tracking-widest uppercase border border-stone-200/50">
                       <Clock size={11} className="inline mr-1.5 -mt-0.5" />
@@ -440,7 +448,7 @@ const ModuleDetail = () => {
                       </div>
                       <h3 className="text-xl sm:text-2xl font-bold font-serif m-0">Materi Belajar</h3>
                     </div>
-                    <div className="text-stone-600 text-base sm:text-lg leading-[1.8] font-light whitespace-pre-line bg-stone-50/30 p-4 sm:p-6 rounded-xl sm:rounded-2xl">
+                    <div className="text-stone-600 text-base sm:text-lg leading-loose font-light whitespace-pre-line bg-stone-50/50 p-6 sm:p-8 rounded-2xl border border-stone-100">
                       {selectedLesson.content}
                     </div>
                   </div>
@@ -449,18 +457,18 @@ const ModuleDetail = () => {
                 {/* Key Insights & Tips Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
                   {selectedLesson.keyPoints && (
-                    <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] border border-stone-100 p-6 sm:p-8 shadow-sm">
+                    <div style={s.card}>
                       <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
                         <div className="p-2 bg-rose-50 rounded-lg sm:rounded-xl text-rose-600">
                           <Lightbulb size={18} className="sm:w-5 sm:h-5" />
                         </div>
                         <h4 className="font-serif font-bold text-base sm:text-lg text-stone-900">Poin Utama</h4>
                       </div>
-                      <ul className="space-y-3 sm:space-y-4">
+                      <ul className="space-y-6">
                         {selectedLesson.keyPoints.map((pt, i) => (
-                          <li key={i} className="flex items-start gap-2 sm:gap-3 group">
-                            <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-rose-400 group-hover:scale-150 transition-all duration-300 shrink-0"></div>
-                            <span className="text-xs sm:text-sm text-stone-600 leading-relaxed font-medium">{pt}</span>
+                          <li key={i} className="flex items-start gap-4 group">
+                            <div className="mt-2 w-2 h-2 rounded-full bg-rose-400 group-hover:scale-150 transition-all duration-300 shrink-0 shadow-sm"></div>
+                            <span className="text-sm sm:text-base text-stone-600 leading-relaxed font-medium">{pt}</span>
                           </li>
                         ))}
                       </ul>
@@ -468,14 +476,14 @@ const ModuleDetail = () => {
                   )}
 
                   {selectedLesson.tips && (
-                    <div className="bg-stone-900 rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 text-white shadow-xl shadow-stone-200">
+                    <div style={{...s.card, background: '#1c1917', color: '#fff', borderColor: '#1c1917'}}>
                       <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
                         <div className="p-2 bg-white/10 rounded-lg sm:rounded-xl text-rose-400">
                           <Info size={18} className="sm:w-5 sm:h-5" />
                         </div>
                         <h4 className="font-serif font-bold text-base sm:text-lg">Saran Belajar</h4>
                       </div>
-                      <p className="text-stone-400 text-xs sm:text-sm leading-relaxed italic">
+                      <p className="text-stone-300 text-sm sm:text-base leading-loose italic">
                         "{selectedLesson.tips}"
                       </p>
                     </div>
@@ -495,6 +503,7 @@ const ModuleDetail = () => {
                       if (idx > 0) selectLesson(module.lessons[idx - 1].id);
                     }}
                     disabled={module.lessons.findIndex(l => l.id === selectedLesson.id) === 0}
+                    style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
                     className="flex items-center gap-2 sm:gap-3 text-stone-400 font-bold text-[10px] sm:text-xs uppercase tracking-widest disabled:opacity-30 disabled:pointer-events-none hover:text-stone-900 transition-all">
                     <ChevronLeft size={16} /> Sebelumnya
                   </button>
@@ -502,7 +511,8 @@ const ModuleDetail = () => {
                   {!isLessonCompleted(selectedLesson.id) ? (
                     <button
                       onClick={handleCompleteLesson}
-                      className="group bg-stone-900 text-white px-6 sm:px-10 py-3 sm:py-5 rounded-[1.5rem] sm:rounded-[2rem] font-bold text-sm sm:text-base flex items-center gap-3 sm:gap-4 hover:shadow-2xl hover:shadow-stone-300 transition-all transform hover:-translate-y-1 w-full sm:w-auto justify-center">
+                      style={{...s.btn, background: '#1c1917', color: '#fff', padding: '16px 32px'}}
+                      className="group hover:shadow-2xl hover:shadow-stone-300 transform hover:-translate-y-1 w-full sm:w-auto">
                       <span>Tandai Selesai</span>
                       <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-emerald-500 transition-all">
                         <CheckCircle2 size={14} className="sm:w-4 sm:h-4" />
@@ -515,7 +525,8 @@ const ModuleDetail = () => {
                         if (idx < module.lessons.length - 1) selectLesson(module.lessons[idx + 1].id);
                         else navigate(`/quiz/${module.routeId}`);
                       }}
-                      className="group bg-rose-600 text-white px-6 sm:px-10 py-3 sm:py-5 rounded-[1.5rem] sm:rounded-[2rem] font-bold text-sm sm:text-base flex items-center gap-3 sm:gap-4 hover:shadow-2xl hover:shadow-rose-300 transition-all transform hover:-translate-y-1 w-full sm:w-auto justify-center">
+                      style={{...s.btn, background: '#e11d48', color: '#fff', padding: '16px 32px'}}
+                      className="group hover:shadow-2xl hover:shadow-rose-300 transform hover:-translate-y-1 w-full sm:w-auto">
                       <span>{module.lessons.findIndex(l => l.id === selectedLesson.id) === module.lessons.length - 1 ? 'Mulai Kuis' : 'Lanjut Belajar'}</span>
                       <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
                     </button>
