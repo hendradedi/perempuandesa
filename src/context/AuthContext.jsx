@@ -169,7 +169,7 @@ export const AuthProvider = ({ children }) => {
       
       unsubscribeSnapshot = onSnapshot(userDocRef, (snapshot) => {
         if (snapshot.exists()) {
-          setUser(normalizeUserData(snapshot.data()));
+          setUser(normalizeUserData({ ...snapshot.data(), uid: snapshot.id }));
         } else {
           // Fallback for user without a document yet
           setUser(normalizeUserData({

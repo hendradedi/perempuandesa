@@ -19,7 +19,7 @@ import {
   Mail,
   ChevronRight
 } from 'lucide-react';
-import { doc, setDoc, collection, getDocs, query, limit } from 'firebase/firestore';
+import { doc, setDoc, collection, getDocs, query, limit, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { useAuth } from '../../context/useAuth';
 import perempuanDesaImage from '../../assets/srikandi-desa.webp';
@@ -74,15 +74,16 @@ const Profile = () => {
     
     setIsSaving(true);
     try {
-      await setDoc(doc(db, 'users', user.uid), {
+      const userRef = doc(db, 'users', user.uid);
+      await setDoc(userRef, {
         ...formData,
-        updatedAt: new Date()
+        updatedAt: serverTimestamp()
       }, { merge: true });
-      await refreshUser();
+      
       setIsEditModalOpen(false);
     } catch (err) {
-      console.error('Error updating profile:', err);
-      alert('Gagal memperbarui profil. Silakan coba lagi.');
+      console.error('Detailed error updating profile:', err);
+      alert(`Gagal memperbarui profil: ${err.message}`);
     } finally {
       setIsSaving(false);
     }
